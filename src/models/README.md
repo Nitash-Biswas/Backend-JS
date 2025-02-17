@@ -41,6 +41,7 @@ userSchema.pre("save", async function (next) {
 - **`this`** refers to the model **`User`**.
 - We're using **`function(next){}`** instead of callback **`() => {}`**,
   because callback don't have access to "this" reference.
+- **`bcrypt.hash(this.password, 10)`**, the 10 represents salt rounds—the higher the number, the stronger but slower the hashing.
 
 ### Matching passwords
 
