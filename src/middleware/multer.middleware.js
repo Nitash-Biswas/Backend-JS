@@ -14,5 +14,6 @@ const upload = multer({
   storage,
 });
 
+export {upload}
 //cb: callback
 //multer() will return storage, which is the full path name of the file
