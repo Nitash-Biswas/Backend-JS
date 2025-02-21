@@ -4,6 +4,20 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/fileToCloudinary.js";
 
+const generateAccessAndRefreshTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(500, "Something went wrong in generating tokens");
+  }
+};
+
 const registerUser = asyncHandler(async (req, res) => {
   // get user details from user
   // validation - not empty
@@ -51,12 +65,9 @@ const registerUser = asyncHandler(async (req, res) => {
     coverImageLocalPath = req.files.coverImage[0].path;
   }
 
-  
   // upload them to cloudinary
   const avatarString = await uploadOnCloudinary(avatarLocalPath);
   const coverImageString = await uploadOnCloudinary(coverImageLocalPath);
-
-
 
   // check avatar uploaded
   if (!avatarString)
@@ -85,16 +96,91 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-export default registerUser;
+const loginUser = asyncHandler(async (req, res) => {
+  //get username or email, and password from req.body
+  //validation
+  //find the user by username or email
+  //compare the password
+  //generate access and refresh token
+  //send token as cookies
 
-// MANUAL METHOD WITHOUT ASYNCHANDLER (USING TRY CATCH)
-// const registerUser = async (req, res, next) => {
-//     try {
-//       res.status(200).json({ message: "User registered successfully" });
-//     } catch (error) {
-//       next(error); // Manually passing errors to Express
-//     }
-//   };
+  //get username or email, and password from req.body
+  const { email, username, password } = req.body;
 
-//When sending request over postman, we use form-data for req.body instead of raw json,
-//because we also have to send files (avatar, coverImage) instead of just text data
+  //validation
+  if (!username || !email) {
+    throw new ApiError(400, "username or email is required");
+  }
+
+  //find the user by username or email
+  const user = await User.findOne({
+    $or: [{ username }, { email }],
+  });
+
+  //if user doesn't exist
+  if (!user) {
+    throw new ApiError(400, "User does not exist");
+  }
+
+  //compare the password
+  const isPasswordValid = await user.isPasswordCorrect(password);
+
+  //if wrong password
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Password is incorrect");
+  }
+
+  //generate access and refresh token
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id
+  );
+
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true, //only modifiable by the server
+  };
+
+  //send token as cookies
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options) //.cookie() is because of app.use(cookieParser());
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "User logged in successfully"
+      )
+    );
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: undefined,
+      },
+    },
+    { new: true }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true, //only modifiable by the server
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out successfully"));
+});
+export { registerUser, loginUser, logoutUser };

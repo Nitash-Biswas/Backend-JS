@@ -60,6 +60,9 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+//Custom methods are always applied to the instances of User
+//const userInstance = User.findOne({username})
+
 //Adding a custom method isPasswordCorrect() to the methods of userSchema
 //aysnc because encrption is slow in nature
 userSchema.methods.isPasswordCorrect = async function (password) {
