@@ -28,21 +28,35 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   // check if user already exists
-  const existedUser = User.findOne({
-    $or: [{ username }, { email }],
+  const existedUser = await User.findOne({
+    $or: [{ username }, { email }], //either username or email is found
   });
 
   if (existedUser) {
     throw new ApiError(409, "User with email or username already exists");
   }
+
+  // console.log(req.files)
   // check for images and avatar
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  //   const coverImageLocalPath = req.files?.coverImage[0]?.path;
   if (!avatarLocalPath) throw new ApiError(400, "Avatar file required");
 
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
+
+  
   // upload them to cloudinary
   const avatarString = await uploadOnCloudinary(avatarLocalPath);
   const coverImageString = await uploadOnCloudinary(coverImageLocalPath);
+
+
 
   // check avatar uploaded
   if (!avatarString)
@@ -81,3 +95,6 @@ export default registerUser;
 //       next(error); // Manually passing errors to Express
 //     }
 //   };
+
+//When sending request over postman, we use form-data for req.body instead of raw json,
+//because we also have to send files (avatar, coverImage) instead of just text data
