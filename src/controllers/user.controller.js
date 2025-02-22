@@ -2,7 +2,11 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/fileToCloudinary.js";
+import {
+  deleteFromCloudinary,
+  getPublicId,
+  uploadOnCloudinary,
+} from "../utils/fileToCloudinary.js";
 import jwt from "jsonwebtoken";
 
 //Options for storing the cookies in the response
@@ -16,6 +20,10 @@ const generateAccessAndRefreshTokens = async (userId) => {
     const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
+
+    if (!refreshToken) {
+      throw new ApiError(500, "Error in generating refresh token");
+    }
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
@@ -198,7 +206,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
-      process.env.ACCESS_JWT_TOKEN_SECRET
+      process.env.REFRESH_JWT_TOKEN_SECRET
     );
 
     const user = await User.findById(decodedToken?._id);
@@ -211,19 +219,21 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new ApiError(401, "Refresh token is expired or used");
     }
 
-    const { accessToken, newRefreshToken } =
-      await generateAccessAndRefreshTokens(user._id);
+    //generate access and refresh token
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+      user._id
+    );
 
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(
         new ApiResponse(
           200,
           {
             accessToken,
-            refreshToken: newRefreshToken,
+            refreshToken: refreshToken,
           },
           "Access token refreshed successfully"
         )
@@ -251,7 +261,13 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiResponse(200, { user: req.user }, "Current User Fetched"));
+    .json(
+      new ApiResponse(
+        200,
+        { user: req.user, avatarPublicID: getPublicId(req.user.avatar) },
+        "Currently Logged In User Fetched"
+      )
+    );
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -278,18 +294,21 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = req.file?.path;
+  //  get the new avatar image file from the request
+  const avatarLocalPath = req.files?.avatar[0]?.path;
 
+  //  if missing
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar File is missing");
   }
-
+  //  upload to cloudinary
   const avatarLink = await uploadOnCloudinary(avatarLocalPath);
 
   if (!avatarLink.url) {
     throw new ApiError(400, "Error while uploading on avatar");
   }
 
+  //  update the User with new avatar Image (as new cloudinary Url string)
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -299,6 +318,10 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     },
     { new: true }
   ).select("-password -refreshToken");
+
+  //  delete the old avatar image from cloudinary
+  const oldAvatarId = getPublicId(req.user.avatar);
+  await deleteFromCloudinary(oldAvatarId);
 
   return res
     .status(200)
@@ -333,6 +356,77 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Cover Image updated successfully"));
 });
 
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+  //extracting username from the params of the route url
+  const { username } = req.params;
+
+  if (!username?.trim()) {
+    throw new ApiError(400, "username is missing");
+  }
+
+  const channel = await User.aggregate([
+    {
+      $match: {
+        username: username?.toLowerCase(),
+      },
+    },
+    //finding all subscribers (with common channel)
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "channel",
+        as: "subscribers",
+      },
+    },
+    //finding all channels user is subscribed to (with common subscriber)
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "subscriber",
+        as: "subscribedTo",
+      },
+    },
+    //adding total channels, subscribers, isSubscribed as new fields to User model
+    {
+      $addFields: {
+        subscriberCount: {
+          $size: "$subscribers",
+        },
+
+        channelsSubscribedToCount: {
+          $size: "$subscribedTo",
+        },
+        isSubscribed: {
+          $cond: {
+            if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    //things to show (1: true)
+    {
+      $project: {
+        fullname: 1,
+        username: 1,
+        subscriberCount: 1,
+        channelsSubscribedToCount: 1,
+        avatar: 1,
+        coverImage: 1,
+        email: 1,
+      },
+    },
+  ]);
+
+  if(!channel?.length){
+    throw new ApiError(404,"Channel does not exist")
+  }
+
+  return res.status(200).json(new ApiResponse(200, channel[0], "User channel fetched successfully"))
+});
 export {
   registerUser,
   loginUser,
@@ -342,5 +436,6 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
-  updateUserCoverImage
+  updateUserCoverImage,
+  getUserChannelProfile,
 };

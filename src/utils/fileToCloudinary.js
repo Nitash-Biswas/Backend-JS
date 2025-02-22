@@ -9,6 +9,12 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_CLOUD_API_SECRET,
 });
 
+function getPublicId(url) {
+    // This regex captures the part after '/upload/' and before the file extension
+    const match = url.match(/\/upload\/(?:v\d+\/)?([^\.]+)/);
+    return match ? match[1] : null;
+  }
+
 const uploadOnCloudinary = async (localFilePath) => {
     try {
         if(!localFilePath) return null
@@ -26,4 +32,12 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 };
 
-export {uploadOnCloudinary}
+const deleteFromCloudinary = async(publicUrl) => {
+    try {
+        const result = await cloudinary.uploader.destroy(publicUrl)
+        return result
+    } catch (error) {
+        console.log("Error while deleting from Cloudinary", error)
+    }
+}
+export {uploadOnCloudinary, getPublicId, deleteFromCloudinary}
