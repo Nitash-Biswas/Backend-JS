@@ -76,7 +76,7 @@ userSchema.methods.generateAccessToken = function () {
 
     //Token expiry object
     {
-      expiresIn: ACCESS_JWT_TOKEN_EXPIRY,
+      expiresIn: ACCESS_JWT_TOKEN_EXPIRY, //expires in 1 day
     }
   );
 };
@@ -95,7 +95,7 @@ userSchema.methods.generateRefreshToken = function () {
     process.env.REFRESH_JWT_TOKEN_SECRET,
     //expiry object
     {
-      expiresIn: REFRESH_JWT_TOKEN_EXPIRY,
+      expiresIn: REFRESH_JWT_TOKEN_EXPIRY,  //expires in 10 days
     }
   );
 };
