@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    changeCurrentPassword,
   getCurrentUser,
   getUserChannelProfile,
   getWatchHistory,
@@ -50,6 +51,7 @@ userRouter.route("/update_cover_image").patch(
   upload.single("coverImage"),
   updateUserCoverImage
 );
+userRouter.route("/change_password").post(verifyJWT,changeCurrentPassword)
 userRouter.route("/channel/:username").get(verifyJWT,getUserChannelProfile)
 userRouter.route("/watch_history").get(verifyJWT,getWatchHistory)
 
