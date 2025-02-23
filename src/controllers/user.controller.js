@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -365,20 +366,23 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
   }
 
   const channel = await User.aggregate([
+    //Stage 1:
     {
       $match: {
         username: username?.toLowerCase(),
       },
     },
+    //Stage 2:
     //finding all subscribers (with common channel)
     {
       $lookup: {
-        from: "subscriptions",
+        from: "subscriptions", //collection name (from MongoDB)
         localField: "_id",
         foreignField: "channel",
         as: "subscribers",
       },
     },
+    //Stage 3:
     //finding all channels user is subscribed to (with common subscriber)
     {
       $lookup: {
@@ -388,6 +392,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         as: "subscribedTo",
       },
     },
+    //Stage 4:
     //adding total channels, subscribers, isSubscribed as new fields to User model
     {
       $addFields: {
@@ -407,6 +412,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
       },
     },
+    //Stage 5:
     //things to show (1: true)
     {
       $project: {
@@ -421,11 +427,75 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if(!channel?.length){
-    throw new ApiError(404,"Channel does not exist")
+  if (!channel?.length) {
+    throw new ApiError(404, "Channel does not exist");
   }
 
-  return res.status(200).json(new ApiResponse(200, channel[0], "User channel fetched successfully"))
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, channel[0], "User channel fetched successfully")
+    );
+});
+
+const getWatchHistory = asyncHandler(async (req, res) => {
+  const user = await User.aggregate([
+    //Stage 1:
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.user._id), //as aggregates pass directly to mongoDB, where _id is of datatype ObjectId instead of string.
+      },
+    },
+    //Stage 2:
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        //sub-pipeline
+        pipeline: [
+          //Stage 2.1:
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              //sub-pipeline
+              pipeline: [
+                {
+                  $project: {
+                    fullname: 1,
+                    username: 1,
+                    avatar: 1,
+                  },
+                },
+              ],
+            },
+          },
+          //Stage 2.2:
+          {
+            $addFields: {
+              owner: {
+                $first: "$owner",
+              },
+            },
+          },
+        ],
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        user[0].watchHistory,
+        "Watch History Fetched Successfully"
+      )
+    );
 });
 export {
   registerUser,
@@ -438,4 +508,5 @@ export {
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
+  getWatchHistory,
 };
