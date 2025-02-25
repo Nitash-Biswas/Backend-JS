@@ -14,7 +14,7 @@ tweetRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this f
 
 tweetRouter.route("/create").post(createTweet);
 tweetRouter.route("/get_tweets").get(getUserTweets);
-tweetRouter.route("/update").patch(updateTweet);
-tweetRouter.route("/delete").post(deleteTweet);
+tweetRouter.route("/update/:tweetId").patch(updateTweet);
+tweetRouter.route("/delete/:tweetId").delete(deleteTweet);
 
 export default tweetRouter;

@@ -25,21 +25,22 @@ const getUserTweets = asyncHandler(async (req, res) => {
     //Stage1: Lookup to join with User collection
     {
       $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "ownerDetails",
+        from: "users", // Collection to join from
+        localField: "owner", // Field from the Tweet collection
+        foreignField: "_id", // Field from the User collection
+        as: "ownerDetails", // Name of the new field for the joined data
       },
     },
     // Stage 2: Unwind to flatten the ownerDetails array into Object
     {
-        $unwind: "$ownerDetails",
-      },
+      $unwind: "$ownerDetails",
+    },
     //Stage2: Project to format output
     {
       $project: {
         content: 1,
         createdAt: 1,
+        updatedAt: 1,
         owner: {
           _id: "$ownerDetails._id",
           ownerName: "$ownerDetails.fullname",
@@ -48,14 +49,68 @@ const getUserTweets = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const x = allTweets[0]
   return res
     .status(200)
     .json(
-      new ApiResponse(200, {allTweets, x  }, "All tweets fetched successfully")
+      new ApiResponse(200, { allTweets }, "All tweets fetched successfully")
     );
 });
-const updateTweet = asyncHandler(async (req, res) => {});
-const deleteTweet = asyncHandler(async (req, res) => {});
+
+const updateTweet = asyncHandler(async (req, res) => {
+  const { tweetId } = req.params;
+  const { newContent } = req.body;
+  const userId = req.user._id;
+
+  //Find the tweet
+  const tweet = await Tweet.findById(tweetId);
+  if (!tweet) {
+    throw new ApiError(400, "Error in getting the Tweet");
+  }
+
+  //   allow update only when the current user is the owner of that tweet
+  let updatedTweet;
+  if (tweet.owner.toString() === userId.toString()) {
+    updatedTweet = await Tweet.findByIdAndUpdate(
+      tweetId,
+      {
+        $set: {
+          content: newContent,
+        },
+      },
+      { new: true }
+    );
+  } else {
+    throw new ApiError(400, "You're not authorised to change this Tweet");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { updatedTweet }, "Tweet updated successfully.")
+    );
+});
+const deleteTweet = asyncHandler(async (req, res) => {
+  const { tweetId } = req.params;
+
+  const userId = req.user._id;
+
+  //Find the tweet
+  const tweet = await Tweet.findById(tweetId);
+  if (!tweet) {
+    throw new ApiError(400, "Error in getting the Tweet");
+  }
+
+  //   allow deletion only when the current user is the owner of that tweet
+
+  if (tweet.owner.toString() === userId.toString()) {
+    await Tweet.findByIdAndDelete(tweetId);
+  } else {
+    throw new ApiError(400, "You're not authorised to delete this Tweet");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { tweet }, "Tweet Deleted successfully."));
+});
 
 export { createTweet, getUserTweets, updateTweet, deleteTweet };
