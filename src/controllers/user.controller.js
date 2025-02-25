@@ -339,7 +339,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   const coverImageLink = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!coverImageLink.url) {
-    throw new ApiError(400, "Error while uploading on avatar");
+    throw new ApiError(400, "Error while uploading on cloudinary");
   }
 
   const user = await User.findByIdAndUpdate(
@@ -376,10 +376,10 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     //finding all subscribers (with common channel)
     {
       $lookup: {
-        from: "subscriptions", //collection name (from MongoDB)
-        localField: "_id",
-        foreignField: "channel",
-        as: "subscribers",
+        from: "subscriptions", // MongoDB collection name (not Model name)
+        localField: "_id",  // Field from the users collection (Model: User)
+        foreignField: "channel",  // Channel Field from the subscribers collection (Model: Susbcribers)
+        as: "subscribers",  // Name of the new field for the joined data
       },
     },
     //Stage 3:
@@ -388,7 +388,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       $lookup: {
         from: "subscriptions",
         localField: "_id",
-        foreignField: "subscriber",
+        foreignField: "subscriber", // Subscriber Field from the subscribers collection (Model: Susbcribers)
         as: "subscribedTo",
       },
     },

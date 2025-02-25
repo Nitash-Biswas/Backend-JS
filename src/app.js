@@ -31,11 +31,13 @@ app.use(cookieParser());
 //////////////////////////////////////////////////////   ROUTES    /////////////////////////////////////////////////////////
 //  routes import
 import userRouter from "./routes/user.routes.js";
+import tweetRouter from "./routes/tweet.routes.js";
 
 //  routes declaration
 
 //  as the routes and controller are in different files we use them as middleware app.use()
 //  also gives ability to use any http method instead of one like app.get()
 app.use("/users", userRouter);
+app.use("/tweet", tweetRouter);
 
 export default app;
