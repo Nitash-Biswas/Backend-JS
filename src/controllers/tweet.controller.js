@@ -49,6 +49,10 @@ const getUserTweets = asyncHandler(async (req, res) => {
     },
   ]);
 
+  if (!allTweets) {
+    throw new ApiError(400, "Error in getting the tweets");
+  }
+
   return res
     .status(200)
     .json(
@@ -68,26 +72,17 @@ const updateTweet = asyncHandler(async (req, res) => {
   }
 
   //   allow update only when the current user is the owner of that tweet
-  let updatedTweet;
+
   if (tweet.owner.toString() === userId.toString()) {
-    updatedTweet = await Tweet.findByIdAndUpdate(
-      tweetId,
-      {
-        $set: {
-          content: newContent,
-        },
-      },
-      { new: true }
-    );
+    tweet.content = newContent;
+    await tweet.save({ validateBeforeSave: false });
   } else {
-    throw new ApiError(400, "You're not authorised to change this Tweet");
+    throw new ApiError(400, "You are not authorised to change this Tweet");
   }
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, { updatedTweet }, "Tweet updated successfully.")
-    );
+    .json(new ApiResponse(200, { tweet }, "Tweet updated successfully."));
 });
 const deleteTweet = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
@@ -105,7 +100,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
   if (tweet.owner.toString() === userId.toString()) {
     await Tweet.findByIdAndDelete(tweetId);
   } else {
-    throw new ApiError(400, "You're not authorised to delete this Tweet");
+    throw new ApiError(400, "You are not authorised to delete this Tweet");
   }
 
   return res

@@ -32,12 +32,14 @@ app.use(cookieParser());
 //  routes import
 import userRouter from "./routes/user.routes.js";
 import tweetRouter from "./routes/tweet.routes.js";
+import videoRouter from "./routes/video.routes.js";
 
 //  routes declaration
 
 //  as the routes and controller are in different files we use them as middleware app.use()
 //  also gives ability to use any http method instead of one like app.get()
 app.use("/users", userRouter);
-app.use("/tweet", tweetRouter);
+app.use("/tweets", tweetRouter);
+app.use("/videos", videoRouter);
 
 export default app;

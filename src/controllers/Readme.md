@@ -9,6 +9,13 @@ userRouter.route("/login").post(loginUser);
 
 Controller `loginUser` will execute when user sends a post request to `localhost:8000/users/login`.
 
+# Concepts to learn:
+
+- CRUD operations in Mongoose.
+- Taking data from **`req.params`**, **`req.body`** or **`req.cookies`**.
+- Aggregation pipelines for joining multiple collections, nesting pipelines, use of operators **`$lookup`**, **`$project`** or **`$addFields`**.
+- Functions and properties like: **`.select("-password")`** , **`validateBeforeSave: false`**
+
 # user.controller.js
 
 - ### With `asyncHandler()`
@@ -86,6 +93,40 @@ export default asyncHandler;
   Instead of duplicating error handling code in every asynchronous function, you can simply wrap each function with asyncHandler.
 
 # Controllers in user.controller.js
+
+## Helper Function: `generateAccessAndRefreshTokens()`
+
+Create and return a new pair of access and refresh Tokens for a given user ( userId ).
+
+```js
+const generateAccessAndRefreshTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+
+    //update the refresh token of the user in the database
+    user.refreshToken = refreshToken;
+
+    //save the changes made in the database
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(500, "Something went wrong in generating tokens");
+  }
+};
+```
+
+### What `validateBeforeSave: false` do?
+
+`Disable Mongoose schema validation` for that specific `save()` operation.
+
+Reasons:
+
+- No critical user data is being changed (like email or password).
+- Performance boost by avoiding unnecessary validations.
+- Prevents issues if unrelated required fields (like email or username) haven't been set during this specific operation.
 
 ## 1. registerUser()
 
@@ -233,11 +274,11 @@ const logoutUser = asyncHandler(async (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1, // this removes the field from document
       },
     },
-    { new: true }
+    { new: true } //returns new updated user
   );
 
   return res
@@ -254,13 +295,6 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 ```
 
-### What User.findByIdAndUpdate() do?
-
-- Find the user in the database with id = `_id` of currently logged in User.
-- `$set` is a MongoDB operator used to set a field's value.
-- Here, `refreshToken` is set to `undefined`, effectively removing the token.
-- `{ new: true }` ensures the function returns the updated document rather than the original one before the update.
-
 ## 4. refreshAccessToken()
 
 When the Access Token expires (because of its short expiry period), instead of asking the User to login again,
@@ -268,7 +302,6 @@ we can match his Refresh Token (stays for longer) in his Cookies to the Refresh 
 
 ```js
 const refreshAccessToken = asyncHandler(async (req, res) => {
-
   //  RefreshToken could be present in the cookies(web) or body(mobile).
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
@@ -326,30 +359,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 ```
 
-### Helper Function: `generateAccessAndRefreshTokens()`
-Create and return a new pair of access and refresh Tokens for a given user ( userId ).
+## 4. changeCurrentPassword()
+
 ```js
-const generateAccessAndRefreshTokens = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+const { oldPassword } = req.body;
+const user = await User.findById(req.user?._id);
 
-    //update the refresh token of the user in the database
-    user.refreshToken = refreshToken;
-    //save the changes made in the database
-    await user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(500, "Something went wrong in generating tokens");
-  }
-};
+const isOldPasswordCorrect = await user.isPasswordCorrect(oldPassword); //true
+//isPasswordCorrect() was defined in the User schema
 ```
-### What `validateBeforeSave: false` do?
-
-`Disable Mongoose schema validation` for that specific `save()` operation.
-
-Reasons:
-- No critical user data is being changed (like email or password).
-- Performance boost by avoiding unnecessary validations.
-- Prevents issues if unrelated required fields (like email or username) haven't been set during this specific operation.

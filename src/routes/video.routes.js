@@ -4,20 +4,21 @@ import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   deleteVideo,
+  getAllVideos,
   getVideoById,
   publishVideo,
   togglePublishStatus,
   updateVideo,
 } from "../controllers/video.controller.js";
 
-const userRouter = Router();
+const videoRouter = Router();
 
-userRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
+videoRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
 
-userRouter.route("/publish").post(
+videoRouter.route("/publish").post(
   upload.fields([
     {
-      name: "video",
+      name: "videoFile",
       maxCount: 1,
     },
     {
@@ -27,9 +28,10 @@ userRouter.route("/publish").post(
   ]),
   publishVideo
 );
-userRouter.route("/:videoId").get(getVideoById);
-userRouter.route("/update").patch(updateVideo);
-userRouter.route("/delete").post(deleteVideo);
-userRouter.route("/liked_videos").post(togglePublishStatus);
+videoRouter.route("/video/:videoId").get(getVideoById);
+videoRouter.route("/get_videos").get(getAllVideos);
+videoRouter.route("/update/:videoId").patch(updateVideo);
+videoRouter.route("/delete/:videoId").delete(deleteVideo);
+videoRouter.route("/toggle_publish/:videoId").post(togglePublishStatus);
 
-export default userRouter;
+export default videoRouter;
