@@ -71,13 +71,18 @@ const updateTweet = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error in getting the Tweet");
   }
 
-  //   allow update only when the current user is the owner of that tweet
+  // console.log({
+  //   tweet: typeof tweet.owner, //object (mongoDB ObjectId)
+  //   user: typeof userId, //object (mongoDB ObjectId)
+  //   isBothEqual: tweet.owner === userId,
+  // }); //false, because objects in JS are compared by reference, not value.
 
+  //   allow update only when the current user is the owner of that tweet
   if (tweet.owner.toString() === userId.toString()) {
     tweet.content = newContent;
     await tweet.save({ validateBeforeSave: false });
   } else {
-    throw new ApiError(400, "You are not authorised to change this Tweet");
+    throw new ApiError(400, "You are not authorised to change this Tweet", []);
   }
 
   return res

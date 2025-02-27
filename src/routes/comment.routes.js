@@ -9,13 +9,13 @@ import {
   updateComment,
 } from "../controllers/comment.controller.js";
 
-const userRouter = Router();
+const commentRouter = Router();
 
-userRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
+commentRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
 
-userRouter.route("/:videoId").get(getVideoComments);
-userRouter.route("/add_comment").post(addComment);
-userRouter.route("/update_comment").patch(updateComment);
-userRouter.route("/delete_comment").post(deleteComment);
+commentRouter.route("/:videoId").get(getVideoComments);
+commentRouter.route("/add/:videoId").post(addComment);
+commentRouter.route("/update/:commentId").patch(updateComment);
+commentRouter.route("/delete/:commentId").delete(deleteComment);
 
-export default userRouter;
+export default commentRouter;
