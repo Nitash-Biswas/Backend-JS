@@ -12,8 +12,8 @@ import jwt from "jsonwebtoken";
 
 //Options for storing the cookies in the response
 const options = {
-  httpOnly: true,
-  secure: true, //only modifiable by the server
+  httpOnly: true, //cookie is not accessible via client side javascript, prevents XSS attacks
+  secure: true, //only modifiable by the server, only sent over HTTPS
 };
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -35,17 +35,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  // get user details from user
-  // validation - not empty
-  // check if user already exists
-  // check for images and avatar
-  // upload them to cloudinary
-  // check avatar uploaded
-  // create user object - create entry in db
-  // remove password and refresh token field from response
-  // check for user creation
-  // return res
-
   // get user details from user
   const { fullname, email, username, password } = req.body;
   console.log("Email: ", email);
@@ -114,13 +103,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   //get username or email, and password from req.body
-  //validation
-  //find the user by username or email
-  //compare the password
-  //generate access and refresh token
-  //send token as cookies
-
-  //get username or email, and password from req.body
   const { email, username, password } = req.body;
   //validation
   if (!username && !email) {
@@ -177,7 +159,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $unset: {
-        refreshToken: 1,  // this removes the field from document
+        refreshToken: 1, // this removes the field from document
       },
     },
     { new: true }
@@ -378,9 +360,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     {
       $lookup: {
         from: "subscriptions", // MongoDB collection name (not Model name)
-        localField: "_id",  // Field from the users collection (Model: User)
-        foreignField: "channel",  // Channel Field from the subscribers collection (Model: Susbcribers)
-        as: "subscribers",  // Name of the new field for the joined data
+        localField: "_id", // Field from the users collection (Model: User)
+        foreignField: "channel", // Channel Field from the subscribers collection (Model: Susbcribers)
+        as: "subscribers", // Name of the new field for the joined data
       },
     },
     //Stage 3:
@@ -450,11 +432,11 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     //Stage 2:
     {
       $lookup: {
-        from: "videos",
-        localField: "watchHistory",
-        foreignField: "_id",
-        as: "watchHistory",
-        //sub-pipeline
+        from: "videos", // Collection to join from
+        localField: "watchHistory", // Field from the User collection
+        foreignField: "_id", // Field from the Video collection
+        as: "watchHistory", // Name of the new field for the joined data
+        //sub-pipeline for watchHistory
         pipeline: [
           //Stage 2.1:
           {
@@ -463,7 +445,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
               localField: "owner",
               foreignField: "_id",
               as: "owner",
-              //sub-pipeline
+              //sub-pipeline for owner
               pipeline: [
                 {
                   $project: {

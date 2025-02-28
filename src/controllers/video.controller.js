@@ -137,7 +137,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   if (video.owner.toString() === userId.toString()) {
     newVideo = await Video.findByIdAndUpdate(
       videoId,
-      {
+      { //set new title and description
         $set: {
           title: newTitle,
           description: newDescription,
@@ -196,7 +196,8 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
   if(video.owner.toString() !== req.user._id.toString()){
     throw new ApiError(400, "You are not authorised to change the status of this video");
   }
-  
+
+  //toggle the publish status
   video.isPublished = !video.isPublished;
   await video.save({ validateBeforeSave: false });
 
