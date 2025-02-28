@@ -35,7 +35,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
     {
       $unwind: "$ownerDetails",
     },
-    //Stage2: Project to format output
+    //Stage 3: Project to format output
     {
       $project: {
         content: 1,
