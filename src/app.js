@@ -34,6 +34,7 @@ import userRouter from "./routes/user.routes.js";
 import tweetRouter from "./routes/tweet.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import commentRouter from "./routes/comment.routes.js";
+import likeRouter from "./routes/like.routes.js";
 
 //  routes declaration
 
@@ -43,5 +44,7 @@ app.use("/users", userRouter);
 app.use("/tweets", tweetRouter);
 app.use("/videos", videoRouter);
 app.use("/comments", commentRouter);
+app.use("/likes", likeRouter);
+
 
 export default app;

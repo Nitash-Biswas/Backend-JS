@@ -193,6 +193,10 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error in getting the video");
   }
 
+  if(video.owner.toString() !== req.user._id.toString()){
+    throw new ApiError(400, "You are not authorised to change the status of this video");
+  }
+  
   video.isPublished = !video.isPublished;
   await video.save({ validateBeforeSave: false });
 
