@@ -249,38 +249,39 @@
   Update `app.js`:
 
   ```javascript
-  import express from "express";
-  import cors from "cors";
-  import cookieParser from "cookie-parser";
-  import { errorHandler } from "./middleware/errorHandler.js";
+  import jwt from "jsonwebtoken";
+  import { ApiError } from "../utils/apiError.js";
+  import asyncHandler from "../utils/asyncHandler.js";
+  import { User } from "../models/user.model.js";
 
-  const app = express();
+  export const verifyJWT = asyncHandler(async (req, _, next) => {
+    //  as res was not used, we can have "_" as parameter
+    try {
+      const token =
+        req.cookies?.accessToken ||
+        req.header("Authorisation")?.replace("Bearer", "");
 
-  app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
-  app.use(express.json({ limit: "16kb" }));
-  app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-  app.use(express.static("public"));
-  app.use(cookieParser());
+      if (!token) {
+        throw new ApiError(401, "Unauthorized request");
+      }
+      const decodedToken = jwt.verify(
+        token,
+        process.env.ACCESS_JWT_TOKEN_SECRET
+      );
+      const user = await User.findById(decodedToken?._id).select(
+        " -refreshToken"
+      );
 
-  // Import and use routes
-  import userRouter from "./routes/user.routes.js";
-  import tweetRouter from "./routes/tweet.routes.js";
-  import videoRouter from "./routes/video.routes.js";
-  import commentRouter from "./routes/comment.routes.js";
-  import likeRouter from "./routes/like.routes.js";
-  import playlistRouter from "./routes/playlist.routes.js";
+      if (!user) {
+        throw new ApiError(401, "Invalid Access Token");
+      }
 
-  app.use("/users", userRouter);
-  app.use("/tweets", tweetRouter);
-  app.use("/videos", videoRouter);
-  app.use("/comments", commentRouter);
-  app.use("/likes", likeRouter);
-  app.use("/playlists", playlistRouter);
-
-  // Use error handling middleware
-  app.use(errorHandler);
-
-  export default app;
+      req.user = user;
+      next();
+    } catch (error) {
+      throw new ApiError(401, error?.message || "Invalid access");
+    }
+  });
   ```
 
 ### 14. Add Authentication and Authorization
@@ -291,12 +292,12 @@
 
   ```javascript
   import express from "express";
-  import { authenticate } from "../middleware/auth.js";
+  import { verifyJWT } from "../middleware/auth.middleware.js";
   import { getUser, createUser } from "../controllers/user.controller.js";
 
   const router = express.Router();
 
-  router.get("/:id", authenticate, getUser);
+  router.get("/:id", verifyJWT, getUser);
   router.post("/", createUser);
 
   export default router;
