@@ -199,9 +199,9 @@
 
 ### 12. Create Middleware
 
-- Create a `middleware` directory and add middleware files as needed (e.g., `middleware/auth.js`, `middleware/errorHandler.js`).
+- Create a `middleware` directory and add middleware files as needed (e.g., `middleware/auth.middleware.js`, `middleware/multer.middleware.js`).
 
-  Example: `middleware/auth.js`
+  Example: `middleware/auth.middleware.js`
 
   ```javascript
   import jwt from "jsonwebtoken";
@@ -230,75 +230,71 @@
   };
   ```
 
-  Example: `middleware/errorHandler.js`
+  Example: `middleware/multer.middleware.js`
 
   ```javascript
-  export const errorHandler = (err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
-    res.status(statusCode).json({
-      message: err.message,
-      ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
-    });
-  };
+  import multer from "multer";
+
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "./public/temp");
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    },
+  });
+
+  // Create upload middleware
+  const upload = multer({ storage });
+
+  export { upload };
   ```
 
 ### 13. Use Middleware in App
 
 - Integrate your custom middleware into the Express application.
 
-  Update `app.js`:
+  Example `app.js`:
 
   ```javascript
-  import jwt from "jsonwebtoken";
-  import { ApiError } from "../utils/apiError.js";
-  import asyncHandler from "../utils/asyncHandler.js";
-  import { User } from "../models/user.model.js";
+  mport express from "express";
+  import cors from "cors";
+  import cookieParser from "cookie-parser";
 
-  export const verifyJWT = asyncHandler(async (req, _, next) => {
-    //  as res was not used, we can have "_" as parameter
-    try {
-      const token =
-        req.cookies?.accessToken ||
-        req.header("Authorisation")?.replace("Bearer", "");
+  const app = express();
 
-      if (!token) {
-        throw new ApiError(401, "Unauthorized request");
-      }
-      const decodedToken = jwt.verify(
-        token,
-        process.env.ACCESS_JWT_TOKEN_SECRET
-      );
-      const user = await User.findById(decodedToken?._id).select(
-        " -refreshToken"
-      );
+  //  .use() applies middleware to all incoming requests before they reach any route handlers.
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN,
+      credentials: true,
+    })
+  );
 
-      if (!user) {
-        throw new ApiError(401, "Invalid Access Token");
-      }
 
-      req.user = user;
-      next();
-    } catch (error) {
-      throw new ApiError(401, error?.message || "Invalid access");
-    }
-  });
+  app.use(express.json({ limit: "16kb" }));
+  app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+  app.use(express.static("public"));
+  app.use(cookieParser());
   ```
 
 ### 14. Add Authentication and Authorization
 
 - Implement authentication and authorization logic using middleware.
 
-  Example: Protecting routes with authentication middleware:
+  Example: Protecting routes with authentication middleware `verifyJWT` in `routes/user.routes.js`:
 
   ```javascript
   import express from "express";
   import { verifyJWT } from "../middleware/auth.middleware.js";
-  import { getUser, createUser } from "../controllers/user.controller.js";
+  import { loginUser, logoutUser } from "../controllers/user.controller.js";
 
-  const router = express.Router();
+  const userRouter = express.Router();
 
-  router.get("/:id", verifyJWT, getUser);
-  router.post("/", createUser);
+  userRouter.route("/login").post(loginUser);
 
-  export default router;
+  //secure routes
+  userRouter.route("/logout").post(verifyJWT, logoutUser);
+
+  export default userRouter;
   ```
