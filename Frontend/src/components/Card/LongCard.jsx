@@ -23,7 +23,7 @@ export default function LongCard({
           </NavLink>
         </div>
 
-        <p className="text-darktext text-lg">{description}</p>
+        <p className="text-darktext text-lg line-clamp-3">{description}</p>
       </div>
     </div>
   );

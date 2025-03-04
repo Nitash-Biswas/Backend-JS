@@ -1,12 +1,14 @@
 //Show Watch History
 
 import React from "react";
-import LongCard from "../Card/LongCard";
+
 import cardDummyDataGen from "../../Utils/cardDummyDataGen";
+import LongCard from "../Card/LongCard";
+
 
 const videos = cardDummyDataGen(5,true);
 
-function Liked_Videos() {
+function LikedVideos() {
   return (
     <div className="bg-darkbg min-h-full text-lighttext p-4">
       <div className="flex justify-between items-center pb-8 pt-4">
@@ -35,4 +37,4 @@ function Liked_Videos() {
   );
 }
 
-export default Liked_Videos;
+export default LikedVideos;

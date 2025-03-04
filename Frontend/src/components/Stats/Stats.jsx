@@ -1,9 +1,14 @@
 //Show subscribers and channels subscribed to
 
-import React from "react";
+import React, { useState } from "react";
 
 function Stats() {
   const username = "username";
+  const [selectedComponent, setSelectedComponent] = useState(null);
+
+  const handleSelect = (component) => {
+    setSelectedComponent(selectedComponent === component ? null : component);
+  };
   return (
     <div className="bg-darkbg min-h-full text-lighttext">
       {/* CoverImage */}
@@ -28,14 +33,26 @@ function Stats() {
       </div>
       {/* Tabs */}
       <div className="flex w-full justify-between">
-        <div className="hover:bg-highlight hover:text-lighttext w-1/2 text-darktext text-xl  flex justify-center items-center m-4 p-4 rounded-lg">
-          <h1>Subscriptions</h1>
-        </div>
-        <div className="hover:bg-highlight hover:text-lighttext w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg">
+        <div
+          className={`hover:bg-highlight hover:text-lighttext w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg ${
+            selectedComponent === "Playlists"
+              ? "bg-highlight text-lighttext"
+              : "bg-transparent"
+          }`}
+          onClick={() => handleSelect("Subscribers")}
+        >
           <h1>Subscribers</h1>
         </div>
-        
-
+        <div
+          className={`hover:bg-highlight hover:text-lighttext w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg ${
+            selectedComponent === "Videos"
+              ? "bg-highlight text-lighttext"
+              : "bg-transparent"
+          }`}
+          onClick={() => handleSelect("Subcribed")}
+        >
+          <h1>Subscribed</h1>
+        </div>
       </div>
     </div>
   );

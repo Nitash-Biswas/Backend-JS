@@ -67,10 +67,59 @@ const publishVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
-  const video = await Video.findById(videoId);
-  if (!video) {
+  const currVideo = await Video.findById(videoId);
+  if (!currVideo) {
     throw new ApiError(400, "Error in getting the video");
   }
+
+  const videoDetails = await Video.aggregate([
+    //Stage1: Match the video
+    {
+      $match: {
+        _id: currVideo._id,
+      },
+    },
+
+    //Stage 2: Lookup to join with User collection
+    {
+      $lookup: {
+        from: "users", // Collection to join from
+        localField: "owner", // Field from the Tweet collection
+        foreignField: "_id", // Field from the User collection
+        as: "ownerDetails", // Name of the new field for the joined data
+      },
+    },
+    // Stage 3: Unwind to flatten the ownerDetails array into Object
+    {
+      $unwind: "$ownerDetails",
+    },
+    //Stage 4: Project to format output
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        videoFile: 1,
+        thumbnail: 1,
+        views: 1,
+        duration: 1,
+        isPublished: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          fullname: "$ownerDetails.fullname",
+          avatar: "$ownerDetails.avatar",
+        },
+      },
+    },
+  ]);
+
+  if (!videoDetails) {
+    throw new ApiError(400, "Error in getting video");
+  }
+
+  const video = videoDetails[0];
+
   return res.status(200).json(new ApiResponse(200, { video }, "Video found"));
 });
 
@@ -185,7 +234,8 @@ const updateVideo = asyncHandler(async (req, res) => {
   if (video.owner.toString() === userId.toString()) {
     newVideo = await Video.findByIdAndUpdate(
       videoId,
-      { //set new title and description
+      {
+        //set new title and description
         $set: {
           title: newTitle,
           description: newDescription,
@@ -241,8 +291,11 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error in getting the video");
   }
 
-  if(video.owner.toString() !== req.user._id.toString()){
-    throw new ApiError(400, "You are not authorised to change the status of this video");
+  if (video.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(
+      400,
+      "You are not authorised to change the status of this video"
+    );
   }
 
   //toggle the publish status
@@ -261,5 +314,5 @@ export {
   updateVideo,
   deleteVideo,
   togglePublishStatus,
-  getUserVideos
+  getUserVideos,
 };
