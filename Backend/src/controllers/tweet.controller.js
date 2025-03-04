@@ -22,6 +22,51 @@ const createTweet = asyncHandler(async (req, res) => {
 
 const getUserTweets = asyncHandler(async (req, res) => {
   const allTweets = await Tweet.aggregate([
+    //Stage1: Match to filter the tweets of the logged in user
+    {
+      $match: {
+        owner: req.user._id,
+      },
+    },
+    //Stage2: Lookup to join with User collection
+    {
+      $lookup: {
+        from: "users", // Collection to join from
+        localField: "owner", // Field from the Tweet collection
+        foreignField: "_id", // Field from the User collection
+        as: "ownerDetails", // Name of the new field for the joined data
+      },
+    },
+    // Stage 3: Unwind to flatten the ownerDetails array into Object
+    {
+      $unwind: "$ownerDetails",
+    },
+    //Stage 4: Project to format output
+    {
+      $project: {
+        content: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          ownerName: "$ownerDetails.fullname",
+        },
+      },
+    },
+  ]);
+
+  if (!allTweets) {
+    throw new ApiError(400, "Error in getting the tweets");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { allTweets }, "All tweets fetched successfully")
+    );
+});
+const getAllTweets = asyncHandler(async (req, res) => {
+  const allTweets = await Tweet.aggregate([
     //Stage1: Lookup to join with User collection
     {
       $lookup: {
@@ -113,4 +158,4 @@ const deleteTweet = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { tweet }, "Tweet Deleted successfully."));
 });
 
-export { createTweet, getUserTweets, updateTweet, deleteTweet };
+export { createTweet, getUserTweets, updateTweet, deleteTweet, getAllTweets };

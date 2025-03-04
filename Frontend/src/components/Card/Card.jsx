@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-export default function Card({ title = "No title", thumbnail = "No thumbnail", uploader = "Someone", videoId = "No videoId" }) {
+export default function Card({ title = "No title", thumbnail = "No thumbnail", uploader = "Someone", videoId = "No videoId"}) {
   return (
     <div className="bg-lightbg shadow-md rounded-lg overflow-hidden">
       <NavLink to={`/video/${videoId}`}>

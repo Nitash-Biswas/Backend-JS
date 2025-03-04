@@ -28,7 +28,50 @@ export default function Sidebar() {
           >
             Github
           </NavLink>
-
+          <NavLink
+            to="/liked_videos"
+            className={({ isActive }) =>
+              `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
+                ${
+                  isActive ? "text-highlight" : "text-darktext"
+                } lg:hover:bg-transparent lg:border-0 hover:text-highlight`
+            }
+          >
+            Liked Videos
+          </NavLink>
+          <NavLink
+            to="/history"
+            className={({ isActive }) =>
+              `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
+                ${
+                  isActive ? "text-highlight" : "text-darktext"
+                } lg:hover:bg-transparent lg:border-0 hover:text-highlight`
+            }
+          >
+            History
+          </NavLink>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
+                ${
+                  isActive ? "text-highlight" : "text-darktext"
+                } lg:hover:bg-transparent lg:border-0 hover:text-highlight`
+            }
+          >
+            Dashboard
+          </NavLink>
+          <NavLink
+            to="/stats"
+            className={({ isActive }) =>
+              `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
+                ${
+                  isActive ? "text-highlight" : "text-darktext"
+                } lg:hover:bg-transparent lg:border-0 hover:text-highlight`
+            }
+          >
+            Stats
+          </NavLink>
         </nav>
       </div>
     </div>

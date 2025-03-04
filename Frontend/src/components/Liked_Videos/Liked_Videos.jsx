@@ -1,22 +1,27 @@
+//Show Watch History
+
 import React from "react";
-import Card from "../Card/Card";
+import LongCard from "../Card/LongCard";
 import cardDummyDataGen from "../../Utils/cardDummyDataGen";
 
+const videos = cardDummyDataGen(5,true);
 
-const videos = cardDummyDataGen(30,false);
-
-export default function Home() {
+function Liked_Videos() {
   return (
-    <div className="bg-darkbg min-h-full p-4">
+    <div className="bg-darkbg min-h-full text-lighttext p-4">
+      <div className="flex justify-between items-center pb-8 pt-4">
+        <h1 className="text-4xl font-bold">Liked Videos</h1>
+      </div>
       {videos.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {videos.map((video) => (
-            <Card
+            <LongCard
               key={video.videoId}
               title={video.title}
               thumbnail={video.thumbnail}
               uploader={video.uploader}
               videoId={video.videoId}
+              description={video.description}
             />
           ))}
         </div>
@@ -29,3 +34,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Liked_Videos;

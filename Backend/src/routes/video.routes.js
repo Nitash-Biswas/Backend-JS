@@ -5,6 +5,7 @@ import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   deleteVideo,
   getAllVideos,
+  getUserVideos,
   getVideoById,
   publishVideo,
   togglePublishStatus,
@@ -13,9 +14,10 @@ import {
 
 const videoRouter = Router();
 
-videoRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
+// videoRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
 
 videoRouter.route("/publish").post(
+  verifyJWT,
   upload.fields([
     {
       name: "videoFile",
@@ -29,9 +31,10 @@ videoRouter.route("/publish").post(
   publishVideo
 );
 videoRouter.route("/video/:videoId").get(getVideoById);
-videoRouter.route("/get_videos").get(getAllVideos);
-videoRouter.route("/update/:videoId").patch(updateVideo);
-videoRouter.route("/delete/:videoId").delete(deleteVideo);
-videoRouter.route("/toggle_publish/:videoId").post(togglePublishStatus);
+videoRouter.route("/get_all_videos").get(getAllVideos);
+videoRouter.route("/get_user_videos").get(verifyJWT, getUserVideos);
+videoRouter.route("/update/:videoId").patch(verifyJWT, updateVideo);
+videoRouter.route("/delete/:videoId").delete(verifyJWT, deleteVideo);
+videoRouter.route("/toggle_publish/:videoId").post(verifyJWT, togglePublishStatus);
 
 export default videoRouter;
