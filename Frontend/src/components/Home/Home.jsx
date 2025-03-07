@@ -1,40 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Card from "../Card/Card";
-import axios from "axios";
-import { BASE_URL, VIDEOS_URL } from "../../constants";
 import { formatDuration } from "../../Utils/formatDuration";
+import { useFetchAllVideos } from "../../hooks/useVideoHooks";
 
 export default function Home() {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}${VIDEOS_URL}/get_all_videos`
-        );
-        setVideos(response.data?.data.allVideos);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchVideos();
-  }, []);
+  // Custom hook to fetch all videos
+  const { videos, loading, error } = useFetchAllVideos();
 
   if (loading) {
     return (
-      <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">Loading...</div>
+      <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">
+        Loading...
+      </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-darkbg text-2xl min-h-full text-highlight p-4">Error: {error}</div>
+      <div className="bg-darkbg text-2xl min-h-full text-highlight p-4">
+        Error: {error}
+      </div>
     );
   }
 
@@ -49,7 +34,7 @@ export default function Home() {
               thumbnail={video.thumbnail}
               uploader={video.owner.ownerName}
               videoId={video._id}
-              duration={formatDuration(video.duration) }
+              duration={formatDuration(video.duration)}
             />
           ))}
         </div>

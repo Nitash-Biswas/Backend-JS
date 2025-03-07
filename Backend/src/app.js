@@ -8,10 +8,11 @@ const app = express();
 //  .use() applies middleware to all incoming requests before they reach any route handlers.
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
+    origin:  'http://localhost:5173' || process.env.CORS_ORIGIN , // Allow requests from this origin
+    credentials: true,          //  allows cookies to be sent and received by the server
   })
 );
+
 
 //  restricts the maximum request body size to 16 kilobytes
 // to prevent excessive data from being sent to the server.

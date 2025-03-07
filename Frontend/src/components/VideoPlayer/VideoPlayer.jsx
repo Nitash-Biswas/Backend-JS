@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BASE_URL, VIDEOS_URL } from "../../constants";
@@ -7,28 +6,12 @@ import getPublicId from "../../Utils/getPublicId";
 import { AdvancedVideo } from "@cloudinary/react";
 import MyTweets from "../MyTweets/MyTweets";
 import { formatTimeAgo } from "../../Utils/formatTimeAgo";
+import { useFetchVideo } from "../../hooks/useVideoHooks";
 
 function VideoPlayer() {
   const { videoId } = useParams();
-  const [videoData, setVideoData] = useState(null);
+  const { videoData, error } = useFetchVideo(videoId); // Custom hook to fetch video data
   const [finalVideo, setFinalVideo] = useState(null);
-
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchVideo = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}${VIDEOS_URL}/video/${videoId}`
-        );
-
-        setVideoData(response.data?.data.video);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-    fetchVideo();
-  }, []);
 
   useEffect(() => {
     if (videoData) {
@@ -68,37 +51,41 @@ function VideoPlayer() {
     <>
       <div className="sticky bg-darkbg min-h-full p-4 flex flex-col md:flex-row">
         <div className="md:w-3/5 w-full">
-        <div className="bg-lightbg shadow-md rounded-lg  w-full max-w-full">
-        <AdvancedVideo
-          className="w-full h-192 object-cover"
-          cldVid={finalVideo.quality("auto")}
-          controls
-        />
-        <div className="p-4">
-            <h2 className="text-3xl font-semibold text-lighttext mb-2">{videoData.title}</h2>
-            <div className="flex items-center mb-2">
-              <img
-                src={videoData.owner.avatar}
-                alt={videoData.owner.fullname}
-                className="w-12 h-12 rounded-full mr-4"
-              />
-              <p className="text-lighttext text-xl"> {videoData.owner.fullname}</p>
+          <div className="bg-lightbg shadow-md rounded-lg  w-full max-w-full">
+            <AdvancedVideo
+              className="w-full h-192 object-cover"
+              cldVid={finalVideo.quality("auto")}
+              controls
+            />
+            <div className="p-4">
+              <h2 className="text-3xl font-semibold text-lighttext mb-2">
+                {videoData.title}
+              </h2>
+              <div className="flex items-center mb-2">
+                <img
+                  src={videoData.owner.avatar}
+                  alt={videoData.owner.fullname}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <p className="text-lighttext text-xl">
+                  {" "}
+                  {videoData.owner.fullname}
+                </p>
+              </div>
+              <p className="text-darktext text-lg mb-2">
+                Uploaded: {formatTimeAgo(videoData.createdAt)}
+              </p>
+              <p className="text-darktext text-lg">{videoData.description}</p>
             </div>
-            <p className="text-darktext text-lg mb-2">Uploaded: {formatTimeAgo(videoData.createdAt)}</p>
-            <p className="text-darktext text-lg">{videoData.description}</p>
           </div>
-
+        </div>
+        <div className="text-3xl md:w-2/5 w-full gap-4 pl-4 flex flex-col justify-start font-semibold text-lighttext">
+          <h1 className="px-4">Comments</h1>
+          <div className="overflow-auto h-220">
+            <MyTweets />
+          </div>
+        </div>
       </div>
-      </div>
-      <div className="text-3xl md:w-2/5 w-full gap-4 pl-4 flex flex-col justify-start font-semibold text-lighttext">
-        <h1 className="px-4">Comments</h1>
-        <div className="overflow-auto h-220"><MyTweets/></div>
-
-      </div>
-
-
-    </div>
-
     </>
   );
 }
