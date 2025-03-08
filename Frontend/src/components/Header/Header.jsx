@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-
-const isloggedIn = false;
+import UserContext from "../../contexts/userContext";
+import { useLoginUser } from "../../hooks/useUserHooks";
 
 export default function Header() {
+  const { loggedUser } = useContext(UserContext);
+  const { user } = useLoginUser();
+
+  const isloggedIn = false;
+  console.log({user, loggedUser});
+  // const [isloggedIn, setIsLoggedIn] = useState(false);
+  // useEffect(() => {
+  //   setIsLoggedIn(!!loggedUser);
+  // }, [loggedUser]);
+
+  // console.log({isloggedIn : isloggedIn, loggedUser: loggedUser});
+
   return (
     <header className="shadow-2xl sticky z-50 top-0">
       <nav className="bg-darkbg border-gray-200 px-4 lg:px-6 py-2.5">
@@ -59,7 +71,6 @@ export default function Header() {
                 >
                   Register
                 </NavLink>
-
               </>
             )}
           </div>

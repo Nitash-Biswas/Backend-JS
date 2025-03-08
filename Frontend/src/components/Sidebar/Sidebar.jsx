@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import UserContext from "../../contexts/userContext";
 
 export default function Sidebar() {
+
+
   return (
     <div className="h-screen sticky top-0 bg-darkbg text-white w-64">
       <div className="flex flex-col items-center py-4">
@@ -51,7 +54,7 @@ export default function Sidebar() {
             History
           </NavLink>
           <NavLink
-            to="/dashboard"
+            to={`/user/nitash`}
             className={({ isActive }) =>
               `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
                 ${

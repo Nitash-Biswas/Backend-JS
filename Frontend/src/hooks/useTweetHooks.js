@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { BASE_URL, VIDEOS_URL } from "../constants";
+import { BASE_URL, TWEETS_URL } from "../constants";
 import Cookies from "js-cookie";
 /*
 What is a custom hook?
@@ -8,43 +8,22 @@ A custom hook is a JavaScript function that allows
 you to reuse logic in your React components.
  */
 
-// Custom hook to fetch video data by videoId
-export const useFetchVideo = (videoId) => {
-  const [videoData, setVideoData] = useState(null);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchVideo = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}${VIDEOS_URL}/video/${videoId}`
-        );
-        setVideoData(response.data?.data.video);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-    fetchVideo();
-  }, [videoId]);
-
-  return { videoData, error };
-};
-
-// Custom hook to fetch all videos
-export const useFetchAllVideos = () => {
+// Custom hook to fetch all tweets
+export const useFetchAllTweets = () => {
   // State to store videos, loading and error
-  const [videos, setVideos] = useState([]);
+  const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch all videos from the server using axios
+  // Fetch all tweets from the server using axios
   useEffect(() => {
-    const fetchVideos = async () => {
+    const fetchTweets = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}${VIDEOS_URL}/get_all_videos`
+          `${BASE_URL}${TWEETS_URL}/get_all_tweets`
         );
-        setVideos(response.data?.data.allVideos);
+        setTweets(response.data?.data.allTweets);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -52,22 +31,22 @@ export const useFetchAllVideos = () => {
       }
     };
 
-    fetchVideos();
+    fetchTweets();
   }, []);
 
-  return { videos, loading, error };
+  return { tweets, loading, error };
 };
 
 // Custom hook to fetch all videos of the logged in user
-export const useFetchUserVideos = (username) => {
-  // State to store videos, loading and error
-  const [videos, setVideos] = useState([]);
+export const useFetchUserTweets = (username) => {
+  // State to store tweets, loading and error
+  const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch all videos from the server using axios
+  // Fetch all tweets from the server using axios
   useEffect(() => {
-    const fetchVideos = async () => {
+    const fetchTweets = async () => {
       try {
         // Get tokens from cookies
         const accessToken = Cookies.get("accessToken");
@@ -80,10 +59,10 @@ export const useFetchUserVideos = (username) => {
         };
 
         const response = await axios.get(
-          `${BASE_URL}${VIDEOS_URL}/get_user_videos/${username}`,
+          `${BASE_URL}${TWEETS_URL}/get_user_tweets/${username}`,
           { headers, withCredentials: true }
         );
-        setVideos(response.data?.data.allVideos);
+        setTweets(response.data?.data.allTweets);
       } catch (err) {
         if (err.response?.status === 401) {
           setError("You are not logged in");
@@ -95,8 +74,8 @@ export const useFetchUserVideos = (username) => {
       }
     };
 
-    fetchVideos();
+    fetchTweets();
   }, []);
 
-  return { videos, loading, error };
+  return { tweets, loading, error };
 };

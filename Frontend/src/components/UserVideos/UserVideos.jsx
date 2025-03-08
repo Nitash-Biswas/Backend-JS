@@ -1,11 +1,17 @@
 import React from "react";
 
 import Card from "../Card/Card";
-import {  useFetchUserVideos } from "../../hooks/useVideoHooks";
+import { useFetchUserVideos } from "../../hooks/useVideoHooks";
+import { formatDuration } from "../../Utils/formatDuration";
+import { useParams } from "react-router-dom";
+// import cardDummyDataGen from "../../Utils/cardDummyDataGen";
 
-function MyVideos() {
+// const videos = cardDummyDataGen(0, false);
+
+function UserVideos() {
+  const username = useParams().username;
   // Custom hook to fetch all videos
-  const { videos, loading, error } = useFetchUserVideos();
+  const { videos, loading, error } = useFetchUserVideos(username);
 
   if (loading) {
     return (
@@ -28,11 +34,14 @@ function MyVideos() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {videos.map((video) => (
             <Card
-              key={video.videoId}
+              key={video._id}
               title={video.title}
               thumbnail={video.thumbnail}
-              uploader={video.uploader}
-              videoId={video.videoId}
+              avatar={video.owner.avatar}
+              uploader={video.owner.ownerName}
+              username={video.owner.username}
+              videoId={video._id}
+              duration={formatDuration(video.duration)}
             />
           ))}
         </div>
@@ -46,4 +55,4 @@ function MyVideos() {
   );
 }
 
-export default MyVideos;
+export default UserVideos;

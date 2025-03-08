@@ -1,3 +1,4 @@
+import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
@@ -108,7 +109,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         owner: {
           _id: "$ownerDetails._id",
           fullname: "$ownerDetails.fullname",
-          avatar: "$ownerDetails.avatar",
+          coverImage: "$ownerDetails.coverImage",
         },
       },
     },
@@ -153,6 +154,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
         owner: {
           _id: "$ownerDetails._id",
           ownerName: "$ownerDetails.fullname",
+          username: "$ownerDetails.username",
+          avatar: "$ownerDetails.avatar",
         },
       },
     },
@@ -165,7 +168,66 @@ const getAllVideos = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, { allVideos }, "All videos found"));
 });
+
 const getUserVideos = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+
+  const user = await User.findOne({ username });
+
+  if (!user) {
+    throw new ApiError(400, "User not found");
+  }
+
+  const allVideos = await Video.aggregate([
+    //Stage1: Match the user
+    {
+      $match: {
+        owner: user._id,
+      },
+    },
+    //Stage2: Lookup to join with User collection
+    {
+      $lookup: {
+        from: "users", // Collection to join from
+        localField: "owner", // Field from the Tweet collection
+        foreignField: "_id", // Field from the User collection
+        as: "ownerDetails", // Name of the new field for the joined data
+      },
+    },
+    // Stage 3: Unwind to flatten the ownerDetails array into Object
+    {
+      $unwind: "$ownerDetails",
+    },
+    //Stage 4: Project to format output
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        videoFile: 1,
+        thumbnail: 1,
+        views: 1,
+        duration: 1,
+        isPublished: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          ownerName: "$ownerDetails.fullname",
+          avatar: "$ownerDetails.avatar",
+          username: "$ownerDetails.username",
+        },
+      },
+    },
+  ]);
+
+  if (!allVideos) {
+    throw new ApiError(400, "Error in getting all videos");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { allVideos }, "All videos found"));
+});
+const getMyVideos = asyncHandler(async (req, res) => {
   const allVideos = await Video.aggregate([
     //Stage1: Match the user
     {
@@ -315,4 +377,5 @@ export {
   deleteVideo,
   togglePublishStatus,
   getUserVideos,
+  getMyVideos,
 };

@@ -2,7 +2,7 @@ const cardDummyDataGen = (number, isDescription) => {
     let data = [];
     for (let i = 1; i < number + 1; i++) {
       let videoData = {
-        videoId: i,
+        _id: i,
         title: `Video ${i}`,
         thumbnail: "https://placehold.co/600x400",
         uploader: `Uploader ${i}`,

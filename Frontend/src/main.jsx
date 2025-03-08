@@ -15,14 +15,15 @@ import History from "./components/History/History.jsx";
 import LikedVideos from "./components/LikedVideos/Liked_Videos.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import Stats from "./components/Stats/Stats.jsx";
-import { extractDate } from "./Utils/extractDate.js";
-import { formatDuration } from "./Utils/formatDuration.js";
 import VideoPlayer from "./components/VideoPlayer/VideoPlayer.jsx";
 import Login from "./components/Login/Login.jsx";
 import Register from "./components/Register/Register.jsx";
-
-console.log(extractDate("2025-03-02T15:17:06.652Z"));
-console.log(formatDuration(4.086712));
+import NotFound from "./components/NotFound/NotFound.jsx";
+import ChannelDashboard from "./components/Dashboard/ChannelDashboard.jsx";
+import UserVideos from "./components/UserVideos/UserVideos.jsx";
+import UserPlaylists from "./components/UserPlaylists/UserPlaylists.jsx";
+import UserTweets from "./components/UserTweets/UserTweets.jsx";
+import UserContextProvider from "./contexts/userContextProvider.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,18 +32,24 @@ const router = createBrowserRouter(
       <Route path="github" element={<Github />} />
       <Route path="history" element={<History />} />
       <Route path="liked_videos" element={<LikedVideos />} />
-      <Route path="dashboard" element={<Dashboard />} />
+      <Route path="/user/:username" element={<ChannelDashboard />}>
+        <Route path="videos" element={<UserVideos />} />
+        <Route path="playlists" element={<UserPlaylists />} />
+        <Route path="tweets" element={<UserTweets />} />
+      </Route>
       <Route path="stats" element={<Stats />} />
       <Route path="video/:videoId" element={<VideoPlayer />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
-
+      <Route path="*" element={<NotFound />} />
     </Route>
   )
 );
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserContextProvider>
+      <RouterProvider router={router} />
+    </UserContextProvider>
   </StrictMode>
 );

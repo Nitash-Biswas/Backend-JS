@@ -5,6 +5,7 @@ import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   deleteVideo,
   getAllVideos,
+  getMyVideos,
   getUserVideos,
   getVideoById,
   publishVideo,
@@ -32,7 +33,8 @@ videoRouter.route("/publish").post(
 );
 videoRouter.route("/video/:videoId").get(getVideoById);
 videoRouter.route("/get_all_videos").get(getAllVideos);
-videoRouter.route("/get_user_videos").get(verifyJWT, getUserVideos);
+videoRouter.route("/get_user_videos/:username").get( getUserVideos);
+videoRouter.route("/get_my_videos").get(verifyJWT, getMyVideos);
 videoRouter.route("/update/:videoId").patch(verifyJWT, updateVideo);
 videoRouter.route("/delete/:videoId").delete(verifyJWT, deleteVideo);
 videoRouter.route("/toggle_publish/:videoId").post(verifyJWT, togglePublishStatus);

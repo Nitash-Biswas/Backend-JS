@@ -52,7 +52,7 @@ userRouter.route("/update_cover_image").patch(
   updateUserCoverImage
 );
 userRouter.route("/change_password").post(verifyJWT,changeCurrentPassword)
-userRouter.route("/channel/:username").get(verifyJWT,getUserChannelProfile)
+userRouter.route("/channel/:username").get(getUserChannelProfile)
 userRouter.route("/watch_history").get(verifyJWT,getWatchHistory)
 
 

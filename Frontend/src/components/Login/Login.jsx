@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLoginUser } from "../../hooks/useUserHooks";
+import UserContext from "../../contexts/userContext.js";
+import { Navigate } from "react-router-dom";
 
 function Login() {
   const { user, loading, error, loginUser } = useLoginUser();
@@ -7,10 +9,11 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [visibleError, setVisibleError] = useState(null);
+  const { loggedUser, setLoggedUser } = useContext(UserContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log({ email, username, password });
+
     await loginUser({ email, username, password });
   };
 
@@ -23,6 +26,14 @@ function Login() {
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+
+  useEffect(() => {
+    console.log({user, loggedUser}); // Log user data when user state changes
+    if (user) {
+      setLoggedUser(user);
+    }
+  }, [user, loggedUser, setLoggedUser]);
 
   const togglePasswordVisibility = () => {
     let passwordInput = document.querySelector("#password");
@@ -82,9 +93,12 @@ function Login() {
             </p>
           )}
           {user && (
-            <p className="text-green-500 mt-4 flex justify-center">
-              Welcome, {user.fullname}!
-            </p>
+            <>
+              <p className="text-green-500 mt-4 flex justify-center">
+                Welcome, {user.fullname}!
+              </p>
+              <Navigate to="/" />
+            </>
           )}
         </form>
       </div>

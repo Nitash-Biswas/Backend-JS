@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { BASE_URL, USERS_URL } from "../constants";
 import Cookies from "js-cookie";
+import { BASE_URL, USERS_URL } from "../constants";
+import UserContext from "../contexts/userContext";
 
 export const useLoginUser = () => {
   const [user, setUser] = useState(null);
@@ -10,29 +11,50 @@ export const useLoginUser = () => {
 
   const loginUser = async ({ email, username, password }) => {
     setLoading(true);
-
     try {
-      // Make a POST request to the server
       const response = await axios.post(`${BASE_URL}${USERS_URL}/login`, {
         email,
         username,
         password,
       });
-      // Set the user in the state
-      setUser(response.data.data.user);
-      //Store Tokens in Cookies
+
+      const loggedInUser = response.data.data.user;
+
+      setUser(loggedInUser);
+
       Cookies.set("accessToken", response.data.data.accessToken);
       Cookies.set("refreshToken", response.data.data.refreshToken);
     } catch (err) {
-        if (err.response?.status === 400) {
-          setError("Incorrect username or password");
-        } else {
-          setError(err.response?.data?.message || "An error occurred");
-        }
+      setError(err.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
-  return { user, loading, error, loginUser };
+  return { loginUser,user, loading, error };
+};
+
+export const useFetchUserDetails = (username) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}${USERS_URL}/channel/${username}`
+        );
+        setUser(response.data?.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  return { user, loading, error };
 };

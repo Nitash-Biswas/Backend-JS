@@ -18,11 +18,11 @@ function LikedVideos() {
         <div className="grid grid-cols-1 gap-4">
           {videos.map((video) => (
             <LongCard
-              key={video.videoId}
+              key={video._id}
               title={video.title}
               thumbnail={video.thumbnail}
               uploader={video.uploader}
-              videoId={video.videoId}
+              videoId={video._id}
               description={video.description}
             />
           ))}

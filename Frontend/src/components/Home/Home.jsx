@@ -35,6 +35,9 @@ export default function Home() {
               uploader={video.owner.ownerName}
               videoId={video._id}
               duration={formatDuration(video.duration)}
+              description={video.description}
+              username={video.owner.username}
+              avatar={video.owner.avatar}
             />
           ))}
         </div>

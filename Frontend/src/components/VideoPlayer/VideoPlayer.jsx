@@ -4,7 +4,7 @@ import { BASE_URL, VIDEOS_URL } from "../../constants";
 import { Cloudinary } from "@cloudinary/url-gen";
 import getPublicId from "../../Utils/getPublicId";
 import { AdvancedVideo } from "@cloudinary/react";
-import MyTweets from "../MyTweets/MyTweets";
+import MyTweets from "../UserTweets/UserTweets";
 import { formatTimeAgo } from "../../Utils/formatTimeAgo";
 import { useFetchVideo } from "../../hooks/useVideoHooks";
 
@@ -29,7 +29,8 @@ function VideoPlayer() {
       setFinalVideo(video);
     }
   }, [videoData]);
-  console.log(videoData);
+
+  // console.log(videoData);
   // If videoData or finalVideo is not available, show a loading message
   if (!videoData || !finalVideo) {
     return (

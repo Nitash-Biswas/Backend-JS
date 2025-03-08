@@ -4,6 +4,7 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { Video } from "../models/video.model.js";
+import { User } from "../models/user.model.js";
 
 //Create Playlist
 const createPlaylist = asyncHandler(async (req, res) => {
@@ -118,15 +119,16 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 
 //Get all playlists of a user
 const getUserPlaylists = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
+  const { username } = req.params;
 
-  if (!userId) {
-    throw new ApiError(400, "User id is required");
+  const user = await User.findOne({ username });
+  if (!user) {
+    throw new ApiError(400, "User not found");
   }
 
   const allUserPlaylists = await Playlist.aggregate([
     //Step 1: Match the playlists owned by the user
-    { $match: { owner: new mongoose.Types.ObjectId(userId)  } },
+    { $match: { owner: user._id } },
     //Step 2: Lookup to join with User Collection
     {
       $lookup: {
@@ -136,8 +138,8 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         as: "ownerDetails", // Name of the new field for the joined data
       },
     },
-     // Stage 2: Unwind to flatten the ownerDetails array into Object
-     {
+    // Stage 2: Unwind to flatten the ownerDetails array into Object
+    {
       $unwind: "$ownerDetails",
     },
     //Stage 3: Project to format output
@@ -151,6 +153,57 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         owner: {
           _id: "$ownerDetails._id",
           ownerName: "$ownerDetails.fullname",
+          avatar: "$ownerDetails.avatar",
+        },
+      },
+    },
+  ]);
+
+  if (!allUserPlaylists) {
+    throw new ApiError(400, "Error in getting the playlists");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { allUserPlaylists },
+        "All playlists fetched successfully"
+      )
+    );
+});
+//Get all playlists of a user
+const getMyPlaylists = asyncHandler(async (req, res) => {
+
+  const allUserPlaylists = await Playlist.aggregate([
+    //Step 1: Match the playlists owned by the user
+    { $match: { owner: new mongoose.Types.ObjectId(req.user._id) } },
+    //Step 2: Lookup to join with User Collection
+    {
+      $lookup: {
+        from: "users", // Collection to join from
+        localField: "owner", // Field from the Playlist collection
+        foreignField: "_id", // Field from the User collection
+        as: "ownerDetails", // Name of the new field for the joined data
+      },
+    },
+    // Stage 2: Unwind to flatten the ownerDetails array into Object
+    {
+      $unwind: "$ownerDetails",
+    },
+    //Stage 3: Project to format output
+    {
+      $project: {
+        name: 1,
+        description: 1,
+        videos: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          ownerName: "$ownerDetails.fullname",
+          avatar: "$ownerDetails.avatar",
         },
       },
     },
@@ -191,18 +244,24 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   }
 
   //Check if playlist is owned by the user
-  if(playlist.owner.toString() !== req.user._id.toString()){
-    throw new ApiError(400, "You are not authorised to add video to this playlist");
+  if (playlist.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(
+      400,
+      "You are not authorised to add video to this playlist"
+    );
   }
 
   //Check if video is already in the playlist
-  if(playlist.videos.includes(videoId)){
+  if (playlist.videos.includes(videoId)) {
     throw new ApiError(400, "Video already in the playlist");
   }
 
   //Check video is published before adding to playlist
-  if(!video.isPublished){
-    throw new ApiError(400, "Please publish the video before adding to playlist");
+  if (!video.isPublished) {
+    throw new ApiError(
+      400,
+      "Please publish the video before adding to playlist"
+    );
   }
 
   //Add video to playlist
@@ -221,7 +280,6 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
         `Video: (${video.title}) added to playlist: (${playlist.name}) successfully`
       )
     );
-
 });
 
 //Remove video from playlist
@@ -244,16 +302,17 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
   }
 
   //Check if playlist is owned by the user
-  if(playlist.owner.toString() !== req.user._id.toString()){
-    throw new ApiError(400, "You are not authorised to remove video from this playlist");
+  if (playlist.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(
+      400,
+      "You are not authorised to remove video from this playlist"
+    );
   }
-
 
   //Check if video is not present in the playlist
-  if(!playlist.videos.includes(videoId)){
+  if (!playlist.videos.includes(videoId)) {
     throw new ApiError(400, "Video not in the playlist");
   }
-
 
   //Remove video from playlist
   const updatedPlaylist = await Playlist.findByIdAndUpdate(
@@ -271,7 +330,6 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
         `Video: (${video.title}) removed from Playlist: (${playlist.name}) successfully`
       )
     );
-
 });
 
 export {
@@ -282,4 +340,5 @@ export {
   updatePlaylist,
   addVideoToPlaylist,
   removeVideoFromPlaylist,
+  getMyPlaylists,
 };
