@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { BASE_URL, VIDEOS_URL } from "../../constants";
 import { Cloudinary } from "@cloudinary/url-gen";
 import getPublicId from "../../Utils/getPublicId";
@@ -8,6 +8,7 @@ import { AdvancedVideo } from "@cloudinary/react";
 import { formatTimeAgo } from "../../Utils/formatTimeAgo";
 import { useFetchVideo } from "../../hooks/useVideoHooks";
 import UserTweets from "../UserTweets/UserTweets";
+import Comments from "../Comments/Comments";
 
 function VideoPlayer() {
   const { videoId } = useParams();
@@ -59,10 +60,12 @@ function VideoPlayer() {
               cldVid={finalVideo.quality("auto")}
               controls
             />
+
             <div className="p-4">
               <h2 className="text-3xl font-semibold text-lighttext mb-2">
                 {videoData.title}
               </h2>
+              <NavLink to={`/user/${videoData.owner.username}`}>
               <div className="flex items-center mb-2">
                 <img
                   src={videoData.owner.avatar}
@@ -74,6 +77,7 @@ function VideoPlayer() {
                   {videoData.owner.fullname}
                 </p>
               </div>
+              </NavLink>
               <p className="text-darktext text-lg mb-2">
                 Uploaded: {formatTimeAgo(videoData.createdAt)}
               </p>
@@ -84,7 +88,7 @@ function VideoPlayer() {
         <div className="text-3xl md:w-2/5 w-full gap-4 pl-4 flex flex-col justify-start font-semibold text-lighttext">
           <h1 className="px-4">Comments</h1>
           <div className="overflow-auto h-220">
-            <UserTweets />
+            <Comments videoId={videoId} />
           </div>
         </div>
       </div>

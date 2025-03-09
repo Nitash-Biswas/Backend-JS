@@ -11,11 +11,11 @@ import {
 
 const commentRouter = Router();
 
-commentRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
+// commentRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
 
 commentRouter.route("/:videoId").get(getVideoComments);
-commentRouter.route("/add/:videoId").post(addComment);
-commentRouter.route("/update/:commentId").patch(updateComment);
-commentRouter.route("/delete/:commentId").delete(deleteComment);
+commentRouter.route("/add/:videoId").post(verifyJWT, addComment);
+commentRouter.route("/update/:commentId").patch(verifyJWT, updateComment);
+commentRouter.route("/delete/:commentId").delete(verifyJWT, deleteComment);
 
 export default commentRouter;

@@ -33,12 +33,22 @@ const getVideoComments = asyncHandler(async (req, res) => {
         as: "ownerDetails", // Name of the new field for the joined data
       },
     },
+    //  Step 3: Unwind to flatten the ownerDetails array into Object
+    {
+      $unwind: "$ownerDetails",
+    },
+    //  Step 4: Project to format output
     {
       $project: {
         _id: 1,
         content: 1,
         createdAt: 1,
-        owner: 1,
+        owner: {
+          _id: "$ownerDetails._id",
+          fullname: "$ownerDetails.fullname",
+          username: "$ownerDetails.username",
+          avatar: "$ownerDetails.avatar",
+        },
         video: 1,
       },
     },

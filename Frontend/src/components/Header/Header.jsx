@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import UserContext from "../../contexts/userContext";
 import { useLogoutUser } from "../../hooks/useUserHooks";
@@ -45,16 +45,20 @@ export default function Header() {
               <>
                 <div
                   className="text-white bg-lightbg hover:bg-highlight focus:ring-4 focus:ring-orange-300
-                font-medium rounded-full text-lg px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
+                font-medium rounded-full text-lg px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none cursor-pointer"
                 >
                   + Create
                 </div>
                 <div
                   className="text-white bg-lightbg hover:bg-highlight focus:ring-4 focus:ring-orange-300
-                font-medium rounded-full text-lg px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
+                font-medium rounded-full text-lg mr-2 focus:outline-none cursor-pointer"
                   onClick={toggleDropdown}
                 >
-                  N
+                  <img
+                    src={loggedUser.avatar || "https://placehold.co/150x150"}
+                    className="w-10 h-10 object-cover rounded-full"
+                    alt=""
+                  />
                   {dropDownOpen && (
                     <div className="absolute right-4 top-16 mt-2 w-48 bg-lightbg  rounded-md shadow-lg z-50 ">
                       <div className="py-1">
@@ -73,7 +77,7 @@ export default function Header() {
                           Settings
                         </NavLink>
                         <div
-                          className="block px-4 py-2 text-sm text-darktext hover:bg-highlight hover:text-lighttext cursor-pointer"
+                          className="block px-4 py-2 text-sm text-lighttext hover:bg-highlight cursor-pointer"
                           onClick={handleLogout}
                         >
                           Logout
@@ -99,6 +103,7 @@ export default function Header() {
                 >
                   Login
                 </NavLink>
+
                 <NavLink
                   to="/register"
                   className={({ isActive }) =>

@@ -27,6 +27,7 @@ import PrivateRoute from "./contexts/privateRoute.jsx";
 import NotLoggedIn from "./pages/NotLoggedIn/NotLoggedIn.jsx";
 import Subscribers from "./components/UserSubscribers/Subscribers.jsx";
 import SubscribedTo from "./components/UserSubscribers/SubscribedTo.jsx";
+import Playlist from "./components/Playlist/Playlist.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -58,6 +59,8 @@ const router = createBrowserRouter(
         }
       ></Route>
       <Route path="video/:videoId" element={<VideoPlayer />} />
+      <Route path="playlist/:playlistId" element={<Playlist />} />
+
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
       <Route path="*" element={<NotFound />} />

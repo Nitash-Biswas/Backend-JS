@@ -10,6 +10,7 @@ you to reuse logic in your React components.
 
 export const useFetchPlaylist = (playlistId) => {
   const [playlistData, setPlaylistData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -18,15 +19,19 @@ export const useFetchPlaylist = (playlistId) => {
         const response = await axios.get(
           `${BASE_URL}${PLAYLISTS_URL}/${playlistId}`
         );
-        setPlaylistData(response.data?.data.playlist);
+        setPlaylistData(response.data?.data.finalPlaylist);
+
       } catch (error) {
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
+
     };
     fetchVideo();
   }, [playlistId]);
-
-  return { playlistData, error };
+  console.log(playlistData);
+  return { playlistData, error, loading };
 };
 
 // Custom hook to fetch all videos of the logged in user

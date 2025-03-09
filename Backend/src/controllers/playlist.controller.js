@@ -49,9 +49,74 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error in getting playlist");
   }
 
+  const playlistWithVideoDetails = await Playlist.aggregate([
+    //Step 1: Match the playlist with its _id
+    { $match: { _id: new mongoose.Types.ObjectId(playlistId) } },
+
+    //Step 2: Lookup to join with Video Collection to get video details
+    {
+      $lookup: {
+        from: "videos",
+        localField: "videos",
+        foreignField: "_id",
+        as: "videos",
+      },
+    },
+    //Step 3: Unwind the videos array to process each video individually
+    {
+      $unwind: "$videos",
+    },
+    //Step 4: Second Lookup to join users collection to get owner data
+    {
+      $lookup: {
+        from: "users",
+        localField: "videos.owner",
+        foreignField: "_id",
+        as: "videos.ownerDetails",
+      },
+    },
+    //Step 5: Unwind the videos.ownerDetails array
+    {
+      $unwind: "$videos.ownerDetails",
+    },
+    //Step 6: Group the data in single playlist document
+    {
+      $group: {
+        _id: "$_id",  //group documents with same playlist id
+        name: { $first: "$name" }, //Takes the name field from the first document in each group, which is "Playlist 1" in this case.
+        description: { $first: "$description" },
+        owner: { $first: "$owner" },
+        createdAt: { $first: "$createdAt" },
+        updatedAt: { $first: "$updatedAt" },
+        videos: {
+          $push: {
+            _id: "$videos._id",
+            videoFile: "$videos.videoFile",
+            thumbnail: "$videos.thumbnail",
+            title: "$videos.title",
+            description: "$videos.description",
+            views: "$videos.views",
+            duration: "$videos.duration",
+            isPublished: "$videos.isPublished",
+            createdAt: "$videos.createdAt",
+            updatedAt: "$videos.updatedAt",
+            owner: {
+              _id: "$videos.ownerDetails._id",
+              fullname: "$videos.ownerDetails.fullname",
+              avatar: "$videos.ownerDetails.avatar",
+              username: "$videos.ownerDetails.username",
+            },
+          },
+        },
+      },
+    },
+  ]);
+
+  const finalPlaylist = playlistWithVideoDetails[0];
+
   return res
     .status(200)
-    .json(new ApiResponse(200, { playlist }, "Playlist found"));
+    .json(new ApiResponse(200, { finalPlaylist }, "Playlist found"));
 });
 
 //Delete playlist

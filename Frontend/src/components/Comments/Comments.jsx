@@ -1,8 +1,8 @@
 import React from "react";
-import TweetCard from "../Card/TweetCard";
-import { useFetchUserTweets } from "../../hooks/useTweetHooks";
+import { useFetchComments } from "../../hooks/useCommentHook";
+import CommentCard from "../Card/CommentCard";
+
 import { extractDate } from "../../Utils/extractDate";
-import { useParams } from "react-router-dom";
 
 // const tweets = [
 //   {
@@ -13,10 +13,9 @@ import { useParams } from "react-router-dom";
 //   },
 // ];
 
-function UserTweets() {
-  const { username } = useParams();
+function Comments({ videoId }) {
   // Custom hook to fetch all videos
-  const { tweets, loading, error } = useFetchUserTweets(username);
+  const { comments, loading, error } = useFetchComments(videoId);
 
   if (loading) {
     return (
@@ -36,26 +35,25 @@ function UserTweets() {
 
   return (
     <div className="bg-darkbg p-4">
-      {tweets.length > 0 ? (
+      {comments.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
-          {tweets.map((tweet) => (
-            <TweetCard
-              key={tweet._id}
-              content={tweet.content}
-              owner={tweet.owner.ownerName}
-              date={extractDate(tweet.createdAt)}
-              avatar={tweet.owner.avatar}
+          {comments.map((comment) => (
+            <CommentCard
+              key={comment._id}
+              content={comment.content}
+              owner={comment.owner.username}
+              date={extractDate(comment.createdAt)}
+              avatar={comment.owner.avatar}
             />
           ))}
         </div>
       ) : (
         <div className="flex flex-col items-center ">
-          <h1 className="text-darktext text-2xl">No tweets found</h1>
-          <p className="text-darktext">There are no tweets available.</p>
+          <h1 className="text-darktext text-2xl">No comments yet.</h1>
         </div>
       )}
     </div>
   );
 }
 
-export default UserTweets;
+export default Comments;
