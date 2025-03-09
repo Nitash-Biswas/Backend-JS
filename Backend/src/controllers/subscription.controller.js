@@ -56,11 +56,11 @@ const getSubscribedChannelsAggregate = async (subscriberId) => {
 };
 
 const toggleSubscription = asyncHandler(async (req, res) => {
-  const { channelId } = req.params;
+  const { username } = req.params;
   const user = req.user._id;
 
   //Check if channel exists
-  const channel = await User.findById(channelId);
+  const channel = await User.findOne({ username: username });
   if (!channel) {
     throw new ApiError(400, "Channel not found");
   }
@@ -74,7 +74,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
   //Check if user is already subscribed
   const subscription = await Subscription.findOne({
     subscriber: user,
-    channel: channelId,
+    channel: channel._id,
   });
 
   //If user is already subscribed, then unsubscribe
@@ -100,7 +100,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
   if (!subscription) {
     const newSubscription = await Subscription.create({
       subscriber: user,
-      channel: channelId,
+      channel: channel._id,
     });
 
     //Subscriber list
@@ -128,13 +128,20 @@ const getSubcribedChannels = asyncHandler(async (req, res) => {
         subscriber: user,
       },
     },
-    //Step 2: Lookup the channel
+    //Step 2:
+    {
+      $group: {
+        _id: "$subscriber",
+        subscribedArray: { $push: "$channel" },
+      },
+    },
+    //Step 3: Lookup for subscriber details of the channel
     {
       $lookup: {
         from: "users",
-        localField: "channel",
+        localField: "subscribedArray",
         foreignField: "_id",
-        as: "channelDetails",
+        as: "subscribedList",
         pipeline: [
           {
             $project: {
@@ -147,18 +154,14 @@ const getSubcribedChannels = asyncHandler(async (req, res) => {
         ],
       },
     },
-    //Step 3: Unwind the channelDetails array
-    {
-      $unwind: "$channelDetails",
-    },
-    //Step 4: Project to format output
+    //Step 4: Add fields for subscriber count
+    { $addFields: { subscribedCount: { $size: "$subscribedList" } } },
+    //Step 5: Project to format output
     {
       $project: {
-        _id: 0,
-        channel: "$channelDetails._id",
-        fullname: "$channelDetails.fullname",
-        avatar: "$channelDetails.avatar",
-        username: "$channelDetails.username",
+        _id: 1,
+        subscribedCount: 1,
+        subscribedList: 1,
       },
     },
   ]);
@@ -169,10 +172,10 @@ const getSubcribedChannels = asyncHandler(async (req, res) => {
 });
 
 const getUserSubscribers = asyncHandler(async (req, res) => {
-  const { channelId } = req.params;
+  const { username } = req.params;
 
   //Find channel
-  const channel = await User.findById(channelId);
+  const channel = await User.findOne({ username: username });
   if (!channel) {
     throw new ApiError(400, "Channel not found");
   }
@@ -183,7 +186,7 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
     //Step 1: Match the channel
     {
       $match: {
-        channel: new mongoose.Types.ObjectId(channelId),
+        channel: new mongoose.Types.ObjectId(channel._id),
       },
     },
     //Step 2: Create a array of subscribers
@@ -210,7 +213,7 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
           {
             $project: {
               _id: 1,
-              fullName: 1,
+              fullname: 1,
               avatar: 1,
               username: 1,
             },
@@ -219,12 +222,12 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
       },
     },
     //Step 4: Add fields for subscriber count
-    { $addFields: { subscriberCount: { $size: "$subscribersList" } } },
+    { $addFields: { subscribersCount: { $size: "$subscribersList" } } },
     //Step 5: Project to format output
     {
       $project: {
         _id: 1,
-        subscriberCount: 1,
+        subscribersCount: 1,
         subscribersList: 1,
       },
     },

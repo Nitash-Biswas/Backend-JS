@@ -109,7 +109,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         owner: {
           _id: "$ownerDetails._id",
           fullname: "$ownerDetails.fullname",
-          coverImage: "$ownerDetails.coverImage",
+          avatar: "$ownerDetails.avatar",
         },
       },
     },

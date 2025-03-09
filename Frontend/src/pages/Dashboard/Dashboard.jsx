@@ -2,9 +2,9 @@
 //Videos, Playlists, Tweets
 
 import React, { useState } from "react";
-import MyVideos from "../UserVideos/UserVideos";
-import MyTweets from "../UserTweets/UserTweets";
-import MyPlaylists from "../UserPlaylists/UserPlaylists";
+import MyVideos from "../../components/UserVideos/UserVideos";
+import MyTweets from "../../components/UserTweets/UserTweets";
+import MyPlaylists from "../../components/UserPlaylists/UserPlaylists";
 
 function Dashboard() {
   const username = "username";

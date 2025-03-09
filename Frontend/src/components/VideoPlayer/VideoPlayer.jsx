@@ -31,7 +31,7 @@ function VideoPlayer() {
     }
   }, [videoData]);
 
-  // console.log(videoData);
+  console.log(videoData);
   // If videoData or finalVideo is not available, show a loading message
   if (!videoData || !finalVideo) {
     return (

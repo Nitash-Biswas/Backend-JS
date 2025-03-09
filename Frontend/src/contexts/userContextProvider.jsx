@@ -1,26 +1,24 @@
-import {  useState, useEffect } from "react";
-import { useCheckAuth } from "../hooks/useCheckAuth.js";
+import React, { useEffect, useState } from "react";
 import UserContext from "./userContext.js";
-
+import { useCheckAuth } from "../hooks/useCheckAuth.js";
 
 const UserContextProvider = ({ children }) => {
-    const [loggedUser, setLoggedUser] = useState(null);
-    const {isAuthenticated, user, error} = useCheckAuth();
+  const { isAuthenticated, user, loading } = useCheckAuth();
+  const [loggedUser, setLoggedUser] = useState(null);
 
-    useEffect(() => {
-        if (isAuthenticated && user) {
-            setLoggedUser(user);
-        }
-        else{
-            setLoggedUser(null);
-        }
-    }, [isAuthenticated, user]);
+  useEffect(() => {
+    if (isAuthenticated && user && !loading) {
+      setLoggedUser(user);
+    } else {
+      setLoggedUser(null);
+    }
+  }, [isAuthenticated, user, loading]);
 
-    return (
-        <UserContext.Provider value={{ loggedUser, setLoggedUser }}>
-            {children}
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider value={{ loggedUser, setLoggedUser, loading, isAuthenticated, user }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export default UserContextProvider;

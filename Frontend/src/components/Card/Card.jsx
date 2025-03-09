@@ -22,7 +22,7 @@ export default function Card({
         <NavLink to={`/video/${videoId}`}>
           <h2 className="text-lg font-semibold text-lighttext">{title}</h2>
         </NavLink>
-        <NavLink to={`/user/${username}` }className="flex items-center mt-2">
+        <NavLink to={`/user/${username}/videos` }className="flex items-center mt-2">
           <img
             src={avatar}
             alt={title}

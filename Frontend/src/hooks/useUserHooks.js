@@ -66,6 +66,7 @@ export const useLogoutUser = () => {
     setLoggedUser(null);
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
+    console.log("User logged out");
   };
 
   return logoutUser;

@@ -9,10 +9,10 @@ import {
 
 const subsRouter = Router();
 
-subsRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
+// subsRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
 
-subsRouter.route("/:channelId").post(toggleSubscription);
-subsRouter.route("/get_channels").get(getSubcribedChannels);
-subsRouter.route("/get_subs/:channelId").get(getUserSubscribers);
+subsRouter.route("/:username").post(verifyJWT, toggleSubscription);
+subsRouter.route("/get_channels").get(verifyJWT, getSubcribedChannels);
+subsRouter.route("/get_subs/:username").get(getUserSubscribers);
 
 export default subsRouter;

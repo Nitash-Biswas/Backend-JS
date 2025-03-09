@@ -21,17 +21,6 @@ export default function Sidebar() {
             Home
           </NavLink>
           <NavLink
-            to="/github"
-            className={({ isActive }) =>
-              `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
-                ${
-                  isActive ? "text-highlight" : "text-darktext"
-                } lg:hover:bg-transparent lg:border-0 hover:text-highlight`
-            }
-          >
-            Github
-          </NavLink>
-          <NavLink
             to="/liked_videos"
             className={({ isActive }) =>
               `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
@@ -54,7 +43,7 @@ export default function Sidebar() {
             History
           </NavLink>
           <NavLink
-            to={`/user/${loggedUser?.username}`}
+            to={loggedUser ? `/user/${loggedUser?.username}/videos` : "/no-auth-dashboard"}
             className={({ isActive }) =>
               `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
                 ${

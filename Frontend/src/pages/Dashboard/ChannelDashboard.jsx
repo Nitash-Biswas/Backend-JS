@@ -2,13 +2,15 @@ import { Outlet, useParams, NavLink } from "react-router-dom";
 import { useFetchUserDetails } from "../../hooks/useUserHooks";
 import { useContext } from "react";
 import UserContext from "../../contexts/userContext";
+import { useFetchSubscibers } from "../../hooks/useSubscriptionHooks";
 
 const ChannelDashboard = () => {
   const { username } = useParams();
   const { user, loading, error } = useFetchUserDetails(username);
+  const { subscribersCount } = useFetchSubscibers(username);
   const { loggedUser } = useContext(UserContext);
 
-  console.log({user: user, loggedUser: loggedUser});
+  console.log({ user: user, loggedUser: loggedUser });
   if (loading) {
     return (
       <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">
@@ -44,12 +46,13 @@ const ChannelDashboard = () => {
             alt="avatarImage"
             className="w-36 h-36 ml-4.5 object-cover rounded-full -mt-16 border-4 border-darkbg"
           />
-          <div className="ml-4.5">
-            <h1 className="text-lighttext text-2xl">{user.fullname}</h1>
-            <p className="text-darktext text-lg">{`@${username}`}</p>
 
+          <div className="flex items-center justify-between w-full mr-20">
+            <div className="ml-4.5">
+              <h1 className="text-lighttext text-2xl">{user.fullname}</h1>
+              <p className="text-darktext text-lg">{`@${username} | ${subscribersCount} subscriber/s`}</p>
+            </div>
           </div>
-
         </div>
 
         <nav className="flex flex-col lg:flex-row">
