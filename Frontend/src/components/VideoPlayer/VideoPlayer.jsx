@@ -4,9 +4,10 @@ import { BASE_URL, VIDEOS_URL } from "../../constants";
 import { Cloudinary } from "@cloudinary/url-gen";
 import getPublicId from "../../Utils/getPublicId";
 import { AdvancedVideo } from "@cloudinary/react";
-import MyTweets from "../UserTweets/UserTweets";
+
 import { formatTimeAgo } from "../../Utils/formatTimeAgo";
 import { useFetchVideo } from "../../hooks/useVideoHooks";
+import UserTweets from "../UserTweets/UserTweets";
 
 function VideoPlayer() {
   const { videoId } = useParams();
@@ -83,7 +84,7 @@ function VideoPlayer() {
         <div className="text-3xl md:w-2/5 w-full gap-4 pl-4 flex flex-col justify-start font-semibold text-lighttext">
           <h1 className="px-4">Comments</h1>
           <div className="overflow-auto h-220">
-            <MyTweets />
+            <UserTweets />
           </div>
         </div>
       </div>

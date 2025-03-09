@@ -3,10 +3,9 @@
 import React from "react";
 
 import cardDummyDataGen from "../../Utils/cardDummyDataGen";
-import LongCard from "../Card/LongCard";
+import LongCard from "../../components/Card/LongCard";
 
-
-const videos = cardDummyDataGen(5,true);
+const videos = cardDummyDataGen(5, true);
 
 function LikedVideos() {
   return (

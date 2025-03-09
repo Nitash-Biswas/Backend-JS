@@ -1,13 +1,20 @@
-import { createContext, useState, useEffect } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { BASE_URL, USERS_URL } from "../constants";
-
+import {  useState, useEffect } from "react";
+import { useCheckAuth } from "../hooks/useCheckAuth.js";
 import UserContext from "./userContext.js";
 
 
 const UserContextProvider = ({ children }) => {
     const [loggedUser, setLoggedUser] = useState(null);
+    const {isAuthenticated, user, error} = useCheckAuth();
+
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            setLoggedUser(user);
+        }
+        else{
+            setLoggedUser(null);
+        }
+    }, [isAuthenticated, user]);
 
     return (
         <UserContext.Provider value={{ loggedUser, setLoggedUser }}>

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import UserContext from "../../contexts/userContext";
 
 export default function Sidebar() {
-
+  const { loggedUser } = useContext(UserContext);
 
   return (
     <div className="h-screen sticky top-0 bg-darkbg text-white w-64">
@@ -54,7 +54,7 @@ export default function Sidebar() {
             History
           </NavLink>
           <NavLink
-            to={`/user/nitash`}
+            to={`/user/${loggedUser?.username}`}
             className={({ isActive }) =>
               `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
                 ${

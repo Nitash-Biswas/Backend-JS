@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useLoginUser } from "../../hooks/useUserHooks";
+import { useLoginUser } from "../../hooks/useUserHooks.js";
 import UserContext from "../../contexts/userContext.js";
 import { Navigate } from "react-router-dom";
 
@@ -27,9 +27,8 @@ function Login() {
     }
   }, [error]);
 
-
   useEffect(() => {
-    console.log({user, loggedUser}); // Log user data when user state changes
+    console.log({ user, loggedUser }); // Log user data when user state changes
     if (user) {
       setLoggedUser(user);
     }

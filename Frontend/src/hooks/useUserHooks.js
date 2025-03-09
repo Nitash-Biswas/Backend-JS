@@ -54,7 +54,20 @@ export const useFetchUserDetails = (username) => {
     };
 
     fetchUser();
-  }, []);
+  }, [username]);
 
   return { user, loading, error };
 };
+
+export const useLogoutUser = () => {
+  const { setLoggedUser } = useContext(UserContext);
+
+  const logoutUser = () => {
+    setLoggedUser(null);
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+  };
+
+  return logoutUser;
+};
+

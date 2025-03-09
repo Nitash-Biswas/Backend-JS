@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import UserContext from "../../contexts/userContext";
-import { useLoginUser } from "../../hooks/useUserHooks";
 
 export default function Header() {
   const { loggedUser } = useContext(UserContext);
-  const { user } = useLoginUser();
 
-  const isloggedIn = false;
-  console.log({user, loggedUser});
+  // const isloggedIn = false;
+  console.log({loggedUser});
   // const [isloggedIn, setIsLoggedIn] = useState(false);
   // useEffect(() => {
   //   setIsLoggedIn(!!loggedUser);
@@ -27,7 +25,7 @@ export default function Header() {
 
           {/* Login and Register buttons */}
           <div className="flex items-center lg:order-2 gap-3">
-            {isloggedIn && (
+            {loggedUser && (
               <>
                 <Link
                   to="#"
@@ -43,7 +41,7 @@ export default function Header() {
                 </Link>
               </>
             )}
-            {!isloggedIn && (
+            {!loggedUser && (
               <>
                 <NavLink
                   to="/login"
