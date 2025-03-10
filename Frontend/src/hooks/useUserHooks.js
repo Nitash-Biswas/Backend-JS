@@ -7,7 +7,7 @@ import UserContext from "../contexts/userContext";
 export const useLoginUser = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const loginUser = async ({ email, username, password }) => {
     setLoading(true);
@@ -25,13 +25,14 @@ export const useLoginUser = () => {
       Cookies.set("accessToken", response.data.data.accessToken);
       Cookies.set("refreshToken", response.data.data.refreshToken);
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred");
+      setError(err.status === 401 ? "Wrong Password" : "User doesn't exist");
+      // console.log({ Error: err.status });
     } finally {
       setLoading(false);
     }
   };
 
-  return { loginUser,user, loading, error };
+  return { loginUser, user, loading, error };
 };
 
 export const useFetchUserDetails = (username) => {
@@ -71,4 +72,3 @@ export const useLogoutUser = () => {
 
   return logoutUser;
 };
-

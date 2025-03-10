@@ -12,7 +12,6 @@ import Layout from "./Layout.jsx";
 import Home from "./pages/Home/Home.jsx";
 import History from "./pages/History/History.jsx";
 import LikedVideos from "./pages/LikedVideos/Liked_Videos.jsx";
-
 import Stats from "./pages/Stats/Stats.jsx";
 import VideoPlayer from "./components/VideoPlayer/VideoPlayer.jsx";
 import Login from "./pages/Login/Login.jsx";
@@ -25,8 +24,6 @@ import UserTweets from "./components/UserTweets/UserTweets.jsx";
 import UserContextProvider from "./contexts/userContextProvider.jsx";
 import PrivateRoute from "./contexts/privateRoute.jsx";
 import NotLoggedIn from "./pages/NotLoggedIn/NotLoggedIn.jsx";
-import Subscribers from "./components/UserSubscribers/Subscribers.jsx";
-import SubscribedTo from "./components/UserSubscribers/SubscribedTo.jsx";
 import Playlist from "./components/Playlist/Playlist.jsx";
 
 const router = createBrowserRouter(

@@ -8,7 +8,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [visibleError, setVisibleError] = useState(null);
+  const [visibleError, setVisibleError] = useState("");
   const { loggedUser, setLoggedUser } = useContext(UserContext);
 
   const handleSubmit = async (event) => {
@@ -21,7 +21,7 @@ function Login() {
     if (error) {
       setVisibleError(error);
       const timer = setTimeout(() => {
-        setVisibleError(null);
+        setVisibleError("");
       }, 3000);
       return () => clearTimeout(timer);
     }

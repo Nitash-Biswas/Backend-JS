@@ -1,21 +1,18 @@
-import React from "react";
-import { useFetchComments } from "../../hooks/useCommentHook";
+import React, { useContext, useEffect } from "react";
+
 import CommentCard from "../Card/CommentCard";
-
 import { extractDate } from "../../Utils/extractDate";
+import UserContext from "../../contexts/userContext";
+import CommentsContext from "../../contexts/commentsContextProvider";
 
-// const tweets = [
-//   {
-//     tweetId: 1,
-//     content: "This is a tweet",
-//     owner: "John Doe",
-//     date: "2021-09-01",
-//   },
-// ];
+function Comments() {
+  const { loggedUser } = useContext(UserContext);
+  // const {  comments, loading, error, refreshComments } = useContext(CommentsContext);
 
-function Comments({ videoId }) {
-  // Custom hook to fetch all videos
-  const { comments, loading, error } = useFetchComments(videoId);
+  const { comments, loading, error, refreshComments } = useContext(CommentsContext);
+
+
+
 
   if (loading) {
     return (
@@ -44,6 +41,9 @@ function Comments({ videoId }) {
               owner={comment.owner.username}
               date={extractDate(comment.createdAt)}
               avatar={comment.owner.avatar}
+              loggedUser={loggedUser}
+              commentId={comment._id}
+              onCommentUpdated={refreshComments}
             />
           ))}
         </div>

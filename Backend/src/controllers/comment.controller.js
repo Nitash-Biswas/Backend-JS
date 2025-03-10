@@ -52,6 +52,8 @@ const getVideoComments = asyncHandler(async (req, res) => {
         video: 1,
       },
     },
+    //  Step 5: Sort by createdAt
+    { $sort: { createdAt: -1 } },
   ]);
 
   if (!allComments) {
