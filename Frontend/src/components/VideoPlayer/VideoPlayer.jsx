@@ -10,23 +10,15 @@ import UserTweets from "../UserTweets/UserTweets";
 import Comments from "../Comments/Comments";
 import UserContext from "../../contexts/userContext";
 import AddComment from "../Comments/AddComment";
-import CommentsContext, { CommentsProvider } from "../../contexts/commentsContextProvider";
-
+import CommentsContext, {
+  CommentsProvider,
+} from "../../contexts/commentsContextProvider";
 
 function VideoPlayer() {
   const { videoId } = useParams();
   const { loggedUser } = useContext(UserContext);
   const { videoData, error } = useFetchVideo(videoId); // Custom hook to fetch video data
   const [finalVideo, setFinalVideo] = useState(null);
-  // const [refreshComments, setRefreshComments] = useState(false);
-
-  // const handleCommentAdded = () => {
-  //   setRefreshComments((prev) => !prev);
-  // };
-
-  // const refresh = () => {
-  //   setRefreshComments((prev) => !prev);
-  // };
 
   useEffect(() => {
     if (videoData) {
@@ -45,8 +37,6 @@ function VideoPlayer() {
     }
   }, [videoData]);
 
-  console.log(videoData);
-  // If videoData or finalVideo is not available, show a loading message
   if (!videoData || !finalVideo) {
     return (
       <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">
@@ -54,7 +44,7 @@ function VideoPlayer() {
       </div>
     );
   }
-  // If there is an error, show the error message
+
   if (error) {
     return (
       <div className="bg-darkbg text-2xl min-h-full text-highlight p-4">
@@ -66,11 +56,12 @@ function VideoPlayer() {
   return (
     <>
       <CommentsProvider videoId={videoId}>
-        <div className="sticky bg-darkbg min-h-full p-4 flex flex-col md:flex-row">
-          <div className="md:w-3/5 w-full">
-            <div className="bg-lightbg shadow-md rounded-lg  w-full max-w-full">
+        <div className="bg-darkbg min-h-screen p-4 flex flex-col md:flex-row overflow-hidden">
+          {/* Video Section */}
+          <div className="md:w-3/5 w-full h-full">
+            <div className="bg-lightbg shadow-md rounded-lg w-full">
               <AdvancedVideo
-                className="w-full h-192 object-cover"
+                className="w-full h-full object-cover rounded-lg"
                 cldVid={finalVideo.quality("auto")}
                 controls
               />
@@ -100,25 +91,18 @@ function VideoPlayer() {
             </div>
           </div>
 
-          <div className="text-3xl md:w-2/5 w-full gap-4 pl-4 flex flex-col justify-start font-semibold text-lighttext">
-            <h1 className="px-4">Comments</h1>
-            <div className="overflow-auto h-220">
-              {loggedUser && (
-                <AddComment
-                  videoId={videoId}
-                  username={loggedUser.username}
-                  avatar={loggedUser.avatar}
-                  // onCommentAdded={refreshComments}
-                  //sets the onCommentAdded() to handleCommentAdded()
-                />
-              )}
-              <Comments
-                // refreshComments={refreshComments}
-
-
-              // refresh={refresh}
-              //Swaps the refresh prop, just to trigger the useEffect in useFetchComments()
+          {/* Comments Section */}
+          <div className="md:w-2/5 w-full h-screen lg:pl-4 flex flex-col">
+            <h1 className="text-3xl font-semibold text-lighttext px-4 lg:mb-4 my-4">Comments</h1>
+            {loggedUser && (
+              <AddComment
+                videoId={videoId}
+                username={loggedUser.username}
+                avatar={loggedUser.avatar}
               />
+            )}
+            <div className="overflow-y-auto flex-1">
+              <Comments />
             </div>
           </div>
         </div>

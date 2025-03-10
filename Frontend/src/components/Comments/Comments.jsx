@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 
 import CommentCard from "../Card/CommentCard";
 import { extractDate } from "../../Utils/extractDate";
@@ -44,6 +44,7 @@ function Comments() {
               loggedUser={loggedUser}
               commentId={comment._id}
               onCommentUpdated={refreshComments}
+              onCommentDeleted={refreshComments}
             />
           ))}
         </div>

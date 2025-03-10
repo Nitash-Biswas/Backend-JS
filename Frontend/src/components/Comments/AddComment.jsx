@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useAddComment } from "../../hooks/useCommentHook";
+import CommentsContext from "../../contexts/commentsContextProvider";
 
-function AddComment({ videoId, username, avatar, onCommentAdded }) {
+function AddComment({ videoId, username, avatar }) {
   const [comment, setComment] = useState("");
   const { addComment, loading, error } = useAddComment();
+  const {  refreshComments } = useContext(CommentsContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     await addComment({ videoId: videoId, comment });
     setComment("");
     //An arbitrary function onCommentAdded() will be executed
-    if (onCommentAdded) {
-      onCommentAdded();
-    }
+    refreshComments();
   };
 
   // Function to adjust the height of the textarea dynamically
@@ -23,10 +23,10 @@ function AddComment({ videoId, username, avatar, onCommentAdded }) {
   };
 
   return (
-    <div className="bg-lightbg m-4 p-4 rounded-lg">
+    <div className="bg-lightbg border-b-8 border-darkbg p-4  w-full overflow-hidden">
       <form onSubmit={handleSubmit}>
-        <div className="flex justify-center items-center">
-          <img src={avatar} alt={username} className="w-16 h-16 rounded-full" />
+        <div className="flex justify-center items-center w-full">
+          <img src={avatar} alt={username} className="w-16 h-16 object-cover rounded-full" />
           <div className="flex flex-col ml-4 w-full">
             <textarea
               className="text-lg text-lighttext border-b-4 border-darktext items-center
@@ -39,7 +39,7 @@ function AddComment({ videoId, username, avatar, onCommentAdded }) {
               rows={1} // Start with one row
               style={{ minHeight: "40px" }} // Set a minimum height
             />
-            <div className="flex justify-end ">
+            <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={loading}

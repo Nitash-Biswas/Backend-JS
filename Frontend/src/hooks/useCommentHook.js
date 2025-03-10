@@ -65,36 +65,60 @@ export const useAddComment = () => {
   return { addComment, loading, error };
 };
 
+export const useUpdateAndDeleteComment = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-export const useUpdateComment = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const updateComment = async ({ commentId, newContent }) => {
+    setLoading(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
 
-    const updateComment = async ({  commentId, newContent }) => {
-      setLoading(true);
-      try {
-        // Get Tokens from cookies
-        const accessToken = Cookies.get("accessToken");
-        const refreshToken = Cookies.get("refreshToken");
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
 
-        // Set up headers with tokens
-        const headers = {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        };
-
-        // Update comment only when carrying auth tokens
-        await axios.patch(
-          `${BASE_URL}${COMMENTS_URL}/update/${commentId}`,
-          { newContent: newContent },
-          { headers, withCredentials: true }
-        );
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return { updateComment, loading, error };
+      // Update comment only when carrying auth tokens
+      await axios.patch(
+        `${BASE_URL}${COMMENTS_URL}/update/${commentId}`,
+        { newContent: newContent },
+        { headers, withCredentials: true }
+      );
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const deleteComment = async ({ commentId }) => {
+    setLoading(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
+
+      // Update comment only when carrying auth tokens
+      await axios.delete(
+        `${BASE_URL}${COMMENTS_URL}/delete/${commentId}`,
+        { headers, withCredentials: true }
+      );
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateComment, deleteComment, loading, error };
+};
