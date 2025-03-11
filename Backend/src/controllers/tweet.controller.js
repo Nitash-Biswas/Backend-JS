@@ -67,12 +67,12 @@ const getMyTweets = asyncHandler(async (req, res) => {
     );
 });
 const getUserTweets = asyncHandler(async (req, res) => {
-  const {username} = req.params
+  const { username } = req.params;
 
-  const user = await User.findOne({username})
+  const user = await User.findOne({ username });
 
-  if(!user){
-    throw new ApiError(400, "User not found")
+  if (!user) {
+    throw new ApiError(400, "User not found");
   }
 
   const allTweets = await Tweet.aggregate([
@@ -104,7 +104,8 @@ const getUserTweets = asyncHandler(async (req, res) => {
         owner: {
           _id: "$ownerDetails._id",
           ownerName: "$ownerDetails.fullname",
-          avatar: "$ownerDetails.avatar"
+          avatar: "$ownerDetails.avatar",
+          username: "$ownerDetails.username",
         },
       },
     },
@@ -144,8 +145,14 @@ const getAllTweets = asyncHandler(async (req, res) => {
         owner: {
           _id: "$ownerDetails._id",
           ownerName: "$ownerDetails.fullname",
+          avatar: "$ownerDetails.avatar",
+          username: "$ownerDetails.username",
         },
       },
+    },
+    //Stage 4: Sort by latest
+    {
+      $sort: { createdAt: -1 },
     },
   ]);
 
@@ -213,4 +220,11 @@ const deleteTweet = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { tweet }, "Tweet Deleted successfully."));
 });
 
-export { createTweet, getUserTweets, updateTweet, deleteTweet, getAllTweets, getMyTweets };
+export {
+  createTweet,
+  getUserTweets,
+  updateTweet,
+  deleteTweet,
+  getAllTweets,
+  getMyTweets,
+};

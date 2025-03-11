@@ -7,7 +7,7 @@ import { AdvancedVideo } from "@cloudinary/react";
 import { formatTimeAgo } from "../../Utils/formatTimeAgo";
 import { useFetchVideo } from "../../hooks/useVideoHooks";
 import UserTweets from "../UserTweets/UserTweets";
-import Comments from "../Comments/Comments";
+import Comments from "../Comments/AllComments";
 import UserContext from "../../contexts/userContext";
 import AddComment from "../Comments/AddComment";
 import CommentsContext, {

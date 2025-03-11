@@ -43,6 +43,17 @@ export default function Sidebar() {
             History
           </NavLink>
           <NavLink
+            to="/tweets"
+            className={({ isActive }) =>
+              `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded
+                ${
+                  isActive ? "text-highlight" : "text-darktext"
+                } lg:hover:bg-transparent lg:border-0 hover:text-highlight`
+            }
+          >
+            Tweets
+          </NavLink>
+          <NavLink
             to={loggedUser ? `/user/${loggedUser?.username}/videos` : "/no-auth-dashboard"}
             className={({ isActive }) =>
               `text-xl font-bold hover:bg-lightbg px-4 py-2 rounded

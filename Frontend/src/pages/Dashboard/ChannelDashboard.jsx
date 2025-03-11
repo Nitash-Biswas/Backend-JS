@@ -1,6 +1,5 @@
 import { Outlet, useParams, NavLink } from "react-router-dom";
 import { useFetchUserDetails } from "../../hooks/useUserHooks";
-import { useContext } from "react";
 import UserContext from "../../contexts/userContext";
 import { useFetchSubscibers } from "../../hooks/useSubscriptionHooks";
 
@@ -8,9 +7,7 @@ const ChannelDashboard = () => {
   const { username } = useParams();
   const { user, loading, error } = useFetchUserDetails(username);
   const { subscribersCount } = useFetchSubscibers(username);
-  const { loggedUser } = useContext(UserContext);
 
-  console.log({ user: user, loggedUser: loggedUser });
   if (loading) {
     return (
       <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">
@@ -28,10 +25,10 @@ const ChannelDashboard = () => {
   }
 
   return (
-    <div className="bg-darkbg min-h-full text-lighttext">
-      <div className="flex flex-col w-full justify-between">
+    <div className="bg-darkbg flex flex-col text-lighttext min-h-screen">
+      <div className="flex flex-col w-full  justify-between">
         {/* CoverImage */}
-        <div className="bg-cover bg-center h-96 flex justify-center items-center">
+        <div className="bg-cover bg-center h-55 flex justify-center items-center">
           <img
             src={user.coverImage || "https://placehold.co/600x400"}
             alt="coverImage"
@@ -93,7 +90,7 @@ const ChannelDashboard = () => {
           </NavLink>
         </nav>
 
-        <div className="mt-8 w-full min-h-full">
+        <div className="mt-8 w-full h-full overflow-auto">
           <Outlet />
         </div>
       </div>

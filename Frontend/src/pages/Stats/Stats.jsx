@@ -15,7 +15,7 @@ function Stats() {
     loggedUser?.username
   );
   const { subscribed, subscribedCount } = useFetchSubscribed();
-  console.log({ subscribed, subscribedCount, loggedUser });
+  // console.log({ subscribed, subscribedCount, loggedUser });
 
   // console.log({ subscribers, subscribersCount });
 
@@ -27,7 +27,7 @@ function Stats() {
   return (
     <div className="bg-darkbg min-h-full text-lighttext">
       {/* CoverImage */}
-      <div className="bg-cover bg-center h-96 flex justify-center items-center">
+      <div className="bg-cover bg-center h-55 flex justify-center items-center">
         <img
           src={loggedUser?.coverImage || "https://placehold.co/600x400"}
           alt="coverImage"
@@ -49,8 +49,6 @@ function Stats() {
 
       {/* Tabs */}
       <div className="flex w-full justify-between">
-
-
         <div
           className={`hover:bg-lightbg hover:text-highlight w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg ${
             selectedComponent === "Subscribers"
@@ -63,7 +61,6 @@ function Stats() {
         >
           <h1>Subscribers : {subscribersCount}</h1>
         </div>
-
 
         <div
           className={`hover:bg-lightbg hover:text-highlight w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg ${

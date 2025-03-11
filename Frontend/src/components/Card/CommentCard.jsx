@@ -15,7 +15,8 @@ function CommentCard({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(content);
-  const { updateComment, deleteComment, loading, error } = useUpdateAndDeleteComment();
+  const { updateComment, deleteComment, loading, error } =
+    useUpdateAndDeleteComment();
 
   const textareaRef = useRef(null);
 
@@ -52,18 +53,21 @@ function CommentCard({
   return (
     <div className="bg-lightbg shadow-md rounded-lg overflow-hidden flex flex-col w-full p-4 relative">
       <div className="flex justify-center items-center">
-        <img
-          src={avatar || "https://placehold.co/150x150"}
-          className="w-10 h-10 object-cover rounded-full"
-          alt=""
-        />
+        <NavLink to={`/user/${owner}`}>
+          <img
+            src={avatar || "https://placehold.co/150x150"}
+            className="w-10 h-10 object-cover rounded-full"
+            alt=""
+          />
+        </NavLink>
         <div className="flex flex-col justify-center ml-4 w-full">
-          <NavLink to={`/user/${owner}`}>
           <div className="flex justify-between items-center">
-            <p className="text-darktext text-sm">{`@${owner}`}</p>
+            <NavLink to={`/user/${owner}`}>
+              <p className="text-darktext text-sm">{`@${owner}`}</p>
+            </NavLink>
             <span className="text-xs text-darktext">{date}</span>
           </div>
-          </NavLink>
+
           {isEditing ? (
             <div className="flex flex-col">
               <textarea
@@ -104,13 +108,13 @@ function CommentCard({
             onClick={() => setIsEditing(true)}
             className="hover:text-lighttext text-darktext pr-4 py-2 "
           >
-            <FaEdit size={25}/>
+            <FaEdit size={25} />
           </button>
           <button
             onClick={handleDelete}
             className="hover:text-red-500 text-darktext   py-2"
           >
-            <MdDelete size={25}/>
+            <MdDelete size={25} />
           </button>
         </div>
       )}

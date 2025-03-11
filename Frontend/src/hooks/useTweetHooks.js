@@ -8,9 +8,8 @@ A custom hook is a JavaScript function that allows
 you to reuse logic in your React components.
  */
 
-
 // Custom hook to fetch all tweets
-export const useFetchAllTweets = () => {
+export const useFetchAllTweets = (refresh) => {
   // State to store videos, loading and error
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +31,7 @@ export const useFetchAllTweets = () => {
     };
 
     fetchTweets();
-  }, []);
+  }, [refresh]);
 
   return { tweets, loading, error };
 };
@@ -78,4 +77,99 @@ export const useFetchUserTweets = (username) => {
   }, []);
 
   return { tweets, loading, error };
+};
+
+export const useAddTweet = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const addTweet = async ({ tweet }) => {
+    setLoading(true);
+    try {
+      //Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      //Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
+
+      //Add comment only when when carrying auth tokens
+      const response = await axios.post(
+        `${BASE_URL}${TWEETS_URL}/create`,
+        {
+          content: tweet,
+        },
+        { headers, withCredentials: true }
+      );
+
+      // console.log(response.data.data.createdTweet);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { addTweet, loading, error };
+};
+
+export const useUpdateAndDeleteTweet = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const updateTweet = async ({ tweetId, newContent }) => {
+    setLoading(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
+
+      // Update comment only when carrying auth tokens
+      await axios.patch(
+        `${BASE_URL}${TWEETS_URL}/update/${tweetId}`,
+        { newContent: newContent },
+        { headers, withCredentials: true }
+      );
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteTweet = async ({ tweetId }) => {
+    setLoading(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
+
+      //Delete tweet only when carrying auth tokens
+      await axios.delete(`${BASE_URL}${TWEETS_URL}/delete/${tweetId}`, {
+        headers,
+        withCredentials: true,
+      });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateTweet, deleteTweet, loading, error };
 };

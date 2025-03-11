@@ -108,7 +108,7 @@ export const useUpdateAndDeleteComment = () => {
         "x-refresh-token": refreshToken,
       };
 
-      // Update comment only when carrying auth tokens
+      // Delete comment only when carrying auth tokens
       await axios.delete(
         `${BASE_URL}${COMMENTS_URL}/delete/${commentId}`,
         { headers, withCredentials: true }

@@ -1,8 +1,10 @@
-import React from "react";
-import TweetCard from "../Card/TweetCard";
-import { useFetchUserTweets } from "../../hooks/useTweetHooks";
+//Show All Tweets
+
+import React, { useContext } from "react";
+import TweetCard from "../../components/Card/TweetCard";
 import { extractDate } from "../../Utils/extractDate";
-import { useParams } from "react-router-dom";
+import TweetsContext from "../../contexts/tweetContextProvider";
+import UserContext from "../../contexts/userContext";
 
 // const tweets = [
 //   {
@@ -13,10 +15,9 @@ import { useParams } from "react-router-dom";
 //   },
 // ];
 
-function UserTweets() {
-  const { username } = useParams();
-  // Custom hook to fetch all videos
-  const { tweets, loading, error } = useFetchUserTweets(username);
+function AllTweets() {
+  const { loggedUser } = useContext(UserContext);
+  const { tweets, loading, error, refreshTweets } = useContext(TweetsContext);
 
   if (loading) {
     return (
@@ -35,16 +36,20 @@ function UserTweets() {
   }
 
   return (
-    <div className="bg-darkbg p-4">
+    <div className="bg-darkbg min-h-full text-lighttext p-4">
       {tweets.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {tweets.map((tweet) => (
             <TweetCard
               key={tweet._id}
+              tweetId={tweet._id}
               content={tweet.content}
               owner={tweet.owner.username}
               date={extractDate(tweet.createdAt)}
               avatar={tweet.owner.avatar}
+              loggedUser={loggedUser}
+              onTweetUpdated={refreshTweets}
+              onTweetDeleted={refreshTweets}
             />
           ))}
         </div>
@@ -58,4 +63,4 @@ function UserTweets() {
   );
 }
 
-export default UserTweets;
+export default AllTweets;

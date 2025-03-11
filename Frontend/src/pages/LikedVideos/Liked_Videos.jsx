@@ -10,11 +10,11 @@ const videos = cardDummyDataGen(5, true);
 function LikedVideos() {
   return (
     <div className="bg-darkbg min-h-full text-lighttext p-4">
-      <div className="flex justify-between items-center pb-8 pt-4">
+      <div className="flex justify-between items-center pb-8 pt-4 px-4">
         <h1 className="text-4xl font-bold">Liked Videos</h1>
       </div>
       {videos.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4 px-4">
           {videos.map((video) => (
             <LongCard
               key={video._id}

@@ -5,7 +5,7 @@ import { extractDate } from "../../Utils/extractDate";
 import UserContext from "../../contexts/userContext";
 import CommentsContext from "../../contexts/commentsContextProvider";
 
-function Comments() {
+function AllComments() {
   const { loggedUser } = useContext(UserContext);
   // const {  comments, loading, error, refreshComments } = useContext(CommentsContext);
 
@@ -57,4 +57,4 @@ function Comments() {
   );
 }
 
-export default Comments;
+export default AllComments;

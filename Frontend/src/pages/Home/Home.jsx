@@ -24,7 +24,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-darkbg min-h-full p-4">
+    <div className="bg-darkbg min-h-full p-4 px-8">
       {videos.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {videos.map((video) => (
