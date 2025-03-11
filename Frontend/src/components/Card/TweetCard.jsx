@@ -62,7 +62,7 @@ const [isEditing, setIsEditing] = useState(false);
           <div className="flex flex-col justify-center ml-4 w-full">
             <div className="flex justify-between items-center">
               <NavLink to={`/user/${owner}`}>
-                <p className="text-darktext text-sm">{`@${owner}`}</p>
+                <p className="text-darktext text-sm hover:text-lighttext">{`@${owner}`}</p>
               </NavLink>
               <span className="text-xs text-darktext">{date}</span>
             </div>

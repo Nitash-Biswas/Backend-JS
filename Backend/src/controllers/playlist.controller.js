@@ -219,6 +219,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
           _id: "$ownerDetails._id",
           ownerName: "$ownerDetails.fullname",
           avatar: "$ownerDetails.avatar",
+          username: "$ownerDetails.username",
         },
       },
     },

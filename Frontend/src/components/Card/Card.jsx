@@ -22,14 +22,18 @@ export default function Card({
         <NavLink to={`/video/${videoId}`}>
           <h2 className="text-lg font-semibold text-lighttext">{title}</h2>
         </NavLink>
-        <NavLink to={`/user/${username}/videos` }className="flex items-center mt-2">
-          <img
-            src={avatar}
-            alt={title}
-            className="w-10 h-10 rounded-full mr-2"
-          />
-          <p className="text-darktext"> {uploader}</p>
-        </NavLink>
+        <div className="flex items-center mt-2">
+          <NavLink to={`/user/${username}/videos`}>
+            <img
+              src={avatar}
+              alt={title}
+              className="w-10 h-10 rounded-full mr-2"
+            />
+          </NavLink>
+          <p className="text-darktext hover:text-lighttext">
+            <NavLink to={`/user/${username}/videos`}>{uploader}</NavLink>
+          </p>
+        </div>
       </div>
     </div>
   );

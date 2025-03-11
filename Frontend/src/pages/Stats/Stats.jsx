@@ -19,7 +19,7 @@ function Stats() {
 
   // console.log({ subscribers, subscribersCount });
 
-  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [selectedComponent, setSelectedComponent] = useState("Subscribers");
   const handleSelect = (component) => {
     setSelectedComponent(selectedComponent === component ? null : component);
   };
@@ -27,7 +27,7 @@ function Stats() {
   return (
     <div className="bg-darkbg min-h-full text-lighttext">
       {/* CoverImage */}
-      <div className="bg-cover bg-center h-55 flex justify-center items-center">
+      <div className="bg-cover bg-center h-65 flex justify-center items-center">
         <img
           src={loggedUser?.coverImage || "https://placehold.co/600x400"}
           alt="coverImage"
@@ -50,7 +50,8 @@ function Stats() {
       {/* Tabs */}
       <div className="flex w-full justify-between">
         <div
-          className={`hover:bg-lightbg hover:text-highlight w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg ${
+          className={` hover:text-highlight w-1/2 text-darktext text-xl flex
+            justify-center items-center m-4 p-4 rounded-lg cursor-pointer ${
             selectedComponent === "Subscribers"
               ? "bg-lightbg text-lighttext"
               : "bg-transparent"
@@ -63,7 +64,8 @@ function Stats() {
         </div>
 
         <div
-          className={`hover:bg-lightbg hover:text-highlight w-1/2 text-darktext text-xl flex justify-center items-center m-4 p-4 rounded-lg ${
+          className={` hover:text-highlight w-1/2 text-darktext text-xl flex
+            justify-center items-center m-4 p-4 rounded-lg cursor-pointer ${
             selectedComponent === "Subscribed"
               ? "bg-lightbg text-lighttext"
               : "bg-transparent"

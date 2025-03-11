@@ -45,6 +45,7 @@ function AllComments() {
               commentId={comment._id}
               onCommentUpdated={refreshComments}
               onCommentDeleted={refreshComments}
+              onCommentLiked={refreshComments}
             />
           ))}
         </div>

@@ -41,6 +41,7 @@ function UserPlaylists() {
               title={playlist.name}
               thumbnail={playlist.thumbnail}
               uploader={playlist.owner.ownerName}
+              username={playlist.owner.username}
               playlistId={playlist._id}
               description={playlist.description}
 

@@ -28,7 +28,7 @@ const ChannelDashboard = () => {
     <div className="bg-darkbg flex flex-col text-lighttext min-h-screen">
       <div className="flex flex-col w-full  justify-between">
         {/* CoverImage */}
-        <div className="bg-cover bg-center h-55 flex justify-center items-center">
+        <div className="bg-cover bg-center h-65 flex justify-center items-center">
           <img
             src={user.coverImage || "https://placehold.co/600x400"}
             alt="coverImage"

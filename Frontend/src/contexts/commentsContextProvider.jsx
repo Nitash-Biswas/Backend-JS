@@ -3,7 +3,7 @@ import { useFetchComments } from "../hooks/useCommentHook.js";
 
 const CommentsContext = createContext();
 
-export const CommentsProvider = ({ children, videoId }) => {
+export const CommentsContextProvider = ({ children, videoId }) => {
   const [refresh, setRefresh] = useState(false);
   const { comments, loading, error } = useFetchComments(videoId, refresh);
 
@@ -13,11 +13,11 @@ export const CommentsProvider = ({ children, videoId }) => {
     setRefresh((prev) => !prev);
   };
 
-  useEffect(() => {
-    console.log("Video ID:", videoId);
-  console.log("Comments:", comments);
-  console.log("Refresh:", refresh);
-  }, [videoId, comments, refresh]);
+  // useEffect(() => {
+  //   console.log("Video ID:", videoId);
+  // console.log("Comments:", comments);
+  // console.log("Refresh:", refresh);
+  // }, [videoId, comments, refresh]);
 
 
 

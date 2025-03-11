@@ -55,6 +55,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     comment: commentId,
     likedBy: req.user._id,
   });
+
   //if already Liked, remove that like
   if (alreadyLiked) {
     await Like.deleteOne(alreadyLiked);
@@ -180,12 +181,10 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     //Step 3: Unwind to flatten the video array
     {
       $unwind: "$video",
-
     },
     //Step 4: Unwind to flatten the likedBy array
     {
       $unwind: "$likedBy",
-
     },
   ]);
 
@@ -204,4 +203,130 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     );
 });
 
-export { toggleVideoLike, toggleCommentLike, toggleTweetLike, getLikedVideos };
+const getCommentLikeCount = asyncHandler(async (req, res) => {
+  const { commentId } = req.params;
+
+  if (!commentId) {
+    throw new ApiError(400, "Comment Id is required");
+  }
+
+  const commentLikeCount = await Like.countDocuments({
+    comment: commentId,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { commentLikeCount },
+        "Comment like count fetched successfully"
+      )
+    );
+});
+
+const getVideoLikeCount = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+
+  if (!videoId) {
+    throw new ApiError(400, "Comment Id is required");
+  }
+
+  const videoLikeCount = await Like.countDocuments({
+    video: videoId,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { videoLikeCount },
+        "Video like count fetched successfully"
+      )
+    );
+});
+
+const getTweetLikeCount = asyncHandler(async (req, res) => {
+  const { tweetId } = req.params;
+
+  if (!tweetId) {
+    throw new ApiError(400, "Comment Id is required");
+  }
+
+  const tweetLikeCount = await Like.countDocuments({
+    tweet: tweetId,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { tweetLikeCount },
+        "Tweet like count fetched successfully"
+      )
+    );
+});
+
+const checkVideoLike = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+
+  if (!videoId) {
+    throw new ApiError(400, "Video Id is required");
+  }
+
+  const isLiked = await Like.findOne({
+    video: videoId,
+    likedBy: req.user._id,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { isLiked: isLiked ? true : false  }, "Video like status fetched"));
+})
+
+const checkCommentLike = asyncHandler(async (req, res) => {
+  const { commentId } = req.params;
+
+  if (!commentId) {
+    throw new ApiError(400, "Video Id is required");
+  }
+
+  const isLiked = await Like.findOne({
+    comment: commentId,
+    likedBy: req.user._id,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { isLiked: isLiked ? true : false }, "Comment like status fetched"));
+})
+
+const checkTweetLike = asyncHandler(async (req, res) => {
+  const { tweetId } = req.params;
+
+  if (!tweetId) {
+    throw new ApiError(400, "Video Id is required");
+  }
+
+  const isLiked = await Like.findOne({
+    tweet: tweetId,
+    likedBy: req.user._id,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { isLiked: isLiked ? true : false  }, "Tweet like status fetched"));
+})
+export {
+  toggleVideoLike,
+  toggleCommentLike,
+  toggleTweetLike,
+  getLikedVideos,
+  getCommentLikeCount,
+  getVideoLikeCount,
+  getTweetLikeCount,
+  checkVideoLike,
+  checkCommentLike,
+  checkTweetLike};

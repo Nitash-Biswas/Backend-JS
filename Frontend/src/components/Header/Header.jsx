@@ -69,13 +69,6 @@ export default function Header() {
                         >
                           Profile
                         </NavLink>
-                        <NavLink
-                          to="/settings"
-                          className="block px-4 py-2 text-sm text-darktext hover:bg-highlight text-lighttext"
-                          onClick={closeDropdown}
-                        >
-                          Settings
-                        </NavLink>
                         <div
                           className="block px-4 py-2 text-sm text-lighttext hover:bg-highlight cursor-pointer"
                           onClick={handleLogout}

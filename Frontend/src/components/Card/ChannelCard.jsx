@@ -12,7 +12,7 @@ function ChannelCard({ fullname, avatar, username }) {
         />
         <div className="flex flex-col justify-between ml-4.5 mb-2">
           <h2 className="text-xl font-semibold text-lighttext">{fullname}</h2>
-          <span className="text-lg text-gray-500">{`@${username}`}</span>
+          <span className="text-lg text-darktext hover:text-lighttext">{`@${username}`}</span>
         </div>
       </div>
     </NavLink>

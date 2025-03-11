@@ -11,7 +11,8 @@ import Comments from "../Comments/AllComments";
 import UserContext from "../../contexts/userContext";
 import AddComment from "../Comments/AddComment";
 import CommentsContext, {
-  CommentsProvider,
+  CommentsContextProvider,
+  
 } from "../../contexts/commentsContextProvider";
 
 function VideoPlayer() {
@@ -55,7 +56,7 @@ function VideoPlayer() {
 
   return (
     <>
-      <CommentsProvider videoId={videoId}>
+      <CommentsContextProvider videoId={videoId}>
         <div className="bg-darkbg min-h-screen p-4 flex flex-col md:flex-row overflow-hidden">
           {/* Video Section */}
           <div className="md:w-3/5 w-full h-full">
@@ -106,7 +107,7 @@ function VideoPlayer() {
             </div>
           </div>
         </div>
-      </CommentsProvider>
+      </CommentsContextProvider>
     </>
   );
 }

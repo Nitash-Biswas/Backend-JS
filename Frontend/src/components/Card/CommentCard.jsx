@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useUpdateAndDeleteComment } from "../../hooks/useCommentHook";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { AiFillLike } from "react-icons/ai";
 import { NavLink } from "react-router-dom";
+import { useToggleLike, useCheckLike, useGetTotalLikes } from "../../hooks/useLikeHook";
+
+
 function CommentCard({
   content,
   owner,
@@ -12,9 +16,18 @@ function CommentCard({
   commentId,
   onCommentUpdated,
   onCommentDeleted,
+  onCommentLiked,
 }) {
+
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(content);
+  const [isLiked, setIsLiked] = useState(false);
+
+  //Custom hooks
+  const { toggleCommentLike, loadingLike, errorLike } = useToggleLike();
+  const { checkCommentLike, loadingLikeCheck, errorLikeCheck } = useCheckLike();
+  const { getCommentLikes, loadingLikeCount, errorLikeCount } =
+    useGetTotalLikes();
   const { updateComment, deleteComment, loading, error } =
     useUpdateAndDeleteComment();
 
@@ -47,6 +60,17 @@ function CommentCard({
     await deleteComment({ commentId });
     if (onCommentDeleted) {
       onCommentDeleted();
+    }
+  };
+
+  const handleLike = async () => {
+    const response = await toggleCommentLike({ commentId });
+    if (response) {
+      setIsLiked(!isLiked);
+    }
+
+    if (onCommentLiked) {
+      onCommentLiked();
     }
   };
 
@@ -103,7 +127,15 @@ function CommentCard({
       </div>
 
       {loggedUser && loggedUser.username === owner && (
-        <div className="flex justify-end mt-2">
+        <div className="flex justify-end ">
+          <button
+            onClick={handleLike}
+            className={`pr-4 py-2 ${
+              isLiked ? "text-highlight" : "text-darktext"
+            } hover:text-lighttext`}
+          >
+            <AiFillLike size={25} />
+          </button>
           <button
             onClick={() => setIsEditing(true)}
             className="hover:text-lighttext text-darktext pr-4 py-2 "

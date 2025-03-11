@@ -6,7 +6,7 @@ export default function Sidebar() {
   const { loggedUser } = useContext(UserContext);
 
   return (
-    <div className="h-screen sticky top-0 bg-darkbg text-white w-64">
+    <div className="h-screen sticky top-0 bg-darkbg text-white w-64 border-r-3 border-lightbg/30">
       <div className="flex flex-col items-center py-4">
         <nav className="flex flex-col space-y-2">
           <NavLink

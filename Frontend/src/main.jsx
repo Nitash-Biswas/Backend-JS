@@ -26,6 +26,8 @@ import PrivateRoute from "./contexts/privateRoute.jsx";
 import NotLoggedIn from "./pages/NotLoggedIn/NotLoggedIn.jsx";
 import Playlist from "./components/Playlist/Playlist.jsx";
 import Tweets from "./pages/Tweets/Tweets.jsx";
+import { LikesContextProvider } from "./contexts/likesContextProvider.jsx";
+import Profile from "./pages/Profile/Profile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,7 +39,9 @@ const router = createBrowserRouter(
         path="liked_videos"
         element={
           <PrivateRoute>
-            <LikedVideos />
+            <LikesContextProvider>
+              <LikedVideos />
+            </LikesContextProvider>
           </PrivateRoute>
         }
       />
@@ -47,7 +51,6 @@ const router = createBrowserRouter(
         <Route path="playlists" element={<UserPlaylists />} />
         <Route path="tweets" element={<UserTweets />} />
       </Route>
-
       <Route
         path="stats"
         element={
@@ -59,6 +62,7 @@ const router = createBrowserRouter(
       <Route path="video/:videoId" element={<VideoPlayer />} />
       <Route path="playlist/:playlistId" element={<Playlist />} />
 
+      <Route path="profile" element={<Profile />} />
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
       <Route path="tweets" element={<Tweets />} />
