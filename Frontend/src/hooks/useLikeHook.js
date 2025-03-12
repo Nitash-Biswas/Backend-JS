@@ -60,8 +60,8 @@ export const useToggleLike = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data);
-      return response.data.data
+      // console.log(response.data.data);
+      return response.data.data;
     } catch (err) {
       setErrorLike(err.message);
     } finally {
@@ -73,7 +73,6 @@ export const useToggleLike = () => {
   const toggleCommentLike = async ({ commentId }) => {
     setLoadingLike(true);
     try {
-
       const headers = requestHeaders();
 
       const response = await axios.post(
@@ -82,8 +81,8 @@ export const useToggleLike = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data);
-      return response.data.data
+      // console.log(response.data.data);
+      return response.data.data;
     } catch (err) {
       setErrorLike(err.message);
     } finally {
@@ -103,8 +102,8 @@ export const useToggleLike = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data);
-      return response.data.data
+      // console.log(response.data.data);
+      return response.data.data;
     } catch (err) {
       setErrorLike(err.message);
     } finally {
@@ -138,14 +137,14 @@ export const useGetTotalLikes = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.videoLikeCount);
-      return response.data.data.videoLikeCount
+      // console.log(response.data.data.videoLikeCount);
+      return response.data.data.videoLikeCount;
     } catch (err) {
       setErrorLike(err.message);
     } finally {
       setLoadingLike(false);
     }
-  },[]);
+  }, []);
 
   //Get total likes for a comment
   const getCommentLikes = useCallback(async ({ commentId }) => {
@@ -159,14 +158,14 @@ export const useGetTotalLikes = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.commentLikeCount);
-      return response.data.data.commentLikeCount
+      // console.log(response.data.data.commentLikeCount);
+      return response.data.data.commentLikeCount;
     } catch (err) {
       setErrorLike(err.message);
     } finally {
       setLoadingLike(false);
     }
-  },[]);
+  }, []);
 
   //Get total likes for a tweet
   const getTweetLikes = useCallback(async ({ tweetId }) => {
@@ -180,14 +179,14 @@ export const useGetTotalLikes = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.tweetLikeCount);
-      return response.data.data.tweetLikeCount
+      // console.log(response.data.data.tweetLikeCount);
+      return response.data.data.tweetLikeCount;
     } catch (err) {
       setErrorLike(err.message);
     } finally {
       setLoadingLike(false);
     }
-  },[]);
+  }, []);
 
   return {
     getVideoLikes,
@@ -215,14 +214,14 @@ export const useCheckLike = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.isLiked);
-      return response.data.data.isLiked
+      // console.log(response.data.data.isLiked);
+      return response.data.data.isLiked;
     } catch (err) {
       setErrorLikeCheck(err.message);
     } finally {
       setLoadingLikeCheck(false);
     }
-  },[]);
+  }, []);
 
   //Check if a user has liked a comment
   const checkCommentLike = useCallback(async ({ commentId }) => {
@@ -236,14 +235,14 @@ export const useCheckLike = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.isLiked);
-      return response.data.data.isLiked
+      // console.log(response.data.data.isLiked);
+      return response.data.data.isLiked;
     } catch (err) {
       setErrorLikeCheck(err.message);
     } finally {
       setLoadingLikeCheck(false);
     }
-  },[]);
+  }, []);
 
   //Check if a user has liked a tweet
   const checkTweetLike = useCallback(async ({ tweetId }) => {
@@ -257,14 +256,14 @@ export const useCheckLike = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.isLiked);
-      return response.data.data.isLiked
+      // console.log(response.data.data.isLiked);
+      return response.data.data.isLiked;
     } catch (err) {
       setErrorLikeCheck(err.message);
     } finally {
       setLoadingLikeCheck(false);
     }
-  },[]);
+  }, []);
 
   return {
     checkVideoLike,

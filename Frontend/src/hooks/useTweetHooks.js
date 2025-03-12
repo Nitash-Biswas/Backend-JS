@@ -79,6 +79,7 @@ export const useFetchUserTweets = (username) => {
   return { tweets, loading, error };
 };
 
+// Custom hook to add a Tweet
 export const useAddTweet = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -97,7 +98,7 @@ export const useAddTweet = () => {
       };
 
       //Add comment only when when carrying auth tokens
-      const response = await axios.post(
+       await axios.post(
         `${BASE_URL}${TWEETS_URL}/create`,
         {
           content: tweet,

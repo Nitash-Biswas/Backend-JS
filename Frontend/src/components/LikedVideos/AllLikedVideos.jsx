@@ -22,7 +22,6 @@ function AllLikedVideos() {
       </div>
     );
   }
-  console.log(likedVideos);
   return (
     <div className="bg-darkbg min-h-full text-lighttext">
 

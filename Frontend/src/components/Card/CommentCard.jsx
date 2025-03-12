@@ -103,8 +103,6 @@ function CommentCard({
     }
   };
 
-  console.log({ commentId, isLiked, totalLikes });
-
   return (
     <div className="bg-lightbg shadow-md rounded-lg overflow-hidden flex flex-col w-full p-4 relative">
       <div className="flex justify-center items-center">
