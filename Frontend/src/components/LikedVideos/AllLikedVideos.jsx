@@ -32,8 +32,8 @@ function AllLikedVideos() {
               key={video._id}
               title={video.video.title}
               thumbnail={video.video.thumbnail}
-              uploader={video.likedBy.fullname}
-              username={video.likedBy.username}
+              uploader={video.ownerDetails.fullname}
+              username={video.ownerDetails.username}
               videoId={video.video._id}
               description={video.video.description}
             />

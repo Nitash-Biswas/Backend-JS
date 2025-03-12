@@ -155,7 +155,7 @@ function CommentCard({
         </div>
       </div>
 
-      <div className="flex justify-between items-center mt-2">
+      <div className="flex justify-between items-center">
         <div >
           {loggedUser && loggedUser.username === owner && (
             <>
@@ -175,7 +175,7 @@ function CommentCard({
           )}
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center items-en">
           <span className="pr-4 text-darktext text-lg font-bold">
             {totalLikes}
           </span>

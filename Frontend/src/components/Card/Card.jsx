@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { SlOptionsVertical } from "react-icons/sl";
 import EditVideo from "../EditVideo/EditVideo";
 
-
 export default function Card({
   title = "No title",
   thumbnail = "No thumbnail",
@@ -13,6 +12,7 @@ export default function Card({
   videoId = "No videoId",
   duration = "0:00",
   loggedUser = null,
+  onVideoEdit,
 }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -46,6 +46,7 @@ export default function Card({
 
   const closeEditVideo = () => {
     setShowEditVideo(false);
+    onVideoEdit();
   };
 
   return (
@@ -124,13 +125,13 @@ export default function Card({
             <div className="flex justify-end">
               <button
                 onClick={cancelDelete}
-                className="bg-lightbg text-lighttext px-4 py-2 rounded mr-2"
+                className="bg-lightbg text-lighttext px-4 py-2 rounded mr-2 hover:bg-lightbg/70"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                className="bg-red-600 text-lighttext px-4 py-2 rounded"
+                className="bg-red-600 text-lighttext px-4 py-2 rounded hover:bg-red-600/70"
               >
                 Delete
               </button>
@@ -139,10 +140,7 @@ export default function Card({
         </div>
       )}
       {showEditVideo && (
-        <EditVideo
-          videoId={videoId}
-          onClose={closeEditVideo}
-        />
+        <EditVideo videoId={videoId} onClose={closeEditVideo} />
       )}
     </div>
   );

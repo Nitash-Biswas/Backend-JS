@@ -117,8 +117,8 @@ function VideoPlayer() {
                   <h2 className="text-3xl font-semibold text-lighttext mb-2">
                     {videoData.title}
                   </h2>
-                  <div className="flex justify-center">
-                    <span className="pr-4 text-darktext text-lg font-bold">
+                  <div className="flex justify-center items-end pb-2">
+                    <span className="pr-4 text-darktext text-2xl font-bold">
                       {totalLikes}
                     </span>
                     <button
@@ -128,7 +128,7 @@ function VideoPlayer() {
                       } hover:text-lighttext disabled:text-darktext/30`}
                       disabled={!loggedUser || loadingLike || loadingLikeCheck}
                     >
-                      <AiFillLike size={25} />
+                      <AiFillLike size={35} />
                     </button>
                   </div>
                 </div>

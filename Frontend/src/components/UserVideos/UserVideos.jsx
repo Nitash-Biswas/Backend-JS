@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import Card from "../Card/Card";
 import { useFetchUserVideos } from "../../hooks/useVideoHooks";
@@ -11,9 +11,14 @@ import UserContext from "../../contexts/userContext";
 
 function UserVideos() {
   const username = useParams().username;
+  const [refresh, setRefresh] = useState(false);
   // Custom hook to fetch all videos
-  const { videos, loading, error } = useFetchUserVideos(username);
-  const {loggedUser} = useContext(UserContext)
+  const { videos, loading, error } = useFetchUserVideos(username, refresh);
+  const { loggedUser } = useContext(UserContext);
+
+  const handleRefresh = () => {
+    setRefresh(prev => !prev)
+  }
 
   if (loading) {
     return (
@@ -45,6 +50,7 @@ function UserVideos() {
               videoId={video._id}
               duration={formatDuration(video.duration)}
               loggedUser={loggedUser}
+              onVideoEdit={handleRefresh}
             />
           ))}
         </div>

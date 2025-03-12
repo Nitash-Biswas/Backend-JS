@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useFetchVideo } from "../../hooks/useVideoHooks";
+import { useFetchVideo, useUpdateAndDeleteVideo } from "../../hooks/useVideoHooks";
 
 export default function EditVideo({ videoId, onClose }) {
   const { videoData, error } = useFetchVideo(videoId);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
+
+  const {updateVideo, loadingChange, errorChange} = useUpdateAndDeleteVideo()
 
   useEffect(() => {
     if (videoData) {
@@ -13,8 +15,8 @@ export default function EditVideo({ videoId, onClose }) {
     }
   }, [videoData]);
 
-  const handleSave = () => {
-    // Handle save action
+  const handleSave = async () => {
+    await updateVideo({videoId, newTitle, newDescription})
     onClose();
   };
 
@@ -67,9 +69,10 @@ export default function EditVideo({ videoId, onClose }) {
           </button>
           <button
             onClick={handleSave}
+            disabled={loadingChange}
             className="bg-blue-600 text-lighttext px-4 py-2 rounded"
           >
-            Save
+            {loadingChange ? "Saving" : "Save"}
           </button>
         </div>
       </div>

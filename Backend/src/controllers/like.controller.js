@@ -155,6 +155,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
               thumbnail: 1,
               views: 1,
               duration: 1,
+              owner: 1
             },
           },
         ],
@@ -178,14 +179,38 @@ const getLikedVideos = asyncHandler(async (req, res) => {
         ],
       },
     },
-    //Step 3: Unwind to flatten the video array
+    //Step 4: Lookup to join with the users collection to get the owner's fullname
     {
+      $lookup: {
+        from: "users", //collection to join with
+        localField: "video.owner", //field in the video collection
+        foreignField: "_id", //matched with field in the users collection
+        as: "ownerDetails", //name of the new field to store the matched data
+        pipeline: [
+          //nested pipeline to project (show) only required fields
+          {
+            $project: {
+              fullname: 1,
+              username: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+     //Step 5: Unwind to flatten the video array
+     {
       $unwind: "$video",
     },
-    //Step 4: Unwind to flatten the likedBy array
+    //Step 6: Unwind to flatten the likedBy array
     {
       $unwind: "$likedBy",
     },
+    //Step 7: Unwind to flatten the ownerDetails array
+    {
+      $unwind: "$ownerDetails",
+    },
+
   ]);
 
   if (!allLikedVideos) {

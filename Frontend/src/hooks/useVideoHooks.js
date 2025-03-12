@@ -59,7 +59,7 @@ export const useFetchAllVideos = () => {
 };
 
 // Custom hook to fetch all videos of the logged in user
-export const useFetchUserVideos = (username) => {
+export const useFetchUserVideos = (username, refresh) => {
   // State to store videos, loading and error
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,7 +96,66 @@ export const useFetchUserVideos = (username) => {
     };
 
     fetchVideos();
-  }, []);
+  }, [refresh]);
 
   return { videos, loading, error };
+};
+
+export const useUpdateAndDeleteVideo = () => {
+  const [loadingChange, setLoadingChange] = useState(false);
+  const [errorChange, setErrorChange] = useState(null);
+  const updateVideo = async ({ videoId, newTitle, newDescription  }) => {
+    setLoadingChange(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
+
+      // Update comment only when carrying auth tokens
+      await axios.patch(
+        `${BASE_URL}${VIDEOS_URL}/update/${videoId}`,
+        { newTitle: newTitle,
+          newDescription: newDescription
+         },
+        { headers, withCredentials: true }
+      );
+    } catch (err) {
+      setErrorChange(err.message);
+    } finally {
+      setLoadingChange(false);
+    }
+  };
+
+  const deleteVideo = async ({ videoId }) => {
+    setLoadingChange(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
+
+      // Delete comment only when carrying auth tokens
+      await axios.delete(`${BASE_URL}${VIDEOS_URL}/delete/${videoId}`, {
+        headers,
+        withCredentials: true,
+      });
+    } catch (err) {
+      setErrorChange(err.message);
+    } finally {
+      setLoadingChange(false);
+    }
+  };
+
+  return { updateVideo, deleteVideo, loadingChange, errorChange };
 };
