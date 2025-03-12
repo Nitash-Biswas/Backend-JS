@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import TweetCard from "../Card/TweetCard";
 import { useFetchUserTweets } from "../../hooks/useTweetHooks";
 import { extractDate } from "../../Utils/extractDate";
 import { useParams } from "react-router-dom";
+import UserContext from "../../contexts/userContext";
+import TweetsContext from "../../contexts/tweetContextProvider";
 
 // const tweets = [
 //   {
@@ -17,6 +19,8 @@ function UserTweets() {
   const { username } = useParams();
   // Custom hook to fetch all videos
   const { tweets, loading, error } = useFetchUserTweets(username);
+  const { loggedUser } = useContext(UserContext);
+  const { refreshTweets } = useContext(TweetsContext);
 
   if (loading) {
     return (
@@ -41,10 +45,16 @@ function UserTweets() {
           {tweets.map((tweet) => (
             <TweetCard
               key={tweet._id}
+              tweetId={tweet._id}
               content={tweet.content}
               owner={tweet.owner.username}
               date={extractDate(tweet.createdAt)}
               avatar={tweet.owner.avatar}
+              loggedUser={loggedUser}
+              onTweetUpdated={refreshTweets}
+              onTweetDeleted={refreshTweets}
+              onTweetLiked={refreshTweets}
+
             />
           ))}
         </div>

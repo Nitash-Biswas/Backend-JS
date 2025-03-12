@@ -50,6 +50,7 @@ function AllTweets() {
               loggedUser={loggedUser}
               onTweetUpdated={refreshTweets}
               onTweetDeleted={refreshTweets}
+              onTweetLiked={refreshTweets}
             />
           ))}
         </div>

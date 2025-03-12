@@ -28,6 +28,7 @@ import Playlist from "./components/Playlist/Playlist.jsx";
 import Tweets from "./pages/Tweets/Tweets.jsx";
 import { LikesContextProvider } from "./contexts/likesContextProvider.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
+import { TweetsProvider } from "./contexts/tweetContextProvider.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -49,7 +50,14 @@ const router = createBrowserRouter(
       <Route path="/user/:username" element={<ChannelDashboard />}>
         <Route path="videos" element={<UserVideos />} />
         <Route path="playlists" element={<UserPlaylists />} />
-        <Route path="tweets" element={<UserTweets />} />
+        <Route
+          path="tweets"
+          element={
+            <TweetsProvider>
+              <UserTweets />
+            </TweetsProvider>
+          }
+        />
       </Route>
       <Route
         path="stats"

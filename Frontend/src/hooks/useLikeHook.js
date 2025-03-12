@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BASE_URL, LIKES_URL } from "../constants";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -56,11 +56,12 @@ export const useToggleLike = () => {
 
       const response = await axios.post(
         `${BASE_URL}${LIKES_URL}/v/${videoId}`,
-
+        {},
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data);
+      return response.data.data
     } catch (err) {
       setErrorLike(err.message);
     } finally {
@@ -72,15 +73,17 @@ export const useToggleLike = () => {
   const toggleCommentLike = async ({ commentId }) => {
     setLoadingLike(true);
     try {
+
       const headers = requestHeaders();
 
       const response = await axios.post(
         `${BASE_URL}${LIKES_URL}/c/${commentId}`,
-
+        {},
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data);
+      return response.data.data
     } catch (err) {
       setErrorLike(err.message);
     } finally {
@@ -96,11 +99,12 @@ export const useToggleLike = () => {
 
       const response = await axios.post(
         `${BASE_URL}${LIKES_URL}/t/${tweetId}`,
-
+        {},
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data);
+      return response.data.data
     } catch (err) {
       setErrorLike(err.message);
     } finally {
@@ -123,64 +127,67 @@ export const useGetTotalLikes = () => {
   const [errorLike, setErrorLike] = useState(null);
 
   //Get total likes for a video
-  const getVideoLikes = async ({ videoId }) => {
+  const getVideoLikes = useCallback(async ({ videoId }) => {
     setLoadingLike(true);
     try {
       const headers = requestHeaders();
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${BASE_URL}${LIKES_URL}/v/count/${videoId}`,
 
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data.videoLikeCount);
+      return response.data.data.videoLikeCount
     } catch (err) {
       setErrorLike(err.message);
     } finally {
       setLoadingLike(false);
     }
-  };
+  },[]);
 
   //Get total likes for a comment
-  const getCommentLikes = async ({ commentId }) => {
+  const getCommentLikes = useCallback(async ({ commentId }) => {
     setLoadingLike(true);
     try {
       const headers = requestHeaders();
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${BASE_URL}${LIKES_URL}/c/count/${commentId}`,
 
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data.commentLikeCount);
+      return response.data.data.commentLikeCount
     } catch (err) {
       setErrorLike(err.message);
     } finally {
       setLoadingLike(false);
     }
-  };
+  },[]);
 
   //Get total likes for a tweet
-  const getTweetLikes = async ({ tweetId }) => {
+  const getTweetLikes = useCallback(async ({ tweetId }) => {
     setLoadingLike(true);
     try {
       const headers = requestHeaders();
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${BASE_URL}${LIKES_URL}/t/count/${tweetId}`,
 
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data.tweetLikeCount);
+      return response.data.data.tweetLikeCount
     } catch (err) {
       setErrorLike(err.message);
     } finally {
       setLoadingLike(false);
     }
-  };
+  },[]);
 
   return {
     getVideoLikes,
@@ -197,64 +204,67 @@ export const useCheckLike = () => {
   const [errorLikeCheck, setErrorLikeCheck] = useState(null);
 
   //Check if a user has liked a video
-  const checkVideoLike = async ({ videoId }) => {
+  const checkVideoLike = useCallback(async ({ videoId }) => {
     setLoadingLikeCheck(true);
     try {
       const headers = requestHeaders();
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${BASE_URL}${LIKES_URL}/v/check/${videoId}`,
 
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data.isLiked);
+      return response.data.data.isLiked
     } catch (err) {
       setErrorLikeCheck(err.message);
     } finally {
       setLoadingLikeCheck(false);
     }
-  };
+  },[]);
 
   //Check if a user has liked a comment
-  const checkCommentLike = async ({ commentId }) => {
+  const checkCommentLike = useCallback(async ({ commentId }) => {
     setLoadingLikeCheck(true);
     try {
       const headers = requestHeaders();
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${BASE_URL}${LIKES_URL}/c/check/${commentId}`,
 
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data.isLiked);
+      return response.data.data.isLiked
     } catch (err) {
       setErrorLikeCheck(err.message);
     } finally {
       setLoadingLikeCheck(false);
     }
-  };
+  },[]);
 
   //Check if a user has liked a tweet
-  const checkTweetLike = async ({ tweetId }) => {
+  const checkTweetLike = useCallback(async ({ tweetId }) => {
     setLoadingLikeCheck(true);
     try {
       const headers = requestHeaders();
 
-      const response = await axios.post(
+      const response = await axios.get(
         `${BASE_URL}${LIKES_URL}/t/check/${tweetId}`,
 
         { headers, withCredentials: true }
       );
 
       console.log(response.data.data.isLiked);
+      return response.data.data.isLiked
     } catch (err) {
       setErrorLikeCheck(err.message);
     } finally {
       setLoadingLikeCheck(false);
     }
-  };
+  },[]);
 
   return {
     checkVideoLike,

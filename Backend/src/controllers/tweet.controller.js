@@ -109,6 +109,12 @@ const getUserTweets = asyncHandler(async (req, res) => {
         },
       },
     },
+    //Stage 5: Sort by createdAt
+    {
+      $sort:{
+        createdAt: -1
+      }
+    }
   ]);
 
   if (!allTweets) {

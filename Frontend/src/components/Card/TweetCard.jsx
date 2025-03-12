@@ -2,7 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { AiFillLike } from "react-icons/ai";
 import { useUpdateAndDeleteTweet } from "../../hooks/useTweetHooks";
+import {
+  useCheckLike,
+  useGetTotalLikes,
+  useToggleLike,
+} from "../../hooks/useLikeHook";
+
+
 function TweetCard({
   content,
   owner,
@@ -12,11 +20,19 @@ function TweetCard({
   tweetId,
   onTweetUpdated,
   onTweetDeleted,
+  onTweetLiked,
 }) {
-const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState(content);
+  const [isLiked, setIsLiked] = useState(false);
+  const [totalLikes, setTotalLikes] = useState(0);
+
+  const { toggleTweetLike, loadingLike, errorLike } = useToggleLike();
+  const { checkTweetLike, loadingLikeCheck, errorLikeCheck } = useCheckLike();
+  const { getTweetLikes, loadingLikeCount, errorLikeCount } =
+    useGetTotalLikes();
   const { updateTweet, deleteTweet, loading, error } =
-  useUpdateAndDeleteTweet();
+    useUpdateAndDeleteTweet();
 
   const textareaRef = useRef(null);
 
@@ -28,98 +44,166 @@ const [isEditing, setIsEditing] = useState(false);
     }
   };
   // Adjust textarea height when content changes
-    useEffect(() => {
-      if (isEditing) {
-        adjustTextareaHeight();
-      }
-    }, [newContent, isEditing]);
+  useEffect(() => {
+    if (isEditing) {
+      adjustTextareaHeight();
+    }
+  }, [newContent, isEditing]);
 
-    const handleUpdate = async () => {
-      await updateTweet({ tweetId, newContent: newContent });
-      setIsEditing(false);
-      if (onTweetUpdated) {
-        onTweetUpdated();
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      try {
+        const liked = await checkTweetLike({ tweetId });
+        setIsLiked(liked);
+      } catch (error) {
+        console.error("Error fetching like status:", error);
       }
     };
 
-    const handleDelete = async () => {
-      await deleteTweet({ tweetId });
-      if (onTweetDeleted) {
-        onTweetDeleted();
+    const fetchTotalLikes = async () => {
+      try {
+        const likes = await getTweetLikes({ tweetId });
+        setTotalLikes(likes);
+      } catch (error) {
+        console.error("Error fetching total likes:", error);
       }
     };
+    if (loggedUser) {
+      fetchLikeStatus();
+    }
+
+    fetchTotalLikes();
+  }, [tweetId, checkTweetLike, getTweetLikes, loggedUser]);
+
+  const handleUpdate = async () => {
+    await updateTweet({ tweetId, newContent: newContent });
+    setIsEditing(false);
+    if (onTweetUpdated) {
+      onTweetUpdated();
+    }
+  };
+
+  const handleDelete = async () => {
+    await deleteTweet({ tweetId });
+    if (onTweetDeleted) {
+      onTweetDeleted();
+    }
+  };
+
+  const handleLike = async () => {
+    const response = await toggleTweetLike({ tweetId });
+    if (response) {
+      setIsLiked(!isLiked);
+      setTotalLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
+    }
+
+    if (onTweetLiked) {
+      onTweetLiked();
+    }
+  };
 
   return (
-      <div className="bg-lightbg shadow-md rounded-lg overflow-hidden flex flex-col w-full p-4 relative">
-        <div className="flex justify-center items-center">
-          <NavLink to={`/user/${owner}`}>
-            <img
-              src={avatar || "https://placehold.co/150x150"}
-              className="w-10 h-10 object-cover rounded-full"
-              alt=""
-            />
-          </NavLink>
-          <div className="flex flex-col justify-center ml-4 w-full">
-            <div className="flex justify-between items-center">
-              <NavLink to={`/user/${owner}`}>
-                <p className="text-darktext text-sm hover:text-lighttext">{`@${owner}`}</p>
-              </NavLink>
-              <span className="text-xs text-darktext">{date}</span>
-            </div>
-
-            {isEditing ? (
-              <div className="flex flex-col">
-                <textarea
-                  ref={textareaRef}
-                  className="text-lg font-semibold text-lighttext bg-darkbg p-2 rounded-md overflow-hidden resize-none"
-                  value={newContent}
-                  onChange={(e) => setNewContent(e.target.value)}
-                  rows={1} // Start with one row
-                />
-                <div className="flex justify-end mt-2">
-                  <button
-                    onClick={handleUpdate}
-                    className="bg-highlight hover:bg-highlight/80 text-lighttext px-4 py-2 rounded-md mr-2"
-                    disabled={loading}
-                  >
-                    {loading ? "Updating..." : "Update"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsEditing(false);
-                      setNewContent(content);
-                    }}
-                    className="bg-darkbg hover:bg-darkbg/80 text-lighttext px-4 py-2 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <h2 className="text-lg font-semibold text-lighttext">{content}</h2>
-            )}
+    <div className="bg-lightbg shadow-md rounded-lg overflow-hidden flex flex-col w-full p-4 relative">
+      <div className="flex justify-center items-center">
+        <NavLink to={`/user/${owner}`}>
+          <img
+            src={avatar || "https://placehold.co/150x150"}
+            className="w-10 h-10 object-cover rounded-full"
+            alt=""
+          />
+        </NavLink>
+        <div className="flex flex-col justify-center ml-4 w-full">
+          <div className="flex justify-between items-center">
+            <NavLink to={`/user/${owner}`}>
+              <p className="text-darktext text-sm hover:text-lighttext">{`@${owner}`}</p>
+            </NavLink>
+            <span className="text-xs text-darktext">{date}</span>
           </div>
+
+          {isEditing ? (
+            <div className="flex flex-col">
+              <textarea
+                ref={textareaRef}
+                className="text-lg font-semibold text-lighttext bg-darkbg p-2 rounded-md overflow-hidden resize-none"
+                value={newContent}
+                onChange={(e) => setNewContent(e.target.value)}
+                rows={1} // Start with one row
+              />
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={handleUpdate}
+                  className="bg-highlight hover:bg-highlight/80 text-lighttext px-4 py-2 rounded-md mr-2"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Update"}
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setNewContent(content);
+                  }}
+                  className="bg-darkbg hover:bg-darkbg/80 text-lighttext px-4 py-2 rounded-md"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <h2 className="text-lg font-semibold text-lighttext">{content}</h2>
+          )}
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mt-2">
+        <div>
+          {loggedUser && loggedUser.username === owner && (
+            <>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="hover:text-lighttext text-darktext pr-4 pt-2"
+              >
+                <FaEdit size={25} />
+              </button>
+              <button
+                onClick={handleDelete}
+                className="hover:text-red-500 text-darktext pt-2"
+              >
+                <MdDelete size={25} />
+              </button>
+            </>
+          )}
         </div>
 
-        {loggedUser && loggedUser.username === owner && (
-          <div className="flex justify-end mt-2">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="hover:text-lighttext text-darktext pr-4 py-2 "
-            >
-              <FaEdit size={25} />
-            </button>
-            <button
-              onClick={handleDelete}
-              className="hover:text-red-500 text-darktext   py-2"
-            >
-              <MdDelete size={25} />
-            </button>
-          </div>
-        )}
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        <div className="flex justify-center">
+          <span className="pr-4 text-darktext text-lg font-bold">
+            {totalLikes}
+          </span>
+          <button
+            onClick={handleLike}
+            className={` ${
+              isLiked ? "text-highlight" : "text-darktext"
+            } hover:text-lighttext disabled:text-darktext/30`}
+            disabled={!loggedUser || loadingLike || loadingLikeCheck}
+          >
+            <AiFillLike size={25} />
+          </button>
+        </div>
       </div>
-    );
+      {!loggedUser && (
+        <p className="text-sm text-right text-darktext/30">
+          Login to like tweets...
+        </p>
+      )}
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      {errorLike && <p className="text-sm text-red-500">{errorLike}</p>}
+      {errorLikeCheck && (
+        <p className="text-sm text-red-500">{errorLikeCheck}</p>
+      )}
+      {errorLikeCount && (
+        <p className="text-sm text-red-500">{errorLikeCount}</p>
+      )}
+    </div>
+  );
 }
 
 export default TweetCard;
