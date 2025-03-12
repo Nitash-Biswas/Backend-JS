@@ -26,7 +26,7 @@ export const useFetchVideo = (videoId) => {
     };
     fetchVideo();
   }, [videoId]);
-
+  // console.log(videoData)
   return { videoData, error };
 };
 

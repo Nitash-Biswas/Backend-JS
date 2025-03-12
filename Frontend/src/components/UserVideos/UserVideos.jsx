@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import Card from "../Card/Card";
 import { useFetchUserVideos } from "../../hooks/useVideoHooks";
 import { formatDuration } from "../../Utils/formatDuration";
 import { useParams } from "react-router-dom";
+import UserContext from "../../contexts/userContext";
 // import cardDummyDataGen from "../../Utils/cardDummyDataGen";
 
 // const videos = cardDummyDataGen(0, false);
@@ -12,6 +13,7 @@ function UserVideos() {
   const username = useParams().username;
   // Custom hook to fetch all videos
   const { videos, loading, error } = useFetchUserVideos(username);
+  const {loggedUser} = useContext(UserContext)
 
   if (loading) {
     return (
@@ -42,6 +44,7 @@ function UserVideos() {
               username={video.owner.username}
               videoId={video._id}
               duration={formatDuration(video.duration)}
+              loggedUser={loggedUser}
             />
           ))}
         </div>

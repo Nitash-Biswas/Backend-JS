@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { SlOptionsVertical } from "react-icons/sl";
+import EditVideo from "../EditVideo/EditVideo";
+
 
 export default function Card({
   title = "No title",
@@ -9,32 +12,138 @@ export default function Card({
   username = "N/A",
   videoId = "No videoId",
   duration = "0:00",
+  loggedUser = null,
 }) {
+  const [showOptions, setShowOptions] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showEditVideo, setShowEditVideo] = useState(false);
+
+  const toggleOptions = () => {
+    setShowOptions(!showOptions);
+  };
+  const closeOptions = () => {
+    setShowOptions(false);
+  };
+
+  const handleEdit = () => {
+    setShowEditVideo(true);
+    setShowOptions(false);
+  };
+
+  const handleDelete = () => {
+    setShowConfirmDelete(true);
+    setShowOptions(false);
+  };
+
+  const confirmDelete = () => {
+    // Handle delete action
+    setShowConfirmDelete(false);
+  };
+
+  const cancelDelete = () => {
+    setShowConfirmDelete(false);
+  };
+
+  const closeEditVideo = () => {
+    setShowEditVideo(false);
+  };
+
   return (
-    <div className="bg-lightbg shadow-md rounded-lg overflow-hidden relative">
-      <NavLink to={`/video/${videoId}`}>
-        <img src={thumbnail} alt={title} className="w-full h-48 object-cover" />
-        <div className="absolute top-40 right-2 bg-black/70 text-lighttext text-sm px-2 py-1 rounded">
-          {duration}
-        </div>
-      </NavLink>
-      <div className="p-4">
+    <div className="relative">
+      {showOptions && (
+        <div
+          className="fixed inset-0 bg-black/70 z-20"
+          onClick={closeOptions}
+        ></div>
+      )}
+      <div
+        className={`bg-lightbg shadow-md rounded-lg overflow-hidden relative ${
+          showOptions ? "z-20" : ""
+        }`}
+      >
         <NavLink to={`/video/${videoId}`}>
-          <h2 className="text-lg font-semibold text-lighttext">{title}</h2>
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-48 object-cover"
+          />
+          <div className="absolute top-40 right-2 bg-black/70 text-lighttext text-sm px-2 py-1 rounded">
+            {duration}
+          </div>
         </NavLink>
-        <div className="flex items-center mt-2">
-          <NavLink to={`/user/${username}/videos`}>
-            <img
-              src={avatar}
-              alt={title}
-              className="w-10 h-10 rounded-full mr-2"
-            />
+        <div className="p-4">
+          <NavLink to={`/video/${videoId}`}>
+            <h2 className="text-lg font-semibold text-lighttext">{title}</h2>
           </NavLink>
-          <p className="text-darktext hover:text-lighttext">
-            <NavLink to={`/user/${username}/videos`}>{uploader}</NavLink>
-          </p>
+          <div className="flex items-center mt-2">
+            <NavLink to={`/user/${username}/videos`}>
+              <img
+                src={avatar}
+                alt={title}
+                className="w-10 h-10 rounded-full mr-2"
+              />
+            </NavLink>
+            <p className="text-darktext hover:text-lighttext">
+              <NavLink to={`/user/${username}/videos`}>{uploader}</NavLink>
+            </p>
+
+            {loggedUser && (
+              <button
+                onClick={toggleOptions}
+                className="ml-auto text-darktext hover:text-lighttext"
+              >
+                <SlOptionsVertical />
+              </button>
+            )}
+          </div>
         </div>
+        {showOptions && (
+          <div className="absolute bottom-10 right-6 border-3 border-darktext/40 bg-lightbg text-lighttext shadow-lg rounded-lg z-40">
+            <div className="py-1 ">
+              <button
+                onClick={handleEdit}
+                className="block px-4 py-2 hover:bg-highlight w-full text-left"
+              >
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="block px-4 py-2 hover:bg-highlight w-full text-left"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+      {showConfirmDelete && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-30">
+          <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Confirm Delete</h2>
+            <p className="mb-4">Are you sure you want to delete this video?</p>
+            <div className="flex justify-end">
+              <button
+                onClick={cancelDelete}
+                className="bg-lightbg text-lighttext px-4 py-2 rounded mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="bg-red-600 text-lighttext px-4 py-2 rounded"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showEditVideo && (
+        <EditVideo
+          videoId={videoId}
+          onClose={closeEditVideo}
+        />
+      )}
     </div>
   );
 }
