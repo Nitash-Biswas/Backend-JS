@@ -71,6 +71,11 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User not found");
   }
 
+  //Check if user is the channel
+  if (subscriber._id.toString() === channel._id.toString()) {
+    throw new ApiError(400, "You cannot subscribe to yourself");
+  }
+
   //Check if user is already subscribed
   const subscription = await Subscription.findOne({
     subscriber: user,
@@ -106,16 +111,49 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     //Subscriber list
     const subsList = await getSubscribedChannelsAggregate(user);
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { newSubscription, subcribedTo: subsList[0]?.subscribedChannels || [] },
-          "Subscribed"
-        )
-      );
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          newSubscription,
+          subcribedTo: subsList[0]?.subscribedChannels || [],
+        },
+        "Subscribed"
+      )
+    );
   }
+});
+
+const checkSubscriptionStatus = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+  const user = req.user._id;
+
+  //Check if channel exists
+  const channel = await User.findOne({ username: username });
+  if (!channel) {
+    throw new ApiError(400, "Channel not found");
+  }
+
+  //Check if user exists
+  const subscriber = await User.findById(user);
+  if (!subscriber) {
+    throw new ApiError(400, "User not found");
+  }
+
+  //Check if user is the channel
+  if (subscriber._id.toString() === channel._id.toString()) {
+    throw new ApiError(400, "You cannot subscribe to yourself");
+  }
+
+  //Check if user is already subscribed
+  const isSubscribed = await Subscription.findOne({
+    subscriber: user,
+    channel: channel._id,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {isSubscribed: isSubscribed ? true : false}, "Subscription status"));
 });
 
 const getSubcribedChannels = asyncHandler(async (req, res) => {
@@ -180,8 +218,6 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Channel not found");
   }
 
-
-
   const subscribers = await Subscription.aggregate([
     //Step 1: Match the channel
     {
@@ -238,4 +274,9 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { subscribers }, "Subscribed channels"));
 });
 
-export { toggleSubscription, getSubcribedChannels, getUserSubscribers };
+export {
+  toggleSubscription,
+  checkSubscriptionStatus,
+  getSubcribedChannels,
+  getUserSubscribers,
+};
