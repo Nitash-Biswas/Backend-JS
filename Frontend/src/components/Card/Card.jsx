@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { SlOptionsVertical } from "react-icons/sl";
 import EditVideo from "../EditVideo/EditVideo";
+import { useUpdateAndDeleteVideo } from "../../hooks/useVideoHooks";
 
 export default function Card({
   title = "No title",
@@ -13,10 +14,12 @@ export default function Card({
   duration = "0:00",
   loggedUser = null,
   onVideoEdit,
+  onVideoDelete,
 }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showEditVideo, setShowEditVideo] = useState(false);
+  const {deleteVideo , loadingChange} = useUpdateAndDeleteVideo()
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -35,9 +38,10 @@ export default function Card({
     setShowOptions(false);
   };
 
-  const confirmDelete = () => {
-    // Handle delete action
+  const confirmDelete = async () => {
+    await deleteVideo({videoId})
     setShowConfirmDelete(false);
+    onVideoDelete();
   };
 
   const cancelDelete = () => {
@@ -131,9 +135,10 @@ export default function Card({
               </button>
               <button
                 onClick={confirmDelete}
-                className="bg-red-600 text-lighttext px-4 py-2 rounded hover:bg-red-600/70"
+                className="bg-red-600 text-lighttext px-4 py-2 rounded hover:bg-red-600/70 disabled:bg-red-600/50"
+                disabled={loadingChange}
               >
-                Delete
+                {loadingChange ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

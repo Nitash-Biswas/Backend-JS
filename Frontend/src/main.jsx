@@ -29,6 +29,7 @@ import Tweets from "./pages/Tweets/Tweets.jsx";
 import { LikesContextProvider } from "./contexts/likesContextProvider.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import { TweetsProvider } from "./contexts/tweetContextProvider.jsx";
+import CreateVideo from "./pages/CreateVideo/CreateVideo.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -67,6 +68,15 @@ const router = createBrowserRouter(
           </PrivateRoute>
         }
       ></Route>
+
+      <Route
+        path="create"
+        element={
+          <PrivateRoute>
+            <CreateVideo />
+          </PrivateRoute>
+        }
+      />
       <Route path="video/:videoId" element={<VideoPlayer />} />
       <Route path="playlist/:playlistId" element={<Playlist />} />
 

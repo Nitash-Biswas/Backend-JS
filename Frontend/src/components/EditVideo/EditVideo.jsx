@@ -6,7 +6,7 @@ export default function EditVideo({ videoId, onClose }) {
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
 
-  const {updateVideo, loadingChange, errorChange} = useUpdateAndDeleteVideo()
+  const {updateVideo, loadingChange} = useUpdateAndDeleteVideo()
 
   useEffect(() => {
     if (videoData) {

@@ -104,7 +104,7 @@ export const useFetchUserVideos = (username, refresh) => {
 export const useUpdateAndDeleteVideo = () => {
   const [loadingChange, setLoadingChange] = useState(false);
   const [errorChange, setErrorChange] = useState(null);
-  const updateVideo = async ({ videoId, newTitle, newDescription  }) => {
+  const updateVideo = async ({ videoId, newTitle, newDescription }) => {
     setLoadingChange(true);
     try {
       // Get Tokens from cookies
@@ -120,9 +120,7 @@ export const useUpdateAndDeleteVideo = () => {
       // Update comment only when carrying auth tokens
       await axios.patch(
         `${BASE_URL}${VIDEOS_URL}/update/${videoId}`,
-        { newTitle: newTitle,
-          newDescription: newDescription
-         },
+        { newTitle: newTitle, newDescription: newDescription },
         { headers, withCredentials: true }
       );
     } catch (err) {
@@ -150,6 +148,7 @@ export const useUpdateAndDeleteVideo = () => {
         headers,
         withCredentials: true,
       });
+      console.log("Video deleted successfully");
     } catch (err) {
       setErrorChange(err.message);
     } finally {
@@ -158,4 +157,46 @@ export const useUpdateAndDeleteVideo = () => {
   };
 
   return { updateVideo, deleteVideo, loadingChange, errorChange };
+};
+
+export const usePublishVideo = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const publishVideo = async ({ title, description, video, thumbnail }) => {
+    setLoading(true);
+    try {
+      // Get Tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
+
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+        "Content-Type": "multipart/form-data", // Important for file uploads
+      };
+
+      // **Prepare FormData**
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("videoFile", video); // Ensure it's a `File` object
+      formData.append("thumbnail", thumbnail); // Ensure it's a `File` object
+
+      // Update comment only when carrying auth tokens
+      await axios.post(
+        `${BASE_URL}${VIDEOS_URL}/publish`,
+        formData,
+        { headers, withCredentials: true }
+      );
+      console.log("Video published successfully");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { publishVideo, loading, error };
 };

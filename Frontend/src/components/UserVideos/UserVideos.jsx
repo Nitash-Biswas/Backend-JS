@@ -51,6 +51,7 @@ function UserVideos() {
               duration={formatDuration(video.duration)}
               loggedUser={loggedUser}
               onVideoEdit={handleRefresh}
+              onVideoDelete={handleRefresh}
             />
           ))}
         </div>

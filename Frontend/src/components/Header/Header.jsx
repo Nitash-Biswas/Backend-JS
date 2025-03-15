@@ -43,12 +43,15 @@ export default function Header() {
           <div className="flex items-center lg:order-2 gap-3">
             {loggedUser && (
               <>
+
+                <NavLink to="/create">
                 <div
                   className="text-white bg-lightbg hover:bg-highlight
                 font-medium rounded-full text-lg px-4 lg:px-5 py-2 lg:py-2.5 mr-2 cursor-pointer"
                 >
                   + Create
                 </div>
+                </NavLink>
                 <div
                   className="text-white bg-lightbg
                 font-medium rounded-full text-lg mr-2 cursor-pointer"
