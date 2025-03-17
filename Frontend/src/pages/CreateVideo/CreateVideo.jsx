@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { MdFileUpload } from "react-icons/md";
 import { usePublishVideo } from "../../hooks/useVideoHooks";
 import { useNavigate } from "react-router-dom";
+
 function CreateVideo() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -186,7 +187,7 @@ function CreateVideo() {
             <p className="text-red-500 text-sm mt-1">{errors.description}</p>
           )}
         </div>
-        <div className="flex justify-end p-4">
+        <div className="flex justify-end p-4 ">
         {uploadSuccess &&
           <p className="text-green-500 text-sm mt-4 mr-8">
             Video uploaded successfully!

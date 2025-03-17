@@ -271,7 +271,7 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { subscribers }, "Subscribed channels"));
+    .json(new ApiResponse(200, { subscribers, subsCount: subscribers.length > 0 ? subscribers[0].subscribersCount : 0 }, "Subscribed channels"));
 });
 
 export {

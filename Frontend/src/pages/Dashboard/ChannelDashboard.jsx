@@ -14,7 +14,7 @@ const ChannelDashboard = () => {
   const { username } = useParams();
   const { loggedUser } = useContext(UserContext);
   const { user, loading, error } = useFetchUserDetails(username);
-  const { fetchSubsCount } = useFetchSubsciberCount(username);
+  const { fetchSubsCount } = useFetchSubsciberCount();
 
   const { loading: subscriptionLoading, toggleSubscription } =
     useToggleSubscription();
@@ -30,6 +30,7 @@ const ChannelDashboard = () => {
 
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
+      // console.log({ username: username });
       const status = await checkSubscription({ username });
       // console.log({ status: status });
       setIsSubscribed(status);
@@ -43,8 +44,8 @@ const ChannelDashboard = () => {
     if (
       loggedUser &&
       user &&
-      loggedUser.username !== user.username &&
-      totalSubs > 0
+      loggedUser.username !== user.username
+
     ) {
       fetchSubscriptionStatus();
       fetchTotalSubs();

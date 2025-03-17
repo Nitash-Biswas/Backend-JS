@@ -152,7 +152,7 @@ export const useCheckSubscriptionStatus = () => {
           );
 
           // console.log({totalSubs: response.data?.data.subscribers[0].subscribersCount});
-          return response.data?.data.subscribers[0].subscribersCount;
+          return response.data?.data.subsCount;
         } catch (err) {
           setError(err.message);
         } finally {
