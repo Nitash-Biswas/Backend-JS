@@ -50,74 +50,74 @@ const getPlaylistById = asyncHandler(async (req, res) => {
   }
 
   const playlistWithVideoDetails = await Playlist.aggregate([
-    //Step 1: Match the playlist with its _id
+    // Step 1: Match the playlist by ID
     { $match: { _id: new mongoose.Types.ObjectId(playlistId) } },
 
-    //Step 2: Lookup to join with Video Collection to get video details
+    // Step 2: Lookup videos and populate owner details within each video
     {
       $lookup: {
         from: "videos",
         localField: "videos",
         foreignField: "_id",
         as: "videos",
-      },
-    },
-    //Step 3: Unwind the videos array to process each video individually
-    {
-      $unwind: "$videos",
-    },
-    //Step 4: Second Lookup to join users collection to get owner data
-    {
-      $lookup: {
-        from: "users",
-        localField: "videos.owner",
-        foreignField: "_id",
-        as: "videos.ownerDetails",
-      },
-    },
-    //Step 5: Unwind the videos.ownerDetails array
-    {
-      $unwind: "$videos.ownerDetails",
-    },
-    //Step 6: Group the data in single playlist document
-    {
-      $group: {
-        _id: "$_id",  //group documents with same playlist id
-        name: { $first: "$name" }, //Takes the name field from the first document in each group, which is "Playlist 1" in this case.
-        description: { $first: "$description" },
-        owner: { $first: "$owner" },
-        createdAt: { $first: "$createdAt" },
-        updatedAt: { $first: "$updatedAt" },
-        videos: {
-          $push: {
-            _id: "$videos._id",
-            videoFile: "$videos.videoFile",
-            thumbnail: "$videos.thumbnail",
-            title: "$videos.title",
-            description: "$videos.description",
-            views: "$videos.views",
-            duration: "$videos.duration",
-            isPublished: "$videos.isPublished",
-            createdAt: "$videos.createdAt",
-            updatedAt: "$videos.updatedAt",
-            owner: {
-              _id: "$videos.ownerDetails._id",
-              fullname: "$videos.ownerDetails.fullname",
-              avatar: "$videos.ownerDetails.avatar",
-              username: "$videos.ownerDetails.username",
+        pipeline: [
+          // Lookup to get the owner details for each video
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "ownerDetails",
             },
           },
-        },
+          // Unwind the ownerDetails array (each video has one owner)
+          { $unwind: "$ownerDetails" },
+          // Project to reshape the video document with owner details
+          {
+            $project: {
+              videoFile: 1,
+              thumbnail: 1,
+              title: 1,
+              description: 1,
+              views: 1,
+              duration: 1,
+              isPublished: 1,
+              createdAt: 1,
+              updatedAt: 1,
+              owner: {
+                _id: "$ownerDetails._id",
+                fullname: "$ownerDetails.fullname",
+                avatar: "$ownerDetails.avatar",
+                username: "$ownerDetails.username",
+              },
+            },
+          },
+        ],
+      },
+    },
+    // Step 3: Project the necessary fields for the final output
+    {
+      $project: {
+        name: 1,
+        description: 1,
+        owner: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        videos: 1,
       },
     },
   ]);
 
-  const finalPlaylist = playlistWithVideoDetails[0];
+  const finalPlaylist = playlistWithVideoDetails[0] || {
+    ...playlist.toObject(),
+    videos: [],
+  };
 
   return res
     .status(200)
     .json(new ApiResponse(200, { finalPlaylist }, "Playlist found"));
 });
+
 
 //Delete playlist
 const deletePlaylist = asyncHandler(async (req, res) => {

@@ -12,7 +12,7 @@ export default function LongCard({
   return (
     <div className="bg-lightbg shadow-md rounded-lg overflow-hidden flex flex-col lg:flex-row">
       <NavLink to={`/video/${videoId}`} className="flex-shrink-0">
-        <img src={thumbnail} alt={title} className=" h-48 w-full lg:w-96 object-cover" />
+        <img src={thumbnail} alt={title} className=" h-fit w-full lg:w-96 object-cover" />
       </NavLink>
       <div className="p-4 flex flex-col justify-between ">
         <div>

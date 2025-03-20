@@ -39,7 +39,7 @@ function UserPlaylists() {
             <PlaylistCard
               key={playlist._id}
               title={playlist.name}
-              thumbnail={playlist.thumbnail}
+              thumbnail={playlist.thumbnail || "/src/assets/Playlist.jpg"}
               uploader={playlist.owner.ownerName}
               username={playlist.owner.username}
               playlistId={playlist._id}

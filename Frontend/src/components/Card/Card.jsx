@@ -6,7 +6,7 @@ import { useUpdateAndDeleteVideo } from "../../hooks/useVideoHooks";
 
 export default function Card({
   title = "No title",
-  thumbnail = "No thumbnail",
+  thumbnail = "https://placehold.co/600x400",
   avatar = "No avatar",
   uploader = "N/A",
   username = "N/A",
@@ -19,7 +19,7 @@ export default function Card({
   const [showOptions, setShowOptions] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showEditVideo, setShowEditVideo] = useState(false);
-  const {deleteVideo , loadingChange} = useUpdateAndDeleteVideo()
+  const { deleteVideo, loadingChange } = useUpdateAndDeleteVideo();
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -39,7 +39,7 @@ export default function Card({
   };
 
   const confirmDelete = async () => {
-    await deleteVideo({videoId})
+    await deleteVideo({ videoId });
     setShowConfirmDelete(false);
     onVideoDelete();
   };
@@ -92,61 +92,75 @@ export default function Card({
               <NavLink to={`/user/${username}/videos`}>{uploader}</NavLink>
             </p>
 
-            {loggedUser && (
-              <button
-                onClick={toggleOptions}
-                className="ml-auto text-darktext hover:text-lighttext"
-              >
-                <SlOptionsVertical />
-              </button>
-            )}
+            {
+              // If the logged user is the owner of the video, show the options
+              loggedUser && loggedUser.username === username && (
+                <button
+                  onClick={toggleOptions}
+                  className="ml-auto text-darktext hover:text-lighttext"
+                >
+                  <SlOptionsVertical />
+                </button>
+              )
+            }
           </div>
         </div>
-        {showOptions && (
-          <div className="absolute bottom-10 right-6 border-3 border-darktext/40 bg-lightbg text-lighttext shadow-lg rounded-lg z-40">
-            <div className="py-1 ">
-              <button
-                onClick={handleEdit}
-                className="block px-4 py-2 hover:bg-highlight w-full text-left"
-              >
-                Edit
-              </button>
-              <button
-                onClick={handleDelete}
-                className="block px-4 py-2 hover:bg-highlight w-full text-left"
-              >
-                Delete
-              </button>
+        {
+          // If showOptions is true, show the options
+          showOptions && (
+            <div className="absolute bottom-10 right-6 border-3 border-darktext/40 bg-lightbg text-lighttext shadow-lg rounded-lg z-40">
+              <div className="py-1 ">
+                <button
+                  onClick={handleEdit}
+                  className="block px-4 py-2 hover:bg-highlight w-full text-left"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="block px-4 py-2 hover:bg-highlight w-full text-left"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )
+        }
       </div>
-      {showConfirmDelete && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-30">
-          <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold mb-4">Confirm Delete</h2>
-            <p className="mb-4">Are you sure you want to delete this video?</p>
-            <div className="flex justify-end">
-              <button
-                onClick={cancelDelete}
-                className="bg-lightbg text-lighttext px-4 py-2 rounded mr-2 hover:bg-lightbg/70"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="bg-red-600 text-lighttext px-4 py-2 rounded hover:bg-red-600/70 disabled:bg-red-600/50"
-                disabled={loadingChange}
-              >
-                {loadingChange ? "Deleting..." : "Delete"}
-              </button>
+      {
+        // If showConfirmDelete is true, show the delete confirmation box
+        showConfirmDelete && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-30">
+            <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg">
+              <h2 className="text-xl font-semibold mb-4">Confirm Delete</h2>
+              <p className="mb-4">
+                Are you sure you want to delete this video?
+              </p>
+              <div className="flex justify-end">
+                <button
+                  onClick={cancelDelete}
+                  className="bg-lightbg text-lighttext px-4 py-2 rounded mr-2 hover:bg-lightbg/70"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="bg-red-600 text-lighttext px-4 py-2 rounded hover:bg-red-600/70 disabled:bg-red-600/50"
+                  disabled={loadingChange}
+                >
+                  {loadingChange ? "Deleting..." : "Delete"}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {showEditVideo && (
-        <EditVideo videoId={videoId} onClose={closeEditVideo} />
-      )}
+        )
+      }
+      {
+        // If showEditVideo is true, show the edit video box
+        showEditVideo && (
+          <EditVideo videoId={videoId} onClose={closeEditVideo} />
+        )
+      }
     </div>
   );
 }
