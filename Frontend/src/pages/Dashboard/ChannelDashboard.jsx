@@ -19,20 +19,15 @@ const ChannelDashboard = () => {
   const { loading: subscriptionLoading, toggleSubscription } =
     useToggleSubscription();
 
-  const {
-    checkSubscription,
-    loading: subscriptionStatusLoading,
-  } = useCheckSubscriptionStatus();
+  const { checkSubscription, loading: subscriptionStatusLoading } =
+    useCheckSubscriptionStatus();
 
   // Check whether the same logged user is using the dashboard of its own channel
   const isUserSame = user?.username === loggedUser?.username;
-  // console.log({ isUserSame: isUserSame });
 
   useEffect(() => {
     const fetchSubscriptionStatus = async () => {
-      // console.log({ username: username });
       const status = await checkSubscription({ username });
-      // console.log({ status: status });
       setIsSubscribed(status);
     };
 
@@ -41,27 +36,11 @@ const ChannelDashboard = () => {
       setTotalSubs(subs);
     };
 
-    if (
-      loggedUser &&
-      user &&
-      loggedUser.username !== user.username
-
-    ) {
+    if (loggedUser && user && loggedUser.username !== user.username) {
       fetchSubscriptionStatus();
       fetchTotalSubs();
     }
-  }, [
-    loggedUser,
-    user,
-    username,
-    checkSubscription,
-    fetchSubsCount,
-    totalSubs,
-  ]);
-
-  // if (user && loggedUser) {
-  //   console.log({ user: user, loggedUser: loggedUser });
-  // }
+  }, [loggedUser, user, username, checkSubscription, fetchSubsCount, totalSubs]);
 
   const handleToggleSubscription = async () => {
     const response = await toggleSubscription(username);
@@ -88,8 +67,8 @@ const ChannelDashboard = () => {
   }
 
   return (
-    <div className="bg-darkbg flex flex-col text-lighttext min-h-screen">
-      <div className="flex flex-col w-full justify-between">
+    <div className="bg-darkbg flex flex-col text-lighttext h-full">
+      <div className="flex flex-col w-full justify-between h-full">
         {/* CoverImage */}
         <div className="bg-cover bg-center h-65 flex justify-center items-center">
           <img
@@ -134,7 +113,8 @@ const ChannelDashboard = () => {
           </div>
         </div>
 
-        <nav className="flex flex-col lg:flex-row">
+        {/* Navigation Tabs */}
+        <nav className="flex">
           <NavLink
             to={`/user/${username}/videos`}
             className={({ isActive }) =>
@@ -169,7 +149,8 @@ const ChannelDashboard = () => {
           </NavLink>
         </nav>
 
-        <div className="mt-8 w-full h-full overflow-auto">
+        {/* Outlet (Dynamic Content) */}
+        <div className="flex-1 overflow-y-auto my-4 mx-8 ">
           <Outlet />
         </div>
       </div>

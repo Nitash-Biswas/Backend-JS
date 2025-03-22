@@ -3,6 +3,7 @@ import { Router } from "express";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   createTweet,
+  deleteAllTweets,
   deleteTweet,
   getAllTweets,
   getMyTweets,
@@ -21,5 +22,7 @@ tweetRouter.route("/get_user_tweets/:username").get(getUserTweets);
 
 tweetRouter.route("/update/:tweetId").patch(verifyJWT, updateTweet);
 tweetRouter.route("/delete/:tweetId").delete(verifyJWT, deleteTweet);
+tweetRouter.route("/delete_all").delete(verifyJWT, deleteAllTweets);
+
 
 export default tweetRouter;

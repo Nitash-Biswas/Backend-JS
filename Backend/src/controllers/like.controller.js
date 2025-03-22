@@ -155,7 +155,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
               thumbnail: 1,
               views: 1,
               duration: 1,
-              owner: 1
+              owner: 1,
             },
           },
         ],
@@ -198,8 +198,8 @@ const getLikedVideos = asyncHandler(async (req, res) => {
         ],
       },
     },
-     //Step 5: Unwind to flatten the video array
-     {
+    //Step 5: Unwind to flatten the video array
+    {
       $unwind: "$video",
     },
     //Step 6: Unwind to flatten the likedBy array
@@ -210,7 +210,6 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     {
       $unwind: "$ownerDetails",
     },
-
   ]);
 
   if (!allLikedVideos) {
@@ -308,8 +307,14 @@ const checkVideoLike = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { isLiked: isLiked ? true : false  }, "Video like status fetched"));
-})
+    .json(
+      new ApiResponse(
+        200,
+        { isLiked: isLiked ? true : false },
+        "Video like status fetched"
+      )
+    );
+});
 
 const checkCommentLike = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
@@ -325,8 +330,14 @@ const checkCommentLike = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { isLiked: isLiked ? true : false }, "Comment like status fetched"));
-})
+    .json(
+      new ApiResponse(
+        200,
+        { isLiked: isLiked ? true : false },
+        "Comment like status fetched"
+      )
+    );
+});
 
 const checkTweetLike = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
@@ -342,8 +353,29 @@ const checkTweetLike = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { isLiked: isLiked ? true : false  }, "Tweet like status fetched"));
-})
+    .json(
+      new ApiResponse(
+        200,
+        { isLiked: isLiked ? true : false },
+        "Tweet like status fetched"
+      )
+    );
+});
+
+const deleteAllLikes = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const likes = await Like.find({ likedBy: userId });
+  if (!likes) {
+    throw new ApiError(400, "Error in getting likes");
+  }
+
+  await Like.deleteMany({ likedBy: userId });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { likes }, "Likes deleted successfully."));
+});
 export {
   toggleVideoLike,
   toggleCommentLike,
@@ -354,4 +386,6 @@ export {
   getTweetLikeCount,
   checkVideoLike,
   checkCommentLike,
-  checkTweetLike};
+  checkTweetLike,
+  deleteAllLikes,
+};

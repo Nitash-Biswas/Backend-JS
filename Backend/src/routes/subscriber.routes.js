@@ -3,6 +3,7 @@ import { Router } from "express";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   checkSubscriptionStatus,
+  deleteAllSubscriptions,
   getSubcribedChannels,
   getUserSubscribers,
   toggleSubscription,
@@ -16,5 +17,7 @@ subsRouter.route("/:username").post(verifyJWT, toggleSubscription);
 subsRouter.route("/check/:username").get(verifyJWT, checkSubscriptionStatus);
 subsRouter.route("/get_channels").get(verifyJWT, getSubcribedChannels);
 subsRouter.route("/get_subs/:username").get(getUserSubscribers);
+subsRouter.route("/delete_all").delete(verifyJWT, deleteAllSubscriptions);
+
 
 export default subsRouter;

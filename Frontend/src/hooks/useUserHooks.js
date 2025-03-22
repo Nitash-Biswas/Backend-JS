@@ -4,6 +4,17 @@ import Cookies from "js-cookie";
 import { BASE_URL, USERS_URL } from "../constants";
 import UserContext from "../contexts/userContext";
 
+const requestHeaders = ({ hasImage = false }) => {
+  const accessToken = Cookies.get("accessToken");
+  const refreshToken = Cookies.get("refreshToken");
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    "x-refresh-token": refreshToken,
+    "Content-Type": hasImage ? "multipart/form-data" : "application/json",
+  };
+  return headers;
+};
+
 export const useRegisterUser = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -107,6 +118,61 @@ export const useFetchUserDetails = (username) => {
   return { user, loading, error };
 };
 
+export const useUpdateImages = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const updateAvatar = async ({avatar}) => {
+    setLoading(true);
+
+    //Prepare Form Data
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+
+    try {
+      const headers = requestHeaders({ hasImage: true });
+      const response = await axios.patch(
+        `${BASE_URL}${USERS_URL}/update_avatar`,
+        formData,
+        { headers, withCredentials: true }
+      );
+      console.log("Avatar updated successfully");
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateCoverImage = async ({coverImage}) => {
+    setLoading(true);
+
+    //Prepare Form Data
+    console.log(coverImage);
+    const formData = new FormData();
+    formData.append("coverImage", coverImage);
+    console.log(formData.get("coverImage"));
+
+    try {
+      const headers = requestHeaders({ hasImage: true });
+      const response = await axios.patch(
+        `${BASE_URL}${USERS_URL}/update_cover_image`,
+        formData,
+        { headers, withCredentials: true }
+      );
+      console.log("Cover image updated successfully");
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateAvatar, updateCoverImage, loading, error };
+};
+
 export const useLogoutUser = () => {
   const { setLoggedUser } = useContext(UserContext);
 
@@ -118,4 +184,28 @@ export const useLogoutUser = () => {
   };
 
   return logoutUser;
+};
+
+export const useDeleteUser = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const deleteUser = async () => {
+    setLoading(true);
+    try {
+      const headers = requestHeaders({ formData: false });
+      const response = await axios.delete(
+        `${BASE_URL}${USERS_URL}/delete_user`,
+        { headers, withCredentials: true }
+      );
+      console.log("User deleted successfully");
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { deleteUser, loading, error };
 };

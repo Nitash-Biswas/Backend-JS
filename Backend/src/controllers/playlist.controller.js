@@ -239,6 +239,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
       )
     );
 });
+
 //Get all playlists of a user
 const getMyPlaylists = asyncHandler(async (req, res) => {
 
@@ -398,6 +399,23 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     );
 });
 
+//Delete all playlists
+const deleteAllPlaylists = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const playlists = await Playlist.find({ owner: userId });
+  if(!playlists){
+    throw new ApiError(400, "Playlists not found");
+  }
+
+  await Playlist.deleteMany({ owner: userId });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { playlists }, "Playlists deleted successfully."));
+
+})
+
 export {
   createPlaylist,
   getUserPlaylists,
@@ -407,4 +425,5 @@ export {
   addVideoToPlaylist,
   removeVideoFromPlaylist,
   getMyPlaylists,
+  deleteAllPlaylists
 };

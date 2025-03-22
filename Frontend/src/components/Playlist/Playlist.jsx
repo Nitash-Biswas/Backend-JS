@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useFetchPlaylist,
   useManagePlaylist,
+  useManageVideosInPlaylist,
 } from "../../hooks/usePlaylistHooks";
 import Card from "../Card/Card";
 import { formatDuration } from "../../Utils/formatDuration";
@@ -12,12 +13,13 @@ import UserContext from "../../contexts/userContext";
 function Playlist() {
   const { playlistId } = useParams();
   const { loggedUser } = useContext(UserContext);
-  const { playlistData, error, loading } = useFetchPlaylist(playlistId);
+  const { playlistData, error, loading, refresh } = useFetchPlaylist(playlistId);
   const {
     deletePlaylist,
     loading: deleteLoading,
     error: deleteError,
   } = useManagePlaylist();
+  const {removeVideoFromPlaylist, loading: removeLoading, error: removeError} = useManageVideosInPlaylist();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showVideoDelete, setShowVideoDelete] = useState(false);
   const navigate = useNavigate();
@@ -50,6 +52,17 @@ function Playlist() {
 
   const handleManageVideos = () => {
     setShowVideoDelete((prev) => !prev);
+  };
+
+  const handleRemoveVideo = async (videoId) => {
+    const response = await removeVideoFromPlaylist(playlistId, videoId);
+    refresh();
+    // If the playlist has only one video while deleting, delete the playlist as well
+    if(response && playlistData.videos.length === 1){
+      await deletePlaylist(playlistId);
+      navigate(-1);
+    }
+
   };
 
   console.log(playlistData, loggedUser);
@@ -106,7 +119,7 @@ function Playlist() {
                   {showVideoDelete && (
                     <button
                       className="absolute top-0 right-0 bg-red-500 text-lighttext p-2 m-1 rounded"
-                      onClick={() => console.log(video._id)}
+                      onClick={() =>{handleRemoveVideo(video._id)}}
                     >
                       <IoClose size={35} />
                     </button>

@@ -4,6 +4,7 @@ import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   addVideoToPlaylist,
   createPlaylist,
+  deleteAllPlaylists,
   deletePlaylist,
   getMyPlaylists,
   getPlaylistById,
@@ -19,6 +20,7 @@ const playlistRouter = Router();
 
 playlistRouter.route("/create").post(verifyJWT, createPlaylist);
 playlistRouter.route("/get_my_playlists").get(verifyJWT, getMyPlaylists);
+playlistRouter.route("/delete_all").delete(verifyJWT, deleteAllPlaylists);
 playlistRouter.route("/get_user_playlists/:username").get(getUserPlaylists);
 playlistRouter.route("/add/:videoId/:playlistId").post(verifyJWT, addVideoToPlaylist);
 playlistRouter.route("/remove/:videoId/:playlistId").post(verifyJWT, removeVideoFromPlaylist);

@@ -140,11 +140,6 @@ const checkSubscriptionStatus = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User not found");
   }
 
-  //Check if user is the channel
-  if (subscriber._id.toString() === channel._id.toString()) {
-    throw new ApiError(400, "You cannot subscribe to yourself");
-  }
-
   //Check if user is already subscribed
   const isSubscribed = await Subscription.findOne({
     subscriber: user,
@@ -274,9 +269,24 @@ const getUserSubscribers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { subscribers, subsCount: subscribers.length > 0 ? subscribers[0].subscribersCount : 0 }, "Subscribed channels"));
 });
 
+const deleteAllSubscriptions = asyncHandler(async (req, res) => {
+  const user = req.user._id;
+  const deletedSubscriptions = await Subscription.find({ subscriber: user });
+  const deletedChannels = await Subscription.find({ channel: user });
+  if (!deletedSubscriptions || !deletedChannels) {
+    throw new ApiError(400, "Error in deleting subscriptions");
+  }
+  await Subscription.deleteMany({ subscriber: user });
+  await Subscription.deleteMany({ channel: user });
+
+
+  return res.status(200).json(new ApiResponse(200, {deletedSubscriptions, deletedChannels}, "All subscriptions deleted"));
+});
+
 export {
   toggleSubscription,
   checkSubscriptionStatus,
   getSubcribedChannels,
   getUserSubscribers,
+  deleteAllSubscriptions
 };

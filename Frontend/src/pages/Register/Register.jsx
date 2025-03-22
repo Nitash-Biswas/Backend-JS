@@ -188,7 +188,7 @@ const Register = () => {
           <div>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Password (min. 6 characters)"
               className="w-full p-3 bg-lightbg rounded border border-gray-600"
               value={formData.password}
               onChange={(e) =>

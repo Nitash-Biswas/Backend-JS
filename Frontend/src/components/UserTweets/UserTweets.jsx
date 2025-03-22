@@ -39,7 +39,7 @@ function UserTweets() {
   }
 
   return (
-    <div className="bg-darkbg p-4">
+    <div className="bg-darkbg p-4 ">
       {tweets.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {tweets.map((tweet) => (

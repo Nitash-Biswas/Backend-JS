@@ -6,6 +6,7 @@ import {
   checkCommentLike,
   checkTweetLike,
   checkVideoLike,
+  deleteAllLikes,
   getCommentLikeCount,
   getLikedVideos,
   getTweetLikeCount,
@@ -20,6 +21,7 @@ const likeRouter = Router();
 // likeRouter.use(verifyJWT); //Apply vefiryJWT middleware to all routes in this file
 
 likeRouter.route("/liked_videos").get(verifyJWT, getLikedVideos);
+likeRouter.route("/delete_all").delete(verifyJWT, deleteAllLikes);
 
 // Routes for toggling likes for comments, videos, and tweets (require authentication)
 likeRouter.route("/v/:videoId").post(verifyJWT, toggleVideoLike);

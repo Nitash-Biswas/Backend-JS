@@ -23,7 +23,7 @@ function AddComment({ videoId, username, avatar }) {
   };
 
   return (
-    <div className="bg-lightbg border-b-8 border-darkbg p-4  w-full overflow-hidden">
+    <div className="bg-lightbg p-4 ml-4 rounded">
       <form onSubmit={handleSubmit}>
         <div className="flex justify-center items-center w-full">
           <img src={avatar} alt={username} className="w-16 h-16 object-cover rounded-full" />

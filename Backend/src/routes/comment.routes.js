@@ -4,6 +4,7 @@ import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import {
   addComment,
+  deleteAllComments,
   deleteComment,
   getVideoComments,
   updateComment,
@@ -17,5 +18,6 @@ commentRouter.route("/:videoId").get(getVideoComments);
 commentRouter.route("/add/:videoId").post(verifyJWT, addComment);
 commentRouter.route("/update/:commentId").patch(verifyJWT, updateComment);
 commentRouter.route("/delete/:commentId").delete(verifyJWT, deleteComment);
+commentRouter.route("/delete_all").delete(verifyJWT, deleteAllComments);
 
 export default commentRouter;

@@ -6,10 +6,16 @@ import Sidebar from "./components/Sidebar/Sidebar";
 export default function Layout() {
   return (
     <div className="flex flex-col h-screen">
+      {/* Header */}
       <Header />
+
+      {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
         <Sidebar />
-        <div className="flex-1 overflow-auto bg-darkbg">
+
+        {/* Outlet (Main Content) */}
+        <div className="flex-1 bg-darkbg overflow-y-auto">
           <Outlet />
         </div>
       </div>

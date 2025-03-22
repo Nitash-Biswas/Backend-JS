@@ -5,10 +5,18 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import {
   deleteFromCloudinary,
+  deleteVideoFromCloudinary,
   getPublicId,
   uploadOnCloudinary,
 } from "../utils/fileToCloudinary.js";
 import jwt from "jsonwebtoken";
+import { getMyTweets } from "./tweet.controller.js";
+import { Comment } from "../models/comment.model.js";
+import { Like } from "../models/like.model.js";
+import { Playlist } from "../models/playlist.model.js";
+import { Subscription } from "../models/subscription.model.js";
+import { Tweet } from "../models/tweet.model.js";
+import { Video } from "../models/video.model.js";
 
 //Options for storing the cookies in the response
 const options = {
@@ -480,6 +488,78 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       )
     );
 });
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  //Delete all comments of user
+  const comments = await Comment.find({ owner: userId });
+  if (!comments) {
+    throw new ApiError(400, "Error in getting comments");
+  }
+
+  await Comment.deleteMany({ owner: userId });
+
+  //Delete all likes of user
+  const likes = await Like.find({ likedBy: userId });
+  if (!likes) {
+    throw new ApiError(400, "Error in getting likes");
+  }
+
+  await Like.deleteMany({ likedBy: userId });
+
+  //Delete all playlists of user
+  const playlists = await Playlist.find({ owner: userId });
+  if (!playlists) {
+    throw new ApiError(400, "Playlists not found");
+  }
+
+  await Playlist.deleteMany({ owner: userId });
+
+  //Delete all subscriptions of user
+  const deletedSubscriptions = await Subscription.find({ subscriber: userId });
+  const deletedChannels = await Subscription.find({ channel: userId });
+  if (!deletedSubscriptions || !deletedChannels) {
+    throw new ApiError(400, "Error in deleting subscriptions");
+  }
+  await Subscription.deleteMany({ subscriber: userId });
+  await Subscription.deleteMany({ channel: userId });
+
+  //Delete all tweets of user
+  const tweets = await Tweet.find({ owner: userId });
+  if (!tweets) {
+    throw new ApiError(400, "Error in getting the tweets");
+  }
+
+  await Tweet.deleteMany({ owner: userId });
+
+  //Delete all videos of user
+  const videos = await Video.find({ owner: userId });
+  if (!videos) {
+    throw new ApiError(400, "Error in getting all videos");
+  }
+
+  for (const video of videos) {
+    const oldVideoId = getPublicId(video.videoFile);
+    const oldThumbnailId = getPublicId(video.thumbnail);
+    await deleteVideoFromCloudinary(oldVideoId);
+    await deleteFromCloudinary(oldThumbnailId);
+    await Video.findByIdAndDelete(video._id);
+  }
+
+  //Delete user
+  const user = await User.findById(userId);
+  const oldAvatarId = getPublicId(user.avatar);
+  const oldCoverImageId = getPublicId(user.coverImage);
+  await deleteFromCloudinary(oldAvatarId);
+  await deleteFromCloudinary(oldCoverImageId);
+  await User.findByIdAndDelete(userId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {comments, likes, playlists, tweets, videos}, "User deleted successfully."));
+});
+
 export {
   registerUser,
   loginUser,
@@ -492,4 +572,5 @@ export {
   updateUserCoverImage,
   getUserChannelProfile,
   getWatchHistory,
+  deleteUser,
 };

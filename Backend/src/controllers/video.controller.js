@@ -228,6 +228,7 @@ const getUserVideos = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, { allVideos }, "All videos found"));
 });
+
 const getMyVideos = asyncHandler(async (req, res) => {
   const allVideos = await Video.aggregate([
     //Stage1: Match the user
@@ -314,6 +315,7 @@ const updateVideo = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, { newVideo }, "Video updated successfully."));
 });
+
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
@@ -370,6 +372,26 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { video }, "Status updated successfully."));
 });
 
+const deleteAllVideos = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const videos = await Video.find({ owner: userId });
+  if (!videos) {
+    throw new ApiError(400, "Error in getting all videos");
+  }
+
+  for (const video of videos) {
+    const oldVideoId = getPublicId(video.videoFile);
+    const oldThumbnailId = getPublicId(video.thumbnail);
+    await deleteVideoFromCloudinary(oldVideoId);
+    await deleteFromCloudinary(oldThumbnailId);
+    await Video.findByIdAndDelete(video._id);
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { videos }, "All videos deleted successfully"));
+})
+
 export {
   publishVideo,
   getVideoById,
@@ -379,4 +401,5 @@ export {
   togglePublishStatus,
   getUserVideos,
   getMyVideos,
+  deleteAllVideos
 };

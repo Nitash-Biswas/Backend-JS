@@ -108,7 +108,7 @@ function VideoPlayer() {
   // If the videoData or finalVideo is null, return a loading message
   if (!videoData || !finalVideo) {
     return (
-      <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">
+      <div className="bg-darkbg text-2xl text-lighttext min-h-full p-8">
         Loading your Video...
       </div>
     );
@@ -117,7 +117,7 @@ function VideoPlayer() {
   // If there is an error, return an error message
   if (error) {
     return (
-      <div className="bg-darkbg text-2xl min-h-full text-highlight p-4">
+      <div className="bg-darkbg text-2xl min-h-full text-highlight p-8">
         Error in getting Video: {error}
       </div>
     );
@@ -126,7 +126,7 @@ function VideoPlayer() {
   return (
     <>
       <CommentsContextProvider videoId={videoId}>
-        <div className="bg-darkbg min-h-screen p-4 flex flex-col md:flex-row overflow-hidden">
+        <div className="bg-darkbg h-full p-8 flex flex-col md:flex-row ">
           {/* Video Section */}
           <div className="md:w-3/5 w-full h-full">
             <div className="bg-lightbg shadow-md rounded-lg w-full">
@@ -197,7 +197,7 @@ function VideoPlayer() {
           </div>
 
           {/* Comments Section */}
-          <div className="md:w-2/5 w-full h-screen lg:pl-4 flex flex-col">
+          <div className="md:w-2/5 w-full h-full lg:pl-4 flex flex-col">
             <h1 className="text-3xl font-semibold text-lighttext px-4 lg:mb-4 my-4">
               Comments
             </h1>
@@ -208,10 +208,10 @@ function VideoPlayer() {
                 avatar={loggedUser.avatar}
               />
             )}
-            <div className="overflow-y-auto flex-1">
+
             {/* We used useMemo to avoid unnecessary re-renders */}
               <MemoizedComments />
-            </div>
+
           </div>
           {showAddToPlaylist && (
             <AddToPlaylist

@@ -66,6 +66,7 @@ const getMyTweets = asyncHandler(async (req, res) => {
       new ApiResponse(200, { allTweets }, "All tweets fetched successfully")
     );
 });
+
 const getUserTweets = asyncHandler(async (req, res) => {
   const { username } = req.params;
 
@@ -202,6 +203,8 @@ const updateTweet = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, { tweet }, "Tweet updated successfully."));
 });
+
+// Delete Tweet
 const deleteTweet = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
 
@@ -226,6 +229,23 @@ const deleteTweet = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { tweet }, "Tweet Deleted successfully."));
 });
 
+//Delete all tweets of userId
+const deleteAllTweets = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const tweets = await Tweet.find({ owner: userId });
+  if (!tweets) {
+    throw new ApiError(400, "Error in getting the tweets");
+  }
+
+  await Tweet.deleteMany({ owner: userId });
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { tweets }, "All tweets deleted successfully")
+    );
+});
+
 export {
   createTweet,
   getUserTweets,
@@ -233,4 +253,5 @@ export {
   deleteTweet,
   getAllTweets,
   getMyTweets,
+  deleteAllTweets
 };

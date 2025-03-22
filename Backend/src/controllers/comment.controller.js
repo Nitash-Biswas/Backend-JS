@@ -177,4 +177,22 @@ const deleteComment = asyncHandler(async (req, res) => {
     );
 });
 
-export { getVideoComments, addComment, updateComment, deleteComment };
+// Delete all comments of userId
+const deleteAllComments = asyncHandler(async (req, res) => {
+  const userId  = req.user._id;
+
+  const comments = await Comment.find({ owner: userId });
+  if (!comments) {
+    throw new ApiError(400, "Error in getting comments");
+  }
+
+  await Comment.deleteMany({ owner: userId });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { comments }, "Comments deleted successfully."));
+})
+
+
+
+export { getVideoComments, addComment, updateComment, deleteComment, deleteAllComments };

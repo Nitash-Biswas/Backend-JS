@@ -44,6 +44,7 @@ function CreateVideo() {
       thumbnail: thumbnail,
     });
     setUploadSuccess(true);
+    navigate("/");
 
     // Proceed with form submission
     console.log("Form submitted with:", {
@@ -79,11 +80,11 @@ function CreateVideo() {
               className="t w-96 h-48 border-4 border-darktext text-darktext border-dashed rounded flex justify-center items-center mb-2"
               onDragOver={(e) => {
                 e.preventDefault();
-                console.log("Drag over");
+                // console.log("Drag over");
               }}
               onDrop={(e) => {
                 e.preventDefault();
-                console.log("Drop");
+                // console.log("Drop");
                 const files = e.dataTransfer.files;
                 if (files.length > 0) {
                   setThumbnail(files[0]);

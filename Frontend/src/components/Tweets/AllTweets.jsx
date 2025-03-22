@@ -36,7 +36,7 @@ function AllTweets() {
   }
 
   return (
-    <div className="bg-darkbg min-h-full text-lighttext p-4">
+    <div className=" p-4 overflow-y-scroll h-screen mt-4 mr-4">
       {tweets.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {tweets.map((tweet) => (

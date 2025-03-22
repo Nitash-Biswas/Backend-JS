@@ -20,14 +20,16 @@ function Tweets() {
   const { loggedUser } = useContext(UserContext);
   return (
     <TweetsProvider>
-    <div className="bg-darkbg min-h-full text-lighttext p-4">
-      <div className="flex justify-between items-center pb-8 pt-4 px-4">
-        <h1 className="text-4xl font-bold">All Tweets</h1>
-      </div>
-      {loggedUser && <AddTweet username={loggedUser.username} avatar={loggedUser.avatar}/>}
+      <div className="bg-darkbg h-full text-lighttext flex flex-col p-4">
+        <div className="flex justify-between items-center pb-8 pt-4 px-4">
+          <h1 className="text-4xl font-bold">All Tweets</h1>
+        </div>
+        {loggedUser && (
+          <AddTweet username={loggedUser.username} avatar={loggedUser.avatar} />
+        )}
 
-      <AllTweets/>
-    </div>
+        <AllTweets />
+      </div>
     </TweetsProvider>
   );
 }

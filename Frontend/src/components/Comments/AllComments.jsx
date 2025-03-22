@@ -31,7 +31,7 @@ function AllComments() {
   }
 
   return (
-    <div className="bg-darkbg p-4">
+    <div className="bg-darkbg p-4 overflow-y-scroll h-screen mt-4">
       {comments.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {comments.map((comment) => (
@@ -45,7 +45,7 @@ function AllComments() {
               commentId={comment._id}
               onCommentUpdated={refreshComments}
               onCommentDeleted={refreshComments}
-              
+
             />
           ))}
         </div>
