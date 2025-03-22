@@ -54,7 +54,7 @@ export const useAddComment = () => {
         { headers, withCredentials: true }
       );
 
-      console.log(response.data.data.createdComment);
+      // console.log(response.data.data.createdComment);
     } catch (err) {
       setError(err.message);
     } finally {

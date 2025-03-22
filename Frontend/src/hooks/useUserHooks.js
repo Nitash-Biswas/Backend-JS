@@ -136,7 +136,7 @@ export const useUpdateImages = () => {
         formData,
         { headers, withCredentials: true }
       );
-      console.log("Avatar updated successfully");
+      // console.log("Avatar updated successfully");
       return response.data;
     } catch (err) {
       setError(err.message);
@@ -149,10 +149,10 @@ export const useUpdateImages = () => {
     setLoading(true);
 
     //Prepare Form Data
-    console.log(coverImage);
+    // console.log(coverImage);
     const formData = new FormData();
     formData.append("coverImage", coverImage);
-    console.log(formData.get("coverImage"));
+    // console.log(formData.get("coverImage"));
 
     try {
       const headers = requestHeaders({ hasImage: true });
@@ -161,7 +161,7 @@ export const useUpdateImages = () => {
         formData,
         { headers, withCredentials: true }
       );
-      console.log("Cover image updated successfully");
+      // console.log("Cover image updated successfully");
       return response.data;
     } catch (err) {
       setError(err.message);
@@ -180,7 +180,7 @@ export const useLogoutUser = () => {
     setLoggedUser(null);
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
-    console.log("User logged out");
+    // console.log("User logged out");
   };
 
   return logoutUser;
@@ -198,7 +198,7 @@ export const useDeleteUser = () => {
         `${BASE_URL}${USERS_URL}/delete_user`,
         { headers, withCredentials: true }
       );
-      console.log("User deleted successfully");
+      // console.log("User deleted successfully");
       return response.data;
     } catch (err) {
       setError(err.message);

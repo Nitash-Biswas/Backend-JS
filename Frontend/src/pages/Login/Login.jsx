@@ -28,7 +28,7 @@ function Login() {
   }, [error]);
 
   useEffect(() => {
-    console.log({ user, loggedUser }); // Log user data when user state changes
+    // console.log({ user, loggedUser }); // Log user data when user state changes
     if (user) {
       setLoggedUser(user);
     }

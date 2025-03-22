@@ -37,7 +37,7 @@ export const useFetchPlaylist = (playlistId) => {
 
     fetchPlaylist();
   }, []);
-  console.log(playlistData);
+  // console.log(playlistData);
   return { playlistData, error, loading, refresh: fetchPlaylist };
 };
 
@@ -87,7 +87,7 @@ export const useManageVideosInPlaylist = () => {
         {},
         { headers, withCredentials: true }
       );
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (err) {
       setError(err.message);
@@ -104,7 +104,7 @@ export const useManageVideosInPlaylist = () => {
         {},
         { headers, withCredentials: true }
       );
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (err) {
       setError(err.message);
@@ -130,7 +130,7 @@ export const useManagePlaylist = () => {
         { name: name, description: description },
         { headers, withCredentials: true }
       );
-      console.log(response.data.data.createdPlaylist);
+      // console.log(response.data.data.createdPlaylist);
       return response.data.data.createdPlaylist;
     } catch (err) {
       setError(err.message);
@@ -146,7 +146,7 @@ export const useManagePlaylist = () => {
         `${BASE_URL}${PLAYLISTS_URL}/${playlistId}`,
         { headers, withCredentials: true }
       );
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     } catch (err) {
       setError(err.message);

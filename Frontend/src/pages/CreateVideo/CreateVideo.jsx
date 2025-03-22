@@ -47,12 +47,12 @@ function CreateVideo() {
     navigate("/");
 
     // Proceed with form submission
-    console.log("Form submitted with:", {
-      title,
-      video,
-      thumbnail,
-      description,
-    });
+    // console.log("Form submitted with:", {
+    //   title,
+    //   video,
+    //   thumbnail,
+    //   description,
+    // });
   };
 
   return (

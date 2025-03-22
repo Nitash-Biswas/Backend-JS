@@ -61,7 +61,7 @@ function AddToPlaylist({ videoData, onClose }) {
 
   const handleSave = async () => {
     const response = await createPlaylist({ name: newTitle, description: newDescription });
-    console.log(response?._id);
+    // console.log(response?._id);
     await addVideoToPlaylist(response?._id, videoData._id);
     await refresh();
     closeDropDown();

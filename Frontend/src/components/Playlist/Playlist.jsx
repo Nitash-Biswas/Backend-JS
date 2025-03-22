@@ -65,7 +65,7 @@ function Playlist() {
 
   };
 
-  console.log(playlistData, loggedUser);
+  // console.log(playlistData, loggedUser);
   return (
     <>
       <div className="bg-darkbg min-h-full p-4">

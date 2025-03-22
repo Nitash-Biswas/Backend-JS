@@ -54,7 +54,7 @@ const Register = () => {
       coverImage: formData.coverImage,
     });
     setRegisterSuccess(true);
-    console.log("Registration data:", formData);
+    // console.log("Registration data:", formData);
   };
 
   const FileUpload = ({ field, label, isAvatar }) => {

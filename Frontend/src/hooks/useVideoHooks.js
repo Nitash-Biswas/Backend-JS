@@ -148,7 +148,7 @@ export const useUpdateAndDeleteVideo = () => {
         headers,
         withCredentials: true,
       });
-      console.log("Video deleted successfully");
+      // console.log("Video deleted successfully");
     } catch (err) {
       setErrorChange(err.message);
     } finally {
@@ -190,7 +190,7 @@ export const usePublishVideo = () => {
         formData,
         { headers, withCredentials: true }
       );
-      console.log("Video published successfully");
+      // console.log("Video published successfully");
     } catch (err) {
       setError(err.message);
     } finally {
