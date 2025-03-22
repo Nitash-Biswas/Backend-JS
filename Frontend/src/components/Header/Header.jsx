@@ -36,7 +36,7 @@ export default function Header() {
         <div className="flex flex-wrap justify-between items-center mx-auto">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/src/assets/Logo3.png" className="mr-3 h-12" alt="Logo" />
+            <img src="/logo.png" className="mr-3 h-12" alt="Logo" />
           </Link>
 
           {/* Login and Register buttons */}
@@ -59,7 +59,7 @@ export default function Header() {
                 >
                   <img
                     src={loggedUser.avatar || "https://placehold.co/150x150"}
-                    className="w-10 h-10 object-cover rounded-full "
+                    className="w-12 h-12 object-cover rounded-full "
                     alt=""
                   />
                   {dropDownOpen && (
