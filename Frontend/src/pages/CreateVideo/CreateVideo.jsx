@@ -187,31 +187,33 @@ function CreateVideo() {
           {errors.description && (
             <p className="text-red-500 text-sm mt-1">{errors.description}</p>
           )}
-        </div>
-        <div className="flex justify-end p-4 ">
-        {uploadSuccess &&
-          <p className="text-green-500 text-sm mt-4 mr-8">
-            Video uploaded successfully!
-          </p>
-        }
-          <button
-            className="bg-lightbg hover:bg-lightbg/70 text-xl text-lighttext px-8 py-2 rounded mr-2 cursor-pointer"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-xl text-lighttext px-8 py-2 rounded cursor-pointer disabled:bg-blue-900"
-            onClick={handleSubmit}
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? "Uploading..." : "Upload"}
-          </button>
 
+          <div className="flex justify-end pb-4 ">
+          {uploadSuccess &&
+            <p className="text-green-500 text-sm mt-4 mr-8">
+              Video uploaded successfully!
+            </p>
+          }
+            <button
+              className="bg-lightbg hover:bg-lightbg/70 text-xl text-lighttext px-8 py-2 rounded mr-2 cursor-pointer"
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-xl text-lighttext px-8 py-2 rounded cursor-pointer disabled:bg-blue-900"
+              onClick={handleSubmit}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Uploading..." : "Upload"}
+            </button>
+
+          </div>
         </div>
+
 
       </div>
     </div>

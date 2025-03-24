@@ -18,9 +18,13 @@ import TweetsContext from "../../contexts/tweetContextProvider";
 function UserTweets() {
   const { username } = useParams();
   // Custom hook to fetch all videos
-  const { tweets, loading, error } = useFetchUserTweets(username);
+  const { tweets, loading, error, refresh } = useFetchUserTweets(username);
   const { loggedUser } = useContext(UserContext);
   const { refreshTweets } = useContext(TweetsContext);
+
+  const handleRefresh = () => {
+    refresh();
+  }
 
   if (loading) {
     return (
@@ -51,9 +55,9 @@ function UserTweets() {
               date={extractDate(tweet.createdAt)}
               avatar={tweet.owner.avatar}
               loggedUser={loggedUser}
-              onTweetUpdated={refreshTweets}
-              onTweetDeleted={refreshTweets}
-              onTweetLiked={refreshTweets}
+              onTweetUpdated={handleRefresh}
+              onTweetDeleted={handleRefresh}
+              onTweetLiked={handleRefresh}
 
             />
           ))}

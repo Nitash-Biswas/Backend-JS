@@ -44,39 +44,39 @@ export const useFetchUserTweets = (username) => {
   const [error, setError] = useState(null);
 
   // Fetch all tweets from the server using axios
-  useEffect(() => {
-    const fetchTweets = async () => {
-      try {
-        // Get tokens from cookies
-        const accessToken = Cookies.get("accessToken");
-        const refreshToken = Cookies.get("refreshToken");
+  const fetchTweets = async () => {
+    try {
+      // Get tokens from cookies
+      const accessToken = Cookies.get("accessToken");
+      const refreshToken = Cookies.get("refreshToken");
 
-        // Set up headers with tokens
-        const headers = {
-          Authorization: `Bearer ${accessToken}`,
-          "x-refresh-token": refreshToken,
-        };
+      // Set up headers with tokens
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "x-refresh-token": refreshToken,
+      };
 
-        const response = await axios.get(
-          `${BASE_URL}${TWEETS_URL}/get_user_tweets/${username}`,
-          { headers, withCredentials: true }
-        );
-        setTweets(response.data?.data.allTweets);
-      } catch (err) {
-        if (err.response?.status === 401) {
-          setError("You are not logged in");
-        } else {
-          setError(err.response?.data?.message || "An error occurred");
-        }
-      } finally {
-        setLoading(false);
+      const response = await axios.get(
+        `${BASE_URL}${TWEETS_URL}/get_user_tweets/${username}`,
+        { headers, withCredentials: true }
+      );
+      setTweets(response.data?.data.allTweets);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        setError("You are not logged in");
+      } else {
+        setError(err.response?.data?.message || "An error occurred");
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTweets();
   }, []);
 
-  return { tweets, loading, error };
+  return { tweets, loading, error, refresh: fetchTweets };
 };
 
 // Custom hook to add a Tweet
@@ -98,7 +98,7 @@ export const useAddTweet = () => {
       };
 
       //Add comment only when when carrying auth tokens
-       await axios.post(
+      await axios.post(
         `${BASE_URL}${TWEETS_URL}/create`,
         {
           content: tweet,
