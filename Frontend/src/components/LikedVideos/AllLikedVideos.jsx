@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import LikesContext from "../../contexts/likesContextProvider";
 import LongCard from "../Card/LongCard";
+import UserContext from "../../contexts/userContext";
 
 function AllLikedVideos() {
   const { likedVideos, loading, error, refreshContext } =
     useContext(LikesContext);
-
+    const { loggedUser } = useContext(UserContext);
 
     if (loading) {
     return (
@@ -36,6 +37,8 @@ function AllLikedVideos() {
               username={video.ownerDetails.username}
               videoId={video.video._id}
               description={video.video.description}
+              loggedUser={loggedUser}
+
             />
           ))}
         </div>

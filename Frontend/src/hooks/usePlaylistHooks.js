@@ -21,6 +21,7 @@ export const useFetchPlaylist = (playlistId) => {
   const [playlistData, setPlaylistData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const fetchPlaylist = async () => {
     try {
       const response = await axios.get(

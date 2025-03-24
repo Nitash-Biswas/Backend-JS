@@ -118,11 +118,37 @@ export const useFetchUserDetails = (username) => {
   return { user, loading, error };
 };
 
+export const useUpdatePassword = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  // console.log("Update Password Hook");
+  const updatePassword = async ({ oldPassword, newPassword }) => {
+    setLoading(true);
+    try {
+      const headers = requestHeaders({ hasImage: false });
+      const response = await axios.post(
+        `${BASE_URL}${USERS_URL}/change_password`,
+        { oldPassword: oldPassword, newPassword: newPassword },
+        { headers, withCredentials: true }
+      );
+      // console.log("Password updated successfully");
+      // console.log(response);
+      return response.data;
+    } catch (err) {
+      setError(err.status === 401 ? "Wrong Password" : err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updatePassword, loading, error };
+};
+
 export const useUpdateImages = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const updateAvatar = async ({avatar}) => {
+  const updateAvatar = async ({ avatar }) => {
     setLoading(true);
 
     //Prepare Form Data
@@ -145,7 +171,7 @@ export const useUpdateImages = () => {
     }
   };
 
-  const updateCoverImage = async ({coverImage}) => {
+  const updateCoverImage = async ({ coverImage }) => {
     setLoading(true);
 
     //Prepare Form Data
@@ -171,6 +197,102 @@ export const useUpdateImages = () => {
   };
 
   return { updateAvatar, updateCoverImage, loading, error };
+};
+
+export const useGetWatchHistory = () => {
+  const [watchHistory, setWatchHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const getWatchHistory = async () => {
+    setLoading(true);
+    try {
+      const headers = requestHeaders({ hasImage: false });
+      const response = await axios.get(
+        `${BASE_URL}${USERS_URL}/watch_history`,
+        { headers, withCredentials: true }
+      );
+      // console.log("Watch history fetched successfully");
+      setWatchHistory(response.data?.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  console.log(watchHistory);
+  useEffect(() => {
+    getWatchHistory();
+  }, []);
+
+  return { watchHistory, loading, error, refresh: getWatchHistory };
+};
+
+export const useEditWatchHistory = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const addToWatchHistory = async ({ videoId }) => {
+    setLoading(true);
+    try {
+      const headers = requestHeaders({ hasImage: false });
+      const response = await axios.post(
+        `${BASE_URL}${USERS_URL}/add_to_history`,
+        { videoId: videoId },
+        { headers, withCredentials: true }
+      );
+      // console.log("Video added to watch history successfully");
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeFromWatchHistory = async ({ videoId }) => {
+    setLoading(true);
+    try {
+      const headers = requestHeaders({ hasImage: false });
+      const response = await axios.post(
+        `${BASE_URL}${USERS_URL}/remove_from_history`,
+        { videoId: videoId },
+        { headers, withCredentials: true }
+      );
+      // console.log("Video removed from watch history successfully");
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearWatchHistory = async () => {
+    setLoading(true);
+    try {
+      const headers = requestHeaders({ hasImage: false });
+      const response = await axios.post(
+        `${BASE_URL}${USERS_URL}/clear_history`,
+        {},
+        { headers, withCredentials: true }
+      );
+      // console.log("Watch history cleared successfully");
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    clearWatchHistory,
+    addToWatchHistory,
+    removeFromWatchHistory,
+    loading,
+    error,
+  };
 };
 
 export const useLogoutUser = () => {

@@ -10,7 +10,6 @@ import {
   uploadOnCloudinary,
 } from "../utils/fileToCloudinary.js";
 import jwt from "jsonwebtoken";
-import { getMyTweets } from "./tweet.controller.js";
 import { Comment } from "../models/comment.model.js";
 import { Like } from "../models/like.model.js";
 import { Playlist } from "../models/playlist.model.js";
@@ -247,7 +246,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Password changed successfully"));
+    .json(new ApiResponse(200, user, "Password changed successfully"));
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -286,6 +285,8 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
+  const oldAvatarId = getPublicId(req.user.avatar);
+
   //  get the new avatar image file from the request
   const avatarLocalPath = req.files?.avatar[0]?.path;
 
@@ -312,7 +313,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   ).select("-password -refreshToken");
 
   //  delete the old avatar image from cloudinary
-  const oldAvatarId = getPublicId(req.user.avatar);
+
   await deleteFromCloudinary(oldAvatarId);
 
   return res
@@ -321,6 +322,8 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
+  const oldCoverImageId = getPublicId(req.user.coverImage);
+  //  get the new cover image file from the request
   const coverImageLocalPath = req.file?.path;
 
   if (!coverImageLocalPath) {
@@ -342,6 +345,9 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     },
     { new: true }
   ).select("-password -refreshToken");
+
+  //delete the old cover image from cloudinary
+  await deleteFromCloudinary(oldCoverImageId);
 
   return res
     .status(200)
@@ -430,61 +436,102 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-  const user = await User.aggregate([
-    //Stage 1:
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(req.user._id), //as aggregates pass directly to mongoDB, where _id is of datatype ObjectId instead of string.
-      },
-    },
-    //Stage 2:
-    {
-      $lookup: {
-        from: "videos", // Collection to join from
-        localField: "watchHistory", // Field from the User collection
-        foreignField: "_id", // Field from the Video collection
-        as: "watchHistory", // Name of the new field for the joined data
-        //sub-pipeline for watchHistory
-        pipeline: [
-          //Stage 2.1:
-          {
-            $lookup: {
-              from: "users",
-              localField: "owner",
-              foreignField: "_id",
-              as: "owner",
-              //sub-pipeline for owner
-              pipeline: [
-                {
-                  $project: {
-                    fullname: 1,
-                    username: 1,
-                    avatar: 1,
-                  },
-                },
-              ],
-            },
-          },
-          //Stage 2.2:
-          {
-            $addFields: {
-              owner: {
-                $first: "$owner",
+  // 1. Get user with populated watchHistory in original order
+  const user = await User.findById(req.user._id)
+    .select("watchHistory")
+    .populate({
+      path: "watchHistory",
+      populate: {
+        path: "owner",
+        select: "fullname username avatar"
+      }
+    });
+
+  // 2. Return watchHistory (already in correct order)
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user.watchHistory, "Watch history fetched"));
+});
+
+const addToWatchHistory = asyncHandler(async (req, res) => {
+  const { videoId } = req.body;
+
+  // Convert videoId to ObjectId
+  const videoObjectId = new mongoose.Types.ObjectId(videoId);
+
+  // Check if video exists
+  const video = await Video.findById(videoObjectId);
+  if (!video) throw new ApiError(400, "Video does not exist");
+
+  // Atomic update using aggregation pipeline syntax
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    [
+      {
+        $set: {
+          watchHistory: {
+            $concatArrays: [
+              {
+                $filter: {
+                  input: "$watchHistory",
+                  as: "vid",
+                  cond: { $ne: ["$$vid", videoObjectId] }
+                }
               },
-            },
-          },
-        ],
-      },
-    },
-  ]);
+              [videoObjectId]
+            ]
+          }
+        }
+      }
+    ],
+    { new: true } // Return the updated document
+  );
+
+  if (!user) throw new ApiError(400, "User does not exist");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user.watchHistory, "Video added to watch history"));
+});
+
+const removeFromWatchHistory = asyncHandler(async (req, res) => {
+  const { videoId } = req.body;
+
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "User does not exist");
+  }
+
+  const watchHistory = user.watchHistory;
+
+  if (watchHistory.includes(videoId)) {
+    watchHistory.splice(watchHistory.indexOf(videoId), 1);
+
+    await User.findByIdAndUpdate(req.user._id, { watchHistory });
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { watchHistory }, "Video removed from watch history")
+    );
+});
+
+const clearWatchHistory = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(400, "User does not exist");
+  }
+
+  await User.findByIdAndUpdate(req.user._id, { watchHistory: [] });
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        user[0].watchHistory,
-        "Watch History Fetched Successfully"
+        { watchHistory: [] },
+        "Watch history cleared successfully"
       )
     );
 });
@@ -557,7 +604,13 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {comments, likes, playlists, tweets, videos}, "User deleted successfully."));
+    .json(
+      new ApiResponse(
+        200,
+        { comments, likes, playlists, tweets, videos },
+        "User deleted successfully."
+      )
+    );
 });
 
 export {
@@ -572,5 +625,8 @@ export {
   updateUserCoverImage,
   getUserChannelProfile,
   getWatchHistory,
+  addToWatchHistory,
+  removeFromWatchHistory,
+  clearWatchHistory,
   deleteUser,
 };

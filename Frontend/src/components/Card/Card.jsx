@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { SlOptionsVertical } from "react-icons/sl";
 import EditVideo from "../EditVideo/EditVideo";
 import { useUpdateAndDeleteVideo } from "../../hooks/useVideoHooks";
+import { useEditWatchHistory } from "../../hooks/useUserHooks";
 
 export default function Card({
   title = "No title",
@@ -20,6 +21,7 @@ export default function Card({
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showEditVideo, setShowEditVideo] = useState(false);
   const { deleteVideo, loadingChange } = useUpdateAndDeleteVideo();
+  const {removeFromWatchHistory} = useEditWatchHistory();
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -39,6 +41,7 @@ export default function Card({
   };
 
   const confirmDelete = async () => {
+    await removeFromWatchHistory({ videoId });
     await deleteVideo({ videoId });
     setShowConfirmDelete(false);
     onVideoDelete();

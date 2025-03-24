@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
+  addToWatchHistory,
     changeCurrentPassword,
+  clearWatchHistory,
   deleteUser,
   getCurrentUser,
   getUserChannelProfile,
@@ -9,6 +11,7 @@ import {
   logoutUser,
   refreshAccessToken,
   registerUser,
+  removeFromWatchHistory,
   updateUserAvatar,
   updateUserCoverImage,
 } from "../controllers/user.controller.js";
@@ -55,6 +58,10 @@ userRouter.route("/update_cover_image").patch(
 userRouter.route("/change_password").post(verifyJWT,changeCurrentPassword)
 userRouter.route("/channel/:username").get(getUserChannelProfile)
 userRouter.route("/watch_history").get(verifyJWT,getWatchHistory)
+userRouter.route("/add_to_history").post(verifyJWT,addToWatchHistory)
+userRouter.route("/remove_from_history").post(verifyJWT,removeFromWatchHistory)
+userRouter.route("/clear_history").post(verifyJWT,clearWatchHistory)
+
 userRouter.route("/delete_user").delete(verifyJWT,deleteUser)
 
 

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../contexts/userContext";
 import { useFetchSubsciberCount } from "../../hooks/useSubscriptionHooks";
-import EditModal from "../../components/EditModal/EditModal";
+import EditModal from "../../components/EditImage/EditImage";
 import {
   useDeleteUser,
   useLogoutUser,
@@ -9,6 +9,8 @@ import {
 } from "../../hooks/useUserHooks";
 import { IoSettingsSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import EditPassword from "../../components/EditPassword/EditPassword";
+import EditImage from "../../components/EditImage/EditImage";
 
 function Profile() {
   const { loggedUser } = useContext(UserContext);
@@ -29,6 +31,7 @@ function Profile() {
   const [showCoverEdit, setShowCoverEdit] = useState(false);
   const [showAvatarEdit, setShowAvatarEdit] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
   const [coverImageFile, setCoverImageFile] = useState(null);
   const [avatarImageFile, setAvatarImageFile] = useState(null);
   const navigate = useNavigate();
@@ -61,6 +64,9 @@ function Profile() {
     await updateAvatar({ avatar: file });
   };
 
+
+
+  // Handle deleting account
   const handleDelete = () => {
     setShowConfirmDelete(true);
   };
@@ -74,6 +80,12 @@ function Profile() {
   };
   const cancelDelete = () => {
     setShowConfirmDelete(false);
+  };
+
+
+  // Handle editing password
+  const handleEditPassword = () => {
+    setShowEditPassword(true);
   };
 
   if (!loggedUser) {
@@ -138,7 +150,13 @@ function Profile() {
           <span className="mr-2">Subscribers :</span>
           <span className="text-darktext">{totalSubs}</span>
         </div>
-        <div className="text-xl  font-bold mx-4 py-2 rounded">
+        <div className="text-xl  font-bold mx-4 py-2 rounded flex flex-col w-fit gap-4">
+          <button
+            className="text-xl py-2 px-4 font-bold rounded bg-lightbg hover:bg-lightbg/80"
+            onClick={handleEditPassword}
+          >
+            Change Password
+          </button>
           <button
             className="text-xl py-2 px-4 font-bold rounded bg-red-500 hover:bg-red-600"
             onClick={handleDelete}
@@ -180,8 +198,17 @@ function Profile() {
         )
       }
 
+      {
+        // If showChangePassword is true, show the change password box
+        showEditPassword && (
+          <EditPassword
+            onClose={() => setShowEditPassword(false)}
+          />
+        )
+      }
+
       {/* Edit Modals */}
-      <EditModal
+      <EditImage
         isOpen={showCoverEdit}
         onClose={() => setShowCoverEdit(false)}
         title="Cover Image"
@@ -191,7 +218,7 @@ function Profile() {
         loading={loadingUpdate}
       />
 
-      <EditModal
+      <EditImage
         isOpen={showAvatarEdit}
         onClose={() => setShowAvatarEdit(false)}
         title="Avatar"

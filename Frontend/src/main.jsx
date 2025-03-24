@@ -36,7 +36,14 @@ const router = createBrowserRouter(
     <Route path="/" element={<Layout />}>
       <Route path="" element={<Home />} />
 
-      <Route path="history" element={<History />} />
+      <Route
+        path="history"
+        element={
+          <PrivateRoute>
+            <History />
+          </PrivateRoute>
+        }
+      />
       <Route
         path="liked_videos"
         element={

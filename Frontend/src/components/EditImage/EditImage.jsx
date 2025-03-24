@@ -2,7 +2,7 @@ import React from "react";
 import { MdFileUpload } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
 
-const EditModal = ({
+const EditImage = ({
   isOpen,
   onClose,
   title,
@@ -32,7 +32,7 @@ const EditModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
       <div
         className={`bg-darkbg p-6 rounded-lg ${
           isAvatar ? "w-full max-w-md" : "w-full max-w-2xl"
@@ -43,7 +43,7 @@ const EditModal = ({
         </h3>
         <div
           className={`relative border-4 border-dashed border-darktext ${
-            isAvatar ? "w-48 h-48 mx-auto" : "rounded-lg h-64"
+            isAvatar ? "w-52 h-52 mx-auto" : "rounded-lg h-64"
           } flex justify-center items-center mb-4 cursor-pointer`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleImageDrop}
@@ -61,7 +61,7 @@ const EditModal = ({
                 }`}
               />
               <button
-                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-lg p-1 m-2 hover:bg-red-600"
                 onClick={(e) => {
                   e.stopPropagation();
                   setImageFile(null);
@@ -73,8 +73,8 @@ const EditModal = ({
           ) : (
             <div className="flex flex-col items-center text-darktext">
               <MdFileUpload className="w-12 h-12 mb-2" />
-              <p>Drag and drop or click to upload</p>
-              <p className="text-sm">(Only *.png, *.jpg, *.jpeg images)</p>
+              <p className="text-center">Drag and drop or click to upload</p>
+              <p className="text-sm text-center">(Only *.png, *.jpg, *.jpeg images)</p>
             </div>
           )}
         </div>
@@ -100,7 +100,7 @@ const EditModal = ({
             className="px-4 py-2 bg-blue-600 text-lighttext rounded hover:bg-blue-700 disabled:bg-blue-900"
             disabled={!imageFile || loading} // Disable Update button when no file or loading
             onClick={() => {
-              onUpdate(imageFile); // Do not call onClose here
+              onUpdate(imageFile);
             }}
           >
             {loading ? "Updating..." : "Update"}
@@ -111,4 +111,4 @@ const EditModal = ({
   );
 };
 
-export default EditModal;
+export default EditImage;

@@ -17,6 +17,7 @@ import { useCheckLike, useGetTotalLikes, useToggleLike } from "../../hooks/useLi
 import { AiFillLike } from "react-icons/ai";
 import { IoAddCircle } from "react-icons/io5";
 import AddToPlaylist from "../AddToPlaylist/AddToPlaylist";
+import { useEditWatchHistory } from "../../hooks/useUserHooks";
 
 
 // Memoize the Comments, AddComment, and AdvancedVideo components
@@ -42,6 +43,12 @@ function VideoPlayer() {
   const { toggleVideoLike, loadingLike, errorLike } = useToggleLike();
   const { checkVideoLike, loadingLikeCheck, errorLikeCheck } = useCheckLike();
   const { getVideoLikes, loadingLikeCount, errorLikeCount } = useGetTotalLikes();
+  const {
+      addToWatchHistory,
+      refresh,
+      loading,
+      error: watchHistoryError,
+    } = useEditWatchHistory();
 
   useEffect(() => {
     // Fetch like status
@@ -65,7 +72,9 @@ function VideoPlayer() {
     };
     // Check if the user is logged in
     if (loggedUser) {
+      console.log(loggedUser, videoId)
       fetchLikeStatus();
+      addToWatchHistory({ videoId });
     }
 
     fetchTotalLikes();
