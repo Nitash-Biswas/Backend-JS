@@ -3,7 +3,6 @@
 import React, { useContext } from "react";
 import LongCard from "../../components/Card/LongCard";
 import UserContext from "../../contexts/userContext";
-import { LikesContextProvider } from "../../contexts/likesContextProvider";
 import AllLikedVideos from "../../components/LikedVideos/AllLikedVideos";
 
 
@@ -20,7 +19,7 @@ function LikedVideos() {
         </div>
         {loggedUser && <AllLikedVideos />}
       </div>
-    
+
   );
 }
 

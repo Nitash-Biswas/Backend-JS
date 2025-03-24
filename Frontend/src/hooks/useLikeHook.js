@@ -14,33 +14,34 @@ const requestHeaders = () => {
 };
 
 //Custom hook to fetch liked videos
-export const useFetchLikedVideos = (refresh) => {
+export const useFetchLikedVideos = () => {
   const [likedVideos, setLikedVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchLikedVideos = async () => {
+    try {
+      const headers = requestHeaders();
+
+      //Show Liked Videos only when when carrying auth tokens
+      const response = await axios.get(
+        `${BASE_URL}${LIKES_URL}/liked_videos`,
+        { headers, withCredentials: true }
+      );
+      setLikedVideos(response.data?.data.allLikedVideos);
+      // console.log(response.data?.data.allCommentsWithPagination.docs);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const headers = requestHeaders();
 
-        //Show Liked Videos only when when carrying auth tokens
-        const response = await axios.get(
-          `${BASE_URL}${LIKES_URL}/liked_videos`,
-          { headers, withCredentials: true }
-        );
-        setLikedVideos(response.data?.data.allLikedVideos);
-        // console.log(response.data?.data.allCommentsWithPagination.docs);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchComments();
-  }, [refresh]);
+    fetchLikedVideos();
+  }, []);
 
-  return { likedVideos, loading, error };
+  return { likedVideos, loading, error, refresh: fetchLikedVideos };
 };
 
 //Custom hook to like a video, comment or tweet

@@ -1,12 +1,17 @@
 import React, { useContext } from "react";
-import LikesContext from "../../contexts/likesContextProvider";
 import LongCard from "../Card/LongCard";
 import UserContext from "../../contexts/userContext";
+import { useFetchLikedVideos, useToggleLike } from "../../hooks/useLikeHook";
 
 function AllLikedVideos() {
-  const { likedVideos, loading, error, refreshContext } =
-    useContext(LikesContext);
+  const { likedVideos, loading, error, refresh } = useFetchLikedVideos();
+  const {toggleVideoLike} = useToggleLike();
     const { loggedUser } = useContext(UserContext);
+
+    const handleRemove = async (videoId) => {
+      await toggleVideoLike({ videoId });
+      refresh();
+    }
 
     if (loading) {
     return (
@@ -38,7 +43,7 @@ function AllLikedVideos() {
               videoId={video.video._id}
               description={video.video.description}
               loggedUser={loggedUser}
-
+              onRemove={() => {handleRemove(video.video._id)}}
             />
           ))}
         </div>
