@@ -4,7 +4,6 @@ import { useFetchUserTweets } from "../../hooks/useTweetHooks";
 import { extractDate } from "../../Utils/extractDate";
 import { useParams } from "react-router-dom";
 import UserContext from "../../contexts/userContext";
-import TweetsContext from "../../contexts/tweetContextProvider";
 
 // const tweets = [
 //   {
@@ -20,7 +19,6 @@ function UserTweets() {
   // Custom hook to fetch all videos
   const { tweets, loading, error, refresh } = useFetchUserTweets(username);
   const { loggedUser } = useContext(UserContext);
-  const { refreshTweets } = useContext(TweetsContext);
 
   const handleRefresh = () => {
     refresh();

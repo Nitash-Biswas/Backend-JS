@@ -27,7 +27,6 @@ import NotLoggedIn from "./pages/NotLoggedIn/NotLoggedIn.jsx";
 import Playlist from "./components/Playlist/Playlist.jsx";
 import Tweets from "./pages/Tweets/Tweets.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
-import { TweetsProvider } from "./contexts/tweetContextProvider.jsx";
 import CreateVideo from "./pages/CreateVideo/CreateVideo.jsx";
 
 const router = createBrowserRouter(
@@ -55,14 +54,7 @@ const router = createBrowserRouter(
       <Route path="/user/:username" element={<ChannelDashboard />}>
         <Route path="videos" element={<UserVideos />} />
         <Route path="playlists" element={<UserPlaylists />} />
-        <Route
-          path="tweets"
-          element={
-            <TweetsProvider>
-              <UserTweets />
-            </TweetsProvider>
-          }
-        />
+        <Route path="tweets" element={<UserTweets/>} />
       </Route>
       <Route
         path="stats"

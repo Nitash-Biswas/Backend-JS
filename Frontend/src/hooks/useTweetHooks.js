@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL, TWEETS_URL } from "../constants";
 import Cookies from "js-cookie";
+import { refresh } from "@cloudinary/url-gen/qualifiers/artisticFilter";
 /*
 What is a custom hook?
 A custom hook is a JavaScript function that allows
@@ -9,31 +10,32 @@ you to reuse logic in your React components.
  */
 
 // Custom hook to fetch all tweets
-export const useFetchAllTweets = (refresh) => {
+export const useFetchAllTweets = () => {
   // State to store videos, loading and error
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Fetch all tweets from the server using axios
+  const fetchTweets = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}${TWEETS_URL}/get_all_tweets`
+      );
+      setTweets(response.data?.data.allTweets);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchTweets = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}${TWEETS_URL}/get_all_tweets`
-        );
-        setTweets(response.data?.data.allTweets);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
+
 
     fetchTweets();
-  }, [refresh]);
+  }, []);
 
-  return { tweets, loading, error };
+  return { tweets, loading, error, refresh: fetchTweets };
 };
 
 // Custom hook to fetch all videos of the logged in user

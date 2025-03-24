@@ -3,8 +3,8 @@
 import React, { useContext } from "react";
 import TweetCard from "../../components/Card/TweetCard";
 import { extractDate } from "../../Utils/extractDate";
-import TweetsContext from "../../contexts/tweetContextProvider";
 import UserContext from "../../contexts/userContext";
+import { useFetchAllTweets } from "../../hooks/useTweetHooks";
 
 // const tweets = [
 //   {
@@ -15,9 +15,15 @@ import UserContext from "../../contexts/userContext";
 //   },
 // ];
 
-function AllTweets() {
+function AllTweets({onChange, tweets, loading, error}) {
   const { loggedUser } = useContext(UserContext);
-  const { tweets, loading, error, refreshTweets } = useContext(TweetsContext);
+
+
+
+  const handleRefresh = () => {
+    onChange();
+  }
+
 
   if (loading) {
     return (
@@ -48,9 +54,9 @@ function AllTweets() {
               date={extractDate(tweet.createdAt)}
               avatar={tweet.owner.avatar}
               loggedUser={loggedUser}
-              onTweetUpdated={refreshTweets}
-              onTweetDeleted={refreshTweets}
-              onTweetLiked={refreshTweets}
+              onTweetUpdated={handleRefresh}
+              onTweetDeleted={handleRefresh}
+              onTweetLiked={handleRefresh}
             />
           ))}
         </div>
