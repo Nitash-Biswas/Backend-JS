@@ -8,8 +8,7 @@ import {
   useCheckLike,
   useGetTotalLikes,
   useToggleLike,
-} from "../../hooks/useLikeHook";
-
+} from "../../hooks/useLikeHooks";
 
 function TweetCard({
   content,

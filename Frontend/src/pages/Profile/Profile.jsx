@@ -19,12 +19,10 @@ function Profile() {
     updateAvatar,
     updateCoverImage,
     loading: loadingUpdate,
-    error: updateError,
   } = useUpdateImages();
   const {
     deleteUser,
     loading: loadingDelete,
-    error: deleteError,
   } = useDeleteUser();
   const logoutUser = useLogoutUser();
   const [totalSubs, setTotalSubs] = useState(0);
@@ -72,8 +70,8 @@ function Profile() {
   };
 
   const confirmDelete = async () => {
-    const response = await deleteUser();
-    console.log(response);
+    await deleteUser();
+    // console.log(response);
     logoutUser();
     navigate("/");
     setShowConfirmDelete(false);

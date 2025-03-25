@@ -1,17 +1,22 @@
-import React, { useContext, useState } from "react";
-import { useAddComment } from "../../hooks/useCommentHook";
+import React, { useContext, useRef, useState } from "react";
+import { useAddComment } from "../../hooks/useCommentHooks";
 import CommentsContext from "../../contexts/commentsContextProvider";
 
 function AddComment({ videoId, username, avatar }) {
   const [comment, setComment] = useState("");
   const { addComment, loading, error } = useAddComment();
-  const {  refreshComments } = useContext(CommentsContext);
+  const { refreshComments } = useContext(CommentsContext);
+  const textareaRef = useRef(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     await addComment({ videoId: videoId, comment });
     setComment("");
     //An arbitrary function onCommentAdded() will be executed
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "40px";
+    }
     refreshComments();
   };
 
@@ -26,9 +31,14 @@ function AddComment({ videoId, username, avatar }) {
     <div className="bg-lightbg p-4 ml-4 rounded">
       <form onSubmit={handleSubmit}>
         <div className="flex justify-center items-center w-full">
-          <img src={avatar} alt={username} className="w-16 h-16 object-cover rounded-full" />
+          <img
+            src={avatar}
+            alt={username}
+            className="w-16 h-16 object-cover rounded-full"
+          />
           <div className="flex flex-col ml-4 w-full">
             <textarea
+              ref={textareaRef}
               className="text-lg text-lighttext border-b-4 border-darktext items-center
               placeholder:text-darktext p-2 mb-2 resize-none overflow-hidden"
               value={comment}

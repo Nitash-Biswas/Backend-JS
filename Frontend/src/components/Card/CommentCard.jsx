@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useUpdateAndDeleteComment } from "../../hooks/useCommentHook";
+import { useUpdateAndDeleteComment } from "../../hooks/useCommentHooks";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { AiFillLike } from "react-icons/ai";
@@ -8,7 +8,7 @@ import {
   useToggleLike,
   useCheckLike,
   useGetTotalLikes,
-} from "../../hooks/useLikeHook";
+} from "../../hooks/useLikeHooks";
 
 function CommentCard({
   content,
@@ -69,7 +69,7 @@ function CommentCard({
         console.error("Error fetching total likes:", error);
       }
     };
-    if(loggedUser){
+    if (loggedUser) {
       fetchLikeStatus();
     }
 
@@ -156,7 +156,7 @@ function CommentCard({
       </div>
 
       <div className="flex justify-between items-center">
-        <div >
+        <div>
           {loggedUser && loggedUser.username === owner && (
             <>
               <button
@@ -190,7 +190,11 @@ function CommentCard({
           </button>
         </div>
       </div>
-      {!loggedUser && <p className="text-sm text-right text-darktext/30">Login to like comments...</p>}
+      {!loggedUser && (
+        <p className="text-sm text-right text-darktext/30">
+          Login to like comments...
+        </p>
+      )}
       {error && <p className="text-sm text-red-500">{error}</p>}
       {errorLike && <p className="text-sm text-red-500">{errorLike}</p>}
       {errorLikeCheck && (

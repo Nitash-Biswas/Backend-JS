@@ -1,19 +1,19 @@
 import React, { useContext } from "react";
-import LongCard from "../Card/LongCard";
+import LongCard from "../../components/Card/LongCard";
 import UserContext from "../../contexts/userContext";
-import { useFetchLikedVideos, useToggleLike } from "../../hooks/useLikeHook";
+import { useFetchLikedVideos, useToggleLike } from "../../hooks/useLikeHooks";
 
-function AllLikedVideos() {
+function LikedVideos() {
   const { likedVideos, loading, error, refresh } = useFetchLikedVideos();
-  const {toggleVideoLike} = useToggleLike();
-    const { loggedUser } = useContext(UserContext);
+  const { toggleVideoLike } = useToggleLike();
+  const { loggedUser } = useContext(UserContext);
 
-    const handleRemove = async (videoId) => {
-      await toggleVideoLike({ videoId });
-      refresh();
-    }
+  const handleRemove = async (videoId) => {
+    await toggleVideoLike({ videoId });
+    refresh();
+  };
 
-    if (loading) {
+  if (loading) {
     return (
       <div className="bg-darkbg text-2xl text-lighttext min-h-full p-4">
         Loading...
@@ -30,7 +30,6 @@ function AllLikedVideos() {
   }
   return (
     <div className="bg-darkbg min-h-full text-lighttext">
-
       {likedVideos.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 px-4">
           {likedVideos.map((video) => (
@@ -43,7 +42,9 @@ function AllLikedVideos() {
               videoId={video.video._id}
               description={video.video.description}
               loggedUser={loggedUser}
-              onRemove={() => {handleRemove(video.video._id)}}
+              onRemove={() => {
+                handleRemove(video.video._id);
+              }}
             />
           ))}
         </div>
@@ -57,4 +58,4 @@ function AllLikedVideos() {
   );
 }
 
-export default AllLikedVideos;
+export default LikedVideos;

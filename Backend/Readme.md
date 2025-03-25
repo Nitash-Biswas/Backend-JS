@@ -1,4 +1,4 @@
-# Understanding Backend in JS
+# Understanding Backend
 
 ## Data Model Diagram
 

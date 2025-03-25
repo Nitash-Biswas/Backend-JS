@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL, TWEETS_URL } from "../constants";
 import Cookies from "js-cookie";
-import { refresh } from "@cloudinary/url-gen/qualifiers/artisticFilter";
 /*
 What is a custom hook?
 A custom hook is a JavaScript function that allows

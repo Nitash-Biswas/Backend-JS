@@ -13,12 +13,15 @@ import AddComment from "../Comments/AddComment";
 import CommentsContext, {
   CommentsContextProvider,
 } from "../../contexts/commentsContextProvider";
-import { useCheckLike, useGetTotalLikes, useToggleLike } from "../../hooks/useLikeHook";
+import {
+  useCheckLike,
+  useGetTotalLikes,
+  useToggleLike,
+} from "../../hooks/useLikeHooks";
 import { AiFillLike } from "react-icons/ai";
 import { IoAddCircle } from "react-icons/io5";
 import AddToPlaylist from "../AddToPlaylist/AddToPlaylist";
 import { useEditWatchHistory } from "../../hooks/useUserHooks";
-
 
 // Memoize the Comments, AddComment, and AdvancedVideo components
 
@@ -42,13 +45,14 @@ function VideoPlayer() {
   // Custom hooks
   const { toggleVideoLike, loadingLike, errorLike } = useToggleLike();
   const { checkVideoLike, loadingLikeCheck, errorLikeCheck } = useCheckLike();
-  const { getVideoLikes, loadingLikeCount, errorLikeCount } = useGetTotalLikes();
+  const { getVideoLikes, loadingLikeCount, errorLikeCount } =
+    useGetTotalLikes();
   const {
-      addToWatchHistory,
-      refresh,
-      loading,
-      error: watchHistoryError,
-    } = useEditWatchHistory();
+    addToWatchHistory,
+    refresh,
+    loading,
+    error: watchHistoryError,
+  } = useEditWatchHistory();
 
   useEffect(() => {
     // Fetch like status
@@ -72,7 +76,7 @@ function VideoPlayer() {
     };
     // Check if the user is logged in
     if (loggedUser) {
-      console.log(loggedUser, videoId)
+      // console.log(loggedUser, videoId)
       fetchLikeStatus();
       addToWatchHistory({ videoId });
     }
@@ -111,8 +115,7 @@ function VideoPlayer() {
 
   const handleAddToPlaylist = () => {
     setShowAddToPlaylist(true);
-  }
-
+  };
 
   // If the videoData or finalVideo is null, return a loading message
   if (!videoData || !finalVideo) {
@@ -147,55 +150,56 @@ function VideoPlayer() {
 
               <div className="p-4">
                 <div className="flex justify-between items-center">
-
                   <h2 className="text-3xl font-semibold text-lighttext mb-2">
                     {videoData.title}
                   </h2>
                   <div className="flex gap-4">
-                  <div className="flex justify-center items-center border-2 border-darktext rounded-full px-4 py-2">
-                    <span className="pr-4 text-darktext text-2xl font-bold">
-                      {totalLikes}
-                    </span>
-                    <button
-                      onClick={handleLike}
-                      className={` ${
-                        isLiked ? "text-highlight" : "text-darktext"
-                      } hover:text-lighttext disabled:text-darktext/30`}
-                      disabled={!loggedUser || loadingLike || loadingLikeCheck}
-                    >
-                      <AiFillLike size={35} />
-                    </button>
+                    <div className="flex justify-center items-center border-2 border-darktext rounded-full px-4 py-2">
+                      <span className="pr-4 text-darktext text-2xl font-bold">
+                        {totalLikes}
+                      </span>
+                      <button
+                        onClick={handleLike}
+                        className={` ${
+                          isLiked ? "text-highlight" : "text-darktext"
+                        } hover:text-lighttext disabled:text-darktext/30`}
+                        disabled={
+                          !loggedUser || loadingLike || loadingLikeCheck
+                        }
+                      >
+                        <AiFillLike size={35} />
+                      </button>
+                    </div>
 
-                  </div>
-
-                  {loggedUser && <div className="flex justify-center items-center  border-2 border-darktext rounded-full">
-
-                    <button
-                      onClick={handleAddToPlaylist}
-                      className={`hover:text-lighttext text-darktext disabled:text-darktext/30`}
-                      disabled={!loggedUser || loadingLike || loadingLikeCheck}
-                    >
-                      <IoAddCircle size={55} />
-                    </button>
-
-                  </div>}
+                    {loggedUser && (
+                      <div className="flex justify-center items-center  border-2 border-darktext rounded-full">
+                        <button
+                          onClick={handleAddToPlaylist}
+                          className={`hover:text-lighttext text-darktext disabled:text-darktext/30`}
+                          disabled={
+                            !loggedUser || loadingLike || loadingLikeCheck
+                          }
+                        >
+                          <IoAddCircle size={55} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-
-                  <div className="flex items-center mb-2">
-                    <img
-                      src={videoData.owner.avatar}
-                      alt={videoData.owner.fullname}
-                      className="w-12 h-12 rounded-full mr-4"
-                    />
-                    <NavLink to={`/user/${videoData.owner.username}`}>
+                <div className="flex items-center mb-2">
+                  <img
+                    src={videoData.owner.avatar}
+                    alt={videoData.owner.fullname}
+                    className="w-12 h-12 rounded-full mr-4"
+                  />
+                  <NavLink to={`/user/${videoData.owner.username}`}>
                     <p className="text-lighttext text-xl">
                       {" "}
                       {videoData.owner.fullname}
                     </p>
-                    </NavLink>
-                  </div>
+                  </NavLink>
+                </div>
 
                 <p className="text-darktext text-lg mb-2">
                   Uploaded: {formatTimeAgo(videoData.createdAt)}
@@ -219,8 +223,7 @@ function VideoPlayer() {
             )}
 
             {/* We used useMemo to avoid unnecessary re-renders */}
-              <MemoizedComments />
-
+            <MemoizedComments />
           </div>
           {showAddToPlaylist && (
             <AddToPlaylist

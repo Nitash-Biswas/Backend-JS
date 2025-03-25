@@ -1,13 +1,11 @@
 import React, { createContext, useEffect, useState } from "react";
-import { useFetchComments } from "../hooks/useCommentHook.js";
+import { useFetchComments } from "../hooks/useCommentHooks.js";
 
 const CommentsContext = createContext();
 
 export const CommentsContextProvider = ({ children, videoId }) => {
   const [refresh, setRefresh] = useState(false);
   const { comments, loading, error } = useFetchComments(videoId, refresh);
-
-
 
   const refreshComments = () => {
     setRefresh((prev) => !prev);
@@ -19,10 +17,10 @@ export const CommentsContextProvider = ({ children, videoId }) => {
   // console.log("Refresh:", refresh);
   // }, [videoId, comments, refresh]);
 
-
-
   return (
-    <CommentsContext.Provider value={{ comments, loading, error, refreshComments }}>
+    <CommentsContext.Provider
+      value={{ comments, loading, error, refreshComments }}
+    >
       {children}
     </CommentsContext.Provider>
   );

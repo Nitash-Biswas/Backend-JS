@@ -47,7 +47,7 @@ export const useRegisterUser = () => {
       await axios.post(`${BASE_URL}${USERS_URL}/register`, formData, {
         headers,
       });
-      console.log("User created successfully");
+      //console.log("User created successfully");
     } catch (err) {
       setError(
         err.response.status === 409
@@ -220,7 +220,7 @@ export const useGetWatchHistory = () => {
       setLoading(false);
     }
   };
-  console.log(watchHistory);
+  //console.log(watchHistory);
   useEffect(() => {
     getWatchHistory();
   }, []);

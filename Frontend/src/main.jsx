@@ -11,7 +11,7 @@ import {
 import Layout from "./Layout.jsx";
 import Home from "./pages/Home/Home.jsx";
 import History from "./pages/History/History.jsx";
-import LikedVideos from "./pages/LikedVideos/Liked_Videos.jsx";
+
 import Stats from "./pages/Stats/Stats.jsx";
 import VideoPlayer from "./components/VideoPlayer/VideoPlayer.jsx";
 import Login from "./pages/Login/Login.jsx";
@@ -28,6 +28,7 @@ import Playlist from "./components/Playlist/Playlist.jsx";
 import Tweets from "./pages/Tweets/Tweets.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import CreateVideo from "./pages/CreateVideo/CreateVideo.jsx";
+import LikedVideos from "./pages/LikedVideos/LikedVideos.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,7 +47,7 @@ const router = createBrowserRouter(
         path="liked_videos"
         element={
           <PrivateRoute>
-            <LikedVideos />
+            <LikedVideos/>
           </PrivateRoute>
         }
       />
