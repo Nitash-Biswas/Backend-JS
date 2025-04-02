@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { BASE_URL, TWEETS_URL } from "../constants";
 import Cookies from "js-cookie";
@@ -14,27 +14,52 @@ export const useFetchAllTweets = () => {
   const [tweets, setTweets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+    totalTweets: 0,
+  });
 
   // Fetch all tweets from the server using axios
-  const fetchTweets = async () => {
+  const fetchTweets = useCallback(async (page = 1, limit = 10) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}${TWEETS_URL}/get_all_tweets`
+        `${BASE_URL}${TWEETS_URL}/get_all_tweets`,
+        {
+          params: {
+            page: page,
+            limit: limit,
+          },
+        }
       );
-      setTweets(response.data?.data.allTweets);
-      setLoading(false);
+      const { docs, totalPages, totalDocs } =
+        response.data?.data.allTweetsWithPagination;
+      setTweets(docs);
+      setPagination({
+        page: page,
+        limit: limit,
+        totalPages: totalPages,
+        totalComments: totalDocs,
+      });
+      // console.log(response.data?.data.allTweetsWithPagination);
     } catch (err) {
       setError(err.message);
+    } finally {
       setLoading(false);
     }
-  };
+  },[]);
+
   useEffect(() => {
-
-
     fetchTweets();
   }, []);
 
-  return { tweets, loading, error, refresh: fetchTweets };
+
+  const refresh = useCallback(() => {
+    fetchTweets(pagination.page, pagination.limit);
+  }, [pagination.page, pagination.limit]);
+
+  return { tweets, loading, error, refresh, pagination, fetchTweets };
 };
 
 // Custom hook to fetch all videos of the logged in user

@@ -1,3 +1,4 @@
+import { Like } from "../models/like.model.js";
 import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import { ApiError } from "../utils/apiError.js";
@@ -332,6 +333,9 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
   //   allow deletion only when the current user is the owner of that video
   if (video.owner.toString() === userId.toString()) {
+    // Delete all the likes associated with the video
+    await Like.deleteMany({ video: videoId });
+    // Delete the video
     await Video.findByIdAndDelete(videoId);
   } else {
     throw new ApiError(400, "You are not authorised to delete this video");

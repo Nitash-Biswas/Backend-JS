@@ -25,7 +25,7 @@ function AddTweet({ username, avatar, onAddTweet }) {
   };
 
   return (
-    <div className="bg-lightbg shadow-xl p-4 mx-4 rounded ">
+    <div className="bg-lightbg shadow-xl p-4 rounded ">
       <form onSubmit={handleSubmit}>
         <div className="flex justify-center items-center w-full">
           <img

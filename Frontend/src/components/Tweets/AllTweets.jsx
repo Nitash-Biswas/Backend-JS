@@ -4,7 +4,6 @@ import React, { useContext } from "react";
 import TweetCard from "../../components/Card/TweetCard";
 import { extractDate } from "../../Utils/extractDate";
 import UserContext from "../../contexts/userContext";
-import { useFetchAllTweets } from "../../hooks/useTweetHooks";
 
 // const tweets = [
 //   {
@@ -42,7 +41,7 @@ function AllTweets({onChange, tweets, loading, error}) {
   }
 
   return (
-    <div className=" p-4 overflow-y-scroll h-screen mt-4 mr-4">
+    <div className=" overflow-y-scroll h-screen mt-4 pr-4">
       {tweets.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
           {tweets.map((tweet) => (

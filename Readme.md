@@ -1,5 +1,14 @@
 # Watchly - Full-Stack Video Streaming App
 
+nitash
+1234
+
+john
+123456
+
+raja
+xyz
+
 ## Overview
 Watchly is a full-stack MERN (MongoDB, Express, React, Node.js) application designed to handle video streaming, user authentication, comments, and real-time interactions. This guide serves as a structured approach to designing full-stack applications with a focus on modularity, scalability, and maintainability.
 

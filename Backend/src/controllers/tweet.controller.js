@@ -1,3 +1,4 @@
+import { Like } from "../models/like.model.js";
 import { Tweet } from "../models/tweet.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/apiError.js";
@@ -128,8 +129,11 @@ const getUserTweets = asyncHandler(async (req, res) => {
       new ApiResponse(200, { allTweets }, "All tweets fetched successfully")
     );
 });
+
 const getAllTweets = asyncHandler(async (req, res) => {
-  const allTweets = await Tweet.aggregate([
+  const { page = 1, limit = 10 } = req.query;
+
+  const allTweets = Tweet.aggregate([
     //Stage1: Lookup to join with User collection
     {
       $lookup: {
@@ -167,10 +171,24 @@ const getAllTweets = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error in getting the tweets");
   }
 
+  const options = {
+    page,
+    limit
+  }
+
+  const allTweetsWithPagination = await Tweet.aggregatePaginate(
+    allTweets,
+    options
+  );
+
+  if (!allTweetsWithPagination) {
+    throw new ApiError(400, "Error in getting tweets with Pagination");
+  }
+
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { allTweets }, "All tweets fetched successfully")
+      new ApiResponse(200, { allTweetsWithPagination }, "All tweets fetched successfully")
     );
 });
 
@@ -219,6 +237,9 @@ const deleteTweet = asyncHandler(async (req, res) => {
   //   allow deletion only when the current user is the owner of that tweet
 
   if (tweet.owner.toString() === userId.toString()) {
+    // Delete all the likes associated with the tweet
+    await Like.deleteMany({ tweet: tweetId });
+    // Delete the tweet
     await Tweet.findByIdAndDelete(tweetId);
   } else {
     throw new ApiError(400, "You are not authorised to delete this Tweet");

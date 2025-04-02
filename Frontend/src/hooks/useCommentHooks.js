@@ -1,31 +1,64 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BASE_URL, COMMENTS_URL } from "../constants";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const useFetchComments = (videoId, refresh) => {
+export const useFetchComments = (videoId) => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+    totalComments: 0,
+  });
+
+  const fetchComments = useCallback(async (page = 1, limit = 10) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}${COMMENTS_URL}/${videoId}`,
+        {
+          params: {
+            page: page,
+            limit: limit,
+          },
+        }
+      );
+
+      const { docs, totalPages, totalDocs } =
+        response.data?.data.allCommentsWithPagination;
+      setComments(docs);
+      setPagination({
+        page: page,
+        limit: limit,
+        totalPages: totalPages,
+        totalComments: totalDocs,
+      });
+      // console.log(response.data?.data.allCommentsWithPagination);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  },[videoId]);
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await axios.get(
-          `${BASE_URL}${COMMENTS_URL}/${videoId}`
-        );
-        setComments(response.data?.data.allCommentsWithPagination.docs);
-        // console.log(response.data?.data.allCommentsWithPagination.docs);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchComments();
-  }, [videoId, refresh]);
+  }, []);
 
-  return { comments, loading, error };
+  const refresh = useCallback(() => {
+    fetchComments(pagination.page, pagination.limit);
+  }, [pagination.page, pagination.limit]);
+
+  return {
+    comments,
+    loading,
+    error,
+    pagination,
+    fetchComments,
+    refresh
+  };
 };
 
 export const useAddComment = () => {
@@ -109,10 +142,10 @@ export const useUpdateAndDeleteComment = () => {
       };
 
       // Delete comment only when carrying auth tokens
-      await axios.delete(
-        `${BASE_URL}${COMMENTS_URL}/delete/${commentId}`,
-        { headers, withCredentials: true }
-      );
+      await axios.delete(`${BASE_URL}${COMMENTS_URL}/delete/${commentId}`, {
+        headers,
+        withCredentials: true,
+      });
     } catch (err) {
       setError(err.message);
     } finally {

@@ -4,6 +4,7 @@ import { Video } from "../models/video.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { Like } from "../models/like.model.js";
 
 //  Takes a id of a video as req.params,
 //  and returns all comments associated to that video in response
@@ -165,6 +166,9 @@ const deleteComment = asyncHandler(async (req, res) => {
 
   //  Allow delete only when the current user is the owner of the comment
   if (commentDoc.owner.toString() === userId.toString()) {
+    // Delete all the likes associated with the comment
+    await Like.deleteMany({comment: commentId});
+    // Delete the comment
     await Comment.findByIdAndDelete(commentId);
   } else {
     throw new ApiError(400, "You are not authorised to delete this comment");

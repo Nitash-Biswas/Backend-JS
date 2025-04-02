@@ -1,13 +1,13 @@
-import React, { useContext, useRef, useState } from "react";
-import { useAddComment } from "../../hooks/useCommentHooks";
-import CommentsContext from "../../contexts/commentsContextProvider";
+import React, { useRef, useState } from "react";
+import { useAddComment, useFetchComments } from "../../hooks/useCommentHooks";
 
-function AddComment({ videoId, username, avatar }) {
+function AddComment({ videoId, username, avatar, onCommentAdded }) {
   const [comment, setComment] = useState("");
   const { addComment, loading, error } = useAddComment();
-  const { refreshComments } = useContext(CommentsContext);
+
   const textareaRef = useRef(null);
 
+  // console.log("AddComment");
   const handleSubmit = async (event) => {
     event.preventDefault();
     await addComment({ videoId: videoId, comment });
@@ -17,7 +17,11 @@ function AddComment({ videoId, username, avatar }) {
     if (textareaRef.current) {
       textareaRef.current.style.height = "40px";
     }
-    refreshComments();
+    console.log("Comment added");
+    // Safely call onCommentAdded if it exists
+    if (typeof onCommentAdded === 'function') {
+      onCommentAdded();
+    }
   };
 
   // Function to adjust the height of the textarea dynamically
@@ -28,15 +32,15 @@ function AddComment({ videoId, username, avatar }) {
   };
 
   return (
-    <div className="bg-lightbg p-4 ml-4 rounded">
+    <div className="bg-lightbg shadow-md rounded-lg flex flex-col  p-4 w-full ">
       <form onSubmit={handleSubmit}>
-        <div className="flex justify-center items-center w-full">
+        <div className="flex justify-between gap-2">
           <img
             src={avatar}
             alt={username}
             className="w-16 h-16 object-cover rounded-full"
           />
-          <div className="flex flex-col ml-4 w-full">
+          <div className="flex flex-col flex-1">
             <textarea
               ref={textareaRef}
               className="text-lg text-lighttext border-b-4 border-darktext items-center
