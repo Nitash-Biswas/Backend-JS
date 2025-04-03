@@ -35,7 +35,7 @@ const EditImage = ({
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
       <div
         className={`bg-darkbg p-6 rounded-lg ${
-          isAvatar ? "w-full max-w-md" : "w-full max-w-2xl"
+          isAvatar ? "w-2/3 md:w-full max-w-md" : "w-2/3 md:w-full max-w-2xl"
         }`}
       >
         <h3 className="text-lighttext text-2xl font-semibold mb-4">

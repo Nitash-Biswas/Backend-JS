@@ -80,7 +80,7 @@ function AddToPlaylist({ videoData, onClose }) {
               onClick={onClose}
               className="bg-lightbg text-lighttext px-4 py-2 rounded"
             >
-              Close
+              <IoClose size={35} />
             </button>
           </div>
         </div>
@@ -89,7 +89,7 @@ function AddToPlaylist({ videoData, onClose }) {
   }
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-30">
-      <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg">
+      <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg w-1/2 h-fit">
         <div className="flex justify-between mb-4 items-center">
           <h2 className="text-xl font-semibold ">Add to Playlist</h2>
           <button

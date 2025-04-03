@@ -18,7 +18,7 @@ export default function LongCard({
         <img
           src={thumbnail}
           alt={title}
-          className=" h-fit w-full lg:w-96 object-cover"
+          className=" h-auto w-full lg:w-96 object-cover"
         />
       </NavLink>
       <div className="p-4 flex flex-1 flex-col justify-between ">

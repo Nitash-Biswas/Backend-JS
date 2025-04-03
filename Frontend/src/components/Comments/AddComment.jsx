@@ -32,19 +32,15 @@ function AddComment({ videoId, username, avatar, onCommentAdded }) {
   };
 
   return (
-    <div className="bg-lightbg shadow-md rounded-lg flex flex-col  p-4 w-full ">
+    <div className="bg-lightbg shadow-xl p-4 rounded w-full ">
       <form onSubmit={handleSubmit}>
-        <div className="flex justify-between gap-2">
-          <img
-            src={avatar}
-            alt={username}
-            className="w-16 h-16 object-cover rounded-full"
-          />
-          <div className="flex flex-col flex-1">
+        <div className="flex flex-wrap items-start w-full">
+
+          <div className="flex flex-col ml-4 w-full sm:w-auto flex-grow">
             <textarea
               ref={textareaRef}
-              className="text-lg text-lighttext border-b-4 border-darktext items-center
-              placeholder:text-darktext p-2 mb-2 resize-none overflow-hidden"
+              className="text-lg text-lighttext border-b-4 border-darktext
+              placeholder:text-darktext p-2 mb-2 resize-none overflow-hidden w-full"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               onInput={handleInput} // Trigger height adjustment on input
@@ -53,7 +49,12 @@ function AddComment({ videoId, username, avatar, onCommentAdded }) {
               rows={1} // Start with one row
               style={{ minHeight: "40px" }} // Set a minimum height
             />
-            <div className="flex justify-end">
+            <div className="flex justify-between mt-2">
+            <img
+            src={avatar}
+            alt={username}
+            className="w-12 h-12 object-cover rounded-full"
+          />
               <button
                 type="submit"
                 disabled={loading}

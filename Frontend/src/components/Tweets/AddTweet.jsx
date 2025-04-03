@@ -25,41 +25,42 @@ function AddTweet({ username, avatar, onAddTweet }) {
   };
 
   return (
-    <div className="bg-lightbg shadow-xl p-4 rounded ">
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-center items-center w-full">
-          <img
-            src={avatar}
-            alt={username}
-            className="w-16 h-16 object-cover rounded-full"
-          />
-          <div className="flex flex-col ml-4 w-full">
-            <textarea
-              ref={textareaRef}
-              className="text-lg text-lighttext border-b-4 border-darktext items-center
-              placeholder:text-darktext p-2 mb-2 resize-none overflow-hidden"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              onInput={handleInput}
-              placeholder="Add a tweet..."
-              required
-              rows={1}
-              style={{ minHeight: "40px", height: "40px" }}
-            />
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-highlight hover:bg-highlight/80 text-lg text-lighttext py-2 px-6 rounded-lg cursor-pointer"
-              >
-                {loading ? "..." : "Submit"}
-              </button>
-            </div>
-          </div>
+    <div className="bg-lightbg shadow-xl p-4 rounded w-full">
+  <form onSubmit={handleSubmit}>
+    <div className="flex flex-wrap items-start w-full">
+
+      <div className="flex flex-col ml-4 w-full sm:w-auto flex-grow">
+        <textarea
+          ref={textareaRef}
+          className="text-lg text-lighttext border-b-4 border-darktext
+          placeholder:text-darktext p-2 mb-2 resize-none overflow-hidden w-full"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onInput={handleInput}
+          placeholder="Add a tweet..."
+          required
+          rows={1}
+          style={{ minHeight: "40px", height: "40px" }}
+        />
+        <div className="flex justify-between mt-2">
+        <img
+        src={avatar}
+        alt={username}
+        className="w-12 h-12 object-cover rounded-full "
+      />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-highlight hover:bg-highlight/80 text-lg text-lighttext py-2 px-6 rounded-lg cursor-pointer"
+          >
+            {loading ? "..." : "Submit"}
+          </button>
         </div>
-      </form>
-      {error && <p>{error}</p>}
+      </div>
     </div>
+  </form>
+  {error && <p>{error}</p>}
+</div>
   );
 }
 

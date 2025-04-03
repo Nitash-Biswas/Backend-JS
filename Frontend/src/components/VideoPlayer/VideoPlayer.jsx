@@ -217,8 +217,8 @@ function VideoPlayer() {
         </div>
 
         {/* Comments Section */}
-        <div className="md:w-2/5 w-full h-full lg:pl-8 flex flex-col">
-          <h1 className="text-3xl font-semibold text-lighttext px-4 lg:mb-4 my-4">
+        <div className="md:w-2/5 w-full h-full md:pl-8 flex flex-col">
+          <h1 className="text-3xl font-semibold text-lighttext  lg:mb-4 my-4">
             Comments
           </h1>
           {loggedUser && (

@@ -77,7 +77,7 @@ function CreateVideo() {
           <div className="mb-4">
             <label className="block text-lg font-medium mb-2">Thumbnail</label>
             <div
-              className="t w-96 h-48 border-4 border-darktext text-darktext border-dashed rounded flex justify-center items-center mb-2"
+              className="t w-full md:w-96 h-46 border-4 border-darktext text-darktext border-dashed rounded flex justify-center items-center mb-2"
               onDragOver={(e) => {
                 e.preventDefault();
                 // console.log("Drag over");
