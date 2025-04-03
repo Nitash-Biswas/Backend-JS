@@ -159,12 +159,12 @@ function VideoPlayer() {
 
             <div className="p-4">
               <div className="flex-col md:flex-row  mb-2">
-                <h2 className="text-3xl font-semibold text-lighttext sm:mb-4 ">
+                <h2 className="text-xl sm:text-3xl font-semibold text-lighttext sm:mb-4 mb-2 ">
                   {videoData.title}
                 </h2>
                 <div className="flex gap-4 sm:mb-4 ">
-                  <div className="flex justify-center items-center border-2 border-darktext rounded-full px-4 py-2">
-                    <span className="pr-4 text-darktext text-2xl font-bold">
+                  <div className="flex justify-center items-center border-2 border-darktext rounded-full sm:px-4 sm:py-2 px-2 py-1">
+                    <span className="pr-4 text-darktext text-xl sm:text-2xl font-bold">
                       {totalLikes}
                     </span>
                     <button
@@ -174,7 +174,7 @@ function VideoPlayer() {
                       } hover:text-lighttext disabled:text-darktext/30`}
                       disabled={!loggedUser || loadingLike || loadingLikeCheck}
                     >
-                      <AiFillLike size={35} />
+                      <AiFillLike className="sm:text-4xl text-2xl" />
                     </button>
                   </div>
 
@@ -187,7 +187,7 @@ function VideoPlayer() {
                           !loggedUser || loadingLike || loadingLikeCheck
                         }
                       >
-                        <IoAddCircle size={55} />
+                        <IoAddCircle className="sm:text-5xl text-4xl" />
                       </button>
                     </div>
                   )}

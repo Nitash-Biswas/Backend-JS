@@ -67,10 +67,10 @@ const ChannelDashboard = () => {
   }
 
   return (
-    <div className="bg-darkbg flex flex-col text-lighttext h-full">
+    <div className="bg-darkbg flex flex-col text-lighttext min-h-full">
       <div className="flex flex-col w-full justify-between h-full">
         {/* CoverImage */}
-        <div className="bg-cover bg-center h-65 flex justify-center items-center">
+        <div className="bg-cover bg-center sm:h-65 h-32 flex justify-center items-center">
           <img
             src={user.coverImage || "https://placehold.co/600x400"}
             alt="coverImage"
@@ -83,13 +83,13 @@ const ChannelDashboard = () => {
           <img
             src={user.avatar}
             alt="avatarImage"
-            className="w-36 h-36 ml-4.5 object-cover rounded-full -mt-16 border-4 border-darkbg"
+            className="sm:w-36 sm:h-36 w-20 h-20 ml-4.5 object-cover rounded-full -mt-24 sm:-mt-16 border-4 border-darkbg"
           />
 
-          <div className="flex items-center justify-between w-full mr-6">
+          <div className="flex-col items-center justify-between w-full mr-6">
             <div className="ml-4.5">
-              <h1 className="text-lighttext text-2xl">{user.fullname}</h1>
-              <p className="text-darktext text-lg">{`@${username} | ${totalSubs} subscriber/s`}</p>
+              <h1 className="text-lighttext text-xl mt-2 sm:text-2xl">{user.fullname}</h1>
+              <p className="text-darktext sm:text-lg mb-2">{`@${username} | ${totalSubs} subscriber/s`}</p>
             </div>
             {loggedUser ? (
               !isUserSame && (
@@ -98,7 +98,7 @@ const ChannelDashboard = () => {
                     isSubscribed
                       ? "bg-lightbg hover:bg-lightbg/70"
                       : "hover:bg-highlight/70 bg-highlight"
-                  } disabled:bg-lightbg/30 disabled:text-lighttext/30 text-xl px-4 py-2 rounded`}
+                  } disabled:bg-lightbg/30 disabled:text-lighttext/30 sm:text-xl ml-4.5 m px-4 py-2 rounded`}
                   disabled={subscriptionLoading || subscriptionStatusLoading}
                   onClick={handleToggleSubscription}
                 >
@@ -118,7 +118,7 @@ const ChannelDashboard = () => {
           <NavLink
             to={`/user/${username}/videos`}
             className={({ isActive }) =>
-              `text-xl w-full text-center font-bold mx-4 py-2 rounded ${
+              `sm:text-xl w-full text-center font-bold ml-4 py-2 rounded ${
                 isActive ? "text-lighttext bg-lightbg" : "text-darktext"
               } lg:border-0 hover:text-highlight`
             }
@@ -129,7 +129,7 @@ const ChannelDashboard = () => {
           <NavLink
             to={`/user/${username}/tweets`}
             className={({ isActive }) =>
-              `text-xl w-full text-center font-bold mx-4 py-2 rounded ${
+              `sm:text-xl w-full text-center font-bold py-2 rounded ${
                 isActive ? "text-lighttext bg-lightbg" : "text-darktext"
               } lg:border-0 hover:text-highlight`
             }
@@ -140,7 +140,7 @@ const ChannelDashboard = () => {
           <NavLink
             to={`/user/${username}/playlists`}
             className={({ isActive }) =>
-              `text-xl w-full text-center font-bold mx-4 py-2 rounded ${
+              `sm:text-xl w-full text-center font-bold mr-4 py-2 rounded ${
                 isActive ? "text-lighttext bg-lightbg" : "text-darktext"
               } lg:border-0 hover:text-highlight`
             }
@@ -150,7 +150,7 @@ const ChannelDashboard = () => {
         </nav>
 
         {/* Outlet (Dynamic Content) */}
-        <div className="flex-1 overflow-y-auto my-4 mx-8 ">
+        <div className="flex-1 overflow-y-auto my-4 sm:mx-8 ">
           <Outlet />
         </div>
       </div>

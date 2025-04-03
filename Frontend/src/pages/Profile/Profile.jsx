@@ -93,17 +93,17 @@ function Profile() {
   return (
     <div className="bg-darkbg flex flex-col text-lighttext min-h-full">
       {/* Cover Image Section */}
-      <div className="bg-cover bg-center h-65 flex justify-center items-center relative">
+      <div className="bg-cover bg-center sm:h-65 h-32 flex justify-center items-center relative">
         <img
           src={loggedUser.coverImage || "https://placehold.co/600x400"}
           alt="coverImage"
           className="w-full h-full object-cover"
         />
         <button
-          className="absolute bottom-0 right-0 bg-darkbg text-lighttext rounded-full w-12 h-12 m-4 flex justify-center items-center"
+          className="absolute sm:bottom-0 sm:right-0 -bottom-2 -right-2 bg-darkbg text-lighttext rounded-full sm:w-12 sm:h-12 w-10 h-10 m-4 flex justify-center items-center"
           onClick={() => setShowCoverEdit(true)}
         >
-          <IoSettingsSharp size={30} />
+          <IoSettingsSharp className="sm:text-3xl text-2xl" />
         </button>
       </div>
 
@@ -113,20 +113,20 @@ function Profile() {
           <img
             src={loggedUser.avatar}
             alt="avatarImage"
-            className="w-36 h-36 object-cover rounded-full border-4 border-darkbg"
+            className="sm:w-36 sm:h-36 w-20 h-20 object-cover rounded-full border-4 border-darkbg"
           />
           <button
-            className="absolute top-0 right-0 bg-darkbg text-lighttext rounded-full w-12 h-12 flex justify-center items-center"
+            className="absolute sm:right-0 -top-2 -right-4 bg-darkbg text-lighttext rounded-full sm:w-12 sm:h-12 w-10 h-10 flex justify-center items-center"
             onClick={() => setShowAvatarEdit(true)}
           >
-            <IoSettingsSharp size={30} />
+            <IoSettingsSharp className="sm:text-3xl text-2xl" />
           </button>
         </div>
 
         {/* User Info */}
         <div className="flex items-center justify-between mr-6">
           <div className="ml-4.5">
-            <h1 className="text-lighttext text-2xl">{loggedUser.fullname}</h1>
+            <h1 className="text-lighttext text-xl mt-2 sm:text-2xl">{loggedUser.fullname}</h1>
             <p className="text-darktext text-lg">{`@${loggedUser.username}`}</p>
           </div>
         </div>

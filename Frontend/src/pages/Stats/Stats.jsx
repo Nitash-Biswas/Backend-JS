@@ -25,33 +25,34 @@ function Stats() {
   };
 
   return (
-    <div className="bg-darkbg min-h-full text-lighttext">
+    <div className="bg-darkbg flex flex-col text-lighttext h-full">
       {/* CoverImage */}
-      <div className="bg-cover bg-center h-65 flex justify-center items-center">
+      <div className="bg-cover bg-center sm:h-65 h-32 flex justify-center items-center">
         <img
           src={loggedUser?.coverImage || "https://placehold.co/600x400"}
           alt="coverImage"
           className="w-full h-full object-cover"
         />
       </div>
+
       {/* AvatarImage */}
       <div className="flex justify-items-start items-center">
         <img
           src={loggedUser?.avatar || "https://placehold.co/150x150"}
           alt="avatarImage"
-          className="w-36 h-36 ml-4.5 object-cover rounded-full -mt-16 border-4 border-darkbg"
+          className="sm:w-36 sm:h-36 w-20 h-20 ml-4.5 object-cover rounded-full -mt-16 border-4 border-darkbg"
         />
         <div className="ml-4.5">
-          <h1 className="text-lighttext text-2xl">{`${loggedUser?.fullname}`}</h1>
-          <p className="text-darktext text-lg">{`@${loggedUser?.username}`}</p>
+          <h1 className="text-lighttext text-xl mt-2 sm:text-2xl">{`${loggedUser?.fullname}`}</h1>
+          <p className="text-darktext sm:text-lg">{`@${loggedUser?.username}`}</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex w-full justify-between">
+      <div className="flex w-full my-4">
         <div
-          className={` hover:text-highlight w-1/2 text-darktext text-xl flex
-            justify-center items-center m-4 p-4 rounded-lg cursor-pointer ${
+          className={` hover:text-highlight w-1/2 text-darktext sm:text-xl ml-4 flex
+            justify-center items-center p-4 rounded-lg cursor-pointer ${
             selectedComponent === "Subscribers"
               ? "bg-lightbg text-lighttext"
               : "bg-transparent"
@@ -64,8 +65,8 @@ function Stats() {
         </div>
 
         <div
-          className={` hover:text-highlight w-1/2 text-darktext text-xl flex
-            justify-center items-center m-4 p-4 rounded-lg cursor-pointer ${
+          className={` hover:text-highlight w-1/2 text-darktext sm:text-xl flex mr-4
+            justify-center items-center p-4 rounded-lg cursor-pointer ${
             selectedComponent === "Subscribed"
               ? "bg-lightbg text-lighttext"
               : "bg-transparent"
@@ -77,7 +78,7 @@ function Stats() {
           <h1>Channels Subscribed : {subscribedCount}</h1>
         </div>
       </div>
-      <div className="mt-8 w-full min-h-full">
+      <div className="mt-2 w-full min-h-full">
         {selectedComponent === "Subscribers" && (
           <Subscribers subscribers={subscribers} />
         )}

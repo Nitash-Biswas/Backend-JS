@@ -36,7 +36,7 @@ function AddComment({ videoId, username, avatar, onCommentAdded }) {
       <form onSubmit={handleSubmit}>
         <div className="flex flex-wrap items-start w-full">
 
-          <div className="flex flex-col ml-4 w-full sm:w-auto flex-grow">
+          <div className="flex flex-col w-full sm:w-auto flex-grow">
             <textarea
               ref={textareaRef}
               className="text-lg text-lighttext border-b-4 border-darktext

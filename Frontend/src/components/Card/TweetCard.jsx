@@ -148,7 +148,7 @@ function TweetCard({
               </div>
             </div>
           ) : (
-            <h2 className="text-lg font-semibold text-lighttext">{content}</h2>
+            <h2 className=" text-sm sm:text-lg font-semibold text-lighttext">{content}</h2>
           )}
         </div>
       </div>
