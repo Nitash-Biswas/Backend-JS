@@ -25,6 +25,8 @@ function CommentCard({
   const [newContent, setNewContent] = useState(content);
   const [isLiked, setIsLiked] = useState(false);
   const [totalLikes, setTotalLikes] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
+
 
   // Custom hooks
   const { toggleCommentLike, loadingLike, errorLike } = useToggleLike();
@@ -50,6 +52,10 @@ function CommentCard({
       adjustTextareaHeight();
     }
   }, [newContent, isEditing]);
+
+  const toggleExpand = () => {
+    setIsExpanded((prev) => !prev);
+  };
 
   useEffect(() => {
     const fetchLikeStatus = async () => {
@@ -109,7 +115,7 @@ function CommentCard({
         <NavLink to={`/user/${owner}`}>
           <img
             src={avatar || "https://placehold.co/150x150"}
-            className="w-10 h-10 object-cover rounded-full"
+            className="w-10 h-10 object-cover rounded-full flex-shrink-0"
             alt=""
           />
         </NavLink>
@@ -150,7 +156,25 @@ function CommentCard({
               </div>
             </div>
           ) : (
-            <h2 className="text-sm sm:text-lg font-semibold text-lighttext">{content}</h2>
+            <div className="flex items-center w-full">
+            <h2
+              className={`text-sm sm:text-lg font-semibold text-lighttext ${
+                isExpanded ? "" : "truncate"
+              }`}
+              style={{ maxWidth: "calc(100% - 80px)" }}
+            >
+              {content}
+
+            </h2>
+            {content.length > 100 && (
+              <span
+                onClick={toggleExpand}
+                className="text-darktext text-sm underline ml-1"
+              >
+                {isExpanded ? "Read Less" : "Read More"}
+              </span>
+            )}
+            </div>
           )}
         </div>
       </div>
@@ -192,7 +216,7 @@ function CommentCard({
       </div>
       {!loggedUser && (
         <p className="text-sm text-right text-darktext/30">
-          Login to like comments...
+          Login to like.
         </p>
       )}
       {error && <p className="text-sm text-red-500">{error}</p>}

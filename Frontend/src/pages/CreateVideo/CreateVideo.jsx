@@ -37,14 +37,19 @@ function CreateVideo() {
     // Clear errors if validation passes
     setErrors({});
 
-    await publishVideo({
-      title: title,
-      description: description,
-      video: video,
-      thumbnail: thumbnail,
-    });
-    setUploadSuccess(true);
-    navigate("/");
+    try {
+      await publishVideo({
+        title: title,
+        description: description,
+        video: video,
+        thumbnail: thumbnail,
+      });
+      setUploadSuccess(true); // Only set this if publishVideo succeeds
+      navigate("/");
+    } catch (error) {
+      console.error("Error publishing video:", error);
+      setUploadSuccess(false); // Ensure success is not set if there's an error
+    }
 
     // Proceed with form submission
     // console.log("Form submitted with:", {

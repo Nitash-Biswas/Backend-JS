@@ -1,5 +1,8 @@
-// export const BASE_URL = "http://localhost:8000";
-export const BASE_URL = "http://3.109.36.151:8000";
+// Development serverURL
+export const BASE_URL = "http://localhost:8000";
+
+// Production server URL
+// export const BASE_URL = "http://3.109.36.151:8000";
 
 export const USERS_URL = `/users`;
 export const VIDEOS_URL = `/videos`;

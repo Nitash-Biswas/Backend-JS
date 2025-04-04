@@ -45,15 +45,21 @@ const Register = () => {
     if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
 
     // Call the registerUser function
-    await registerUser({
-      fullname: formData.fullName,
-      email: formData.email,
-      username: formData.username,
-      password: formData.password,
-      avatar: formData.avatar,
-      coverImage: formData.coverImage,
-    });
-    setRegisterSuccess(true);
+    try {
+      await registerUser({
+        fullname: formData.fullName,
+        email: formData.email,
+        username: formData.username,
+        password: formData.password,
+        avatar: formData.avatar,
+        coverImage: formData.coverImage,
+      });
+      setRegisterSuccess(true);
+    } catch (error) {
+      console.error("Registration error:", error);
+      setRegisterSuccess(false);
+    }
+
     // console.log("Registration data:", formData);
   };
 

@@ -88,8 +88,8 @@ function AddToPlaylist({ videoData, onClose }) {
     );
   }
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-30">
-      <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg w-1/2 h-fit">
+    <div className="fixed inset-0 bg-black/70 flex p-6 items-center justify-center z-30">
+      <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg overflow-auto sm:w-1/2 w-6/10 h-full ">
         <div className="flex justify-between mb-4 items-center">
           <h2 className="text-xl font-semibold ">Add to Playlist</h2>
           <button
@@ -163,7 +163,7 @@ function AddToPlaylist({ videoData, onClose }) {
             Add to Playlists
           </label>
           <div className="grid grid-cols-1 gap-2">
-            {playlists.map((playlist) => {
+            {playlists.length>0 ? (playlists.map((playlist) => {
               const hasVideo = playlist.videos?.some(
                 (id) => id.toString() === videoData._id.toString()
               );
@@ -186,7 +186,11 @@ function AddToPlaylist({ videoData, onClose }) {
                   <label htmlFor={playlist._id}>{playlist.name}</label>
                 </div>
               );
-            })}
+            })) : (
+              <div className="flex items-center  rounded-lg">
+                <p className="text-darktext text-sm">No playlists available</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

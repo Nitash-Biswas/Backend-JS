@@ -147,107 +147,89 @@ function VideoPlayer() {
 
   return (
     <>
-      <div className="bg-darkbg h-full p-8 flex flex-col md:flex-row ">
-        {/* Video Section */}
-        <div className="md:w-3/5 w-full h-full">
-          <div className="bg-lightbg shadow-md rounded-lg w-full">
-            <MemoizedAdvancedVideo
-              className="w-full h-full object-cover rounded-lg"
-              cldVid={finalVideo.quality("auto")}
-              controls
-            />
-
-            <div className="p-4">
-              <div className="flex-col md:flex-row  mb-2">
-                <h2 className="text-xl sm:text-3xl font-semibold text-lighttext sm:mb-4 mb-2 ">
-                  {videoData.title}
-                </h2>
-                <div className="flex gap-4 sm:mb-4 ">
-                  <div className="flex justify-center items-center border-2 border-darktext rounded-full sm:px-4 sm:py-2 px-2 py-1">
-                    <span className="pr-4 text-darktext text-xl sm:text-2xl font-bold">
-                      {totalLikes}
-                    </span>
-                    <button
-                      onClick={handleLike}
-                      className={` ${
-                        isLiked ? "text-highlight" : "text-darktext"
-                      } hover:text-lighttext disabled:text-darktext/30`}
-                      disabled={!loggedUser || loadingLike || loadingLikeCheck}
-                    >
-                      <AiFillLike className="sm:text-4xl text-2xl" />
-                    </button>
-                  </div>
-
-                  {loggedUser && (
-                    <div className="flex justify-center items-center  border-2 border-darktext rounded-full">
-                      <button
-                        onClick={handleAddToPlaylist}
-                        className={`hover:text-lighttext text-darktext disabled:text-darktext/30`}
-                        disabled={
-                          !loggedUser || loadingLike || loadingLikeCheck
-                        }
-                      >
-                        <IoAddCircle className="sm:text-5xl text-4xl" />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center mb-2">
-                <img
-                  src={videoData.owner.avatar}
-                  alt={videoData.owner.fullname}
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <NavLink to={`/user/${videoData.owner.username}`}>
-                  <p className="text-lighttext text-xl">
-                    {" "}
-                    {videoData.owner.fullname}
-                  </p>
-                </NavLink>
-              </div>
-
-              <p className="text-darktext text-lg mb-2">
-                Uploaded: {formatTimeAgo(videoData.createdAt)}
-              </p>
-              <p className="text-darktext text-lg">{videoData.description}</p>
-            </div>
+      <div className="bg-darkbg h-full p-8 flex flex-col lg:flex-row gap-8">
+  {/* Video Section */}
+  <div className="lg:w-3/5 w-full h-fit flex flex-col">
+    <div className="bg-lightbg shadow-md rounded-lg overflow-hidden h-full">
+      <MemoizedAdvancedVideo
+        className="w-full h-auto aspect-video object-cover"
+        cldVid={finalVideo.quality("auto")}
+        controls
+      />
+      <div className="p-4">
+        <h2 className="text-xl sm:text-3xl font-semibold text-lighttext mb-4 truncate">
+          {videoData.title}
+        </h2>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center border-2 border-darktext rounded-full px-4 py-2">
+            <span className="pr-4 text-darktext text-xl font-bold">
+              {totalLikes}
+            </span>
+            <button
+              onClick={handleLike}
+              className={`${
+                isLiked ? "text-highlight" : "text-darktext"
+              } hover:text-lighttext disabled:text-darktext/30`}
+              disabled={!loggedUser || loadingLike || loadingLikeCheck}
+            >
+              <AiFillLike size={30} />
+            </button>
           </div>
-        </div>
-
-        {/* Comments Section */}
-        <div className="md:w-2/5 w-full h-full md:pl-8 flex flex-col">
-          <h1 className="text-3xl font-semibold text-lighttext  lg:mb-4 my-4">
-            Comments
-          </h1>
           {loggedUser && (
-            <AddComment
-              videoId={videoId}
-              username={loggedUser.username}
-              avatar={loggedUser.avatar}
-              onCommentAdded={commentsRefresh}
-            />
+            <button
+              onClick={handleAddToPlaylist}
+              className="flex items-center justify-center border-2 border-darktext rounded-full p-2 hover:text-lighttext text-darktext disabled:text-darktext/30"
+              disabled={!loggedUser || loadingLike || loadingLikeCheck}
+            >
+              <IoAddCircle size={40} />
+            </button>
           )}
-          <Pagination
-            pagination={pagination}
-            onPageChange={handlePageChange}
-          />
-          <AllComments
-            comments={comments}
-            loading={commentsLoading}
-            error={commentsError}
-            refresh={commentsRefresh}
-          />
         </div>
-
-        {showAddToPlaylist && (
-          <AddToPlaylist
-            videoData={videoData}
-            onClose={() => setShowAddToPlaylist(false)}
+        <div className="flex items-center mb-4">
+          <img
+            src={videoData.owner.avatar}
+            alt={videoData.owner.fullname}
+            className="w-12 h-12 rounded-full mr-4"
           />
-        )}
+          <NavLink to={`/user/${videoData.owner.username}`}>
+            <p className="text-lighttext text-lg">{videoData.owner.fullname}</p>
+          </NavLink>
+        </div>
+        <p className="text-darktext text-sm mb-2">
+          Uploaded: {formatTimeAgo(videoData.createdAt)}
+        </p>
+        <p className="text-darktext text-sm">{videoData.description}</p>
       </div>
+    </div>
+  </div>
+
+  {/* Comments Section */}
+  <div className="lg:w-2/5 w-full h-screen flex flex-col">
+    <h1 className="text-2xl font-semibold text-lighttext mb-4">Comments</h1>
+    {loggedUser && (
+      <AddComment
+        videoId={videoId}
+        username={loggedUser.username}
+        avatar={loggedUser.avatar}
+        onCommentAdded={commentsRefresh}
+      />
+    )}
+    <Pagination pagination={pagination} onPageChange={handlePageChange} />
+    <AllComments
+      comments={comments}
+      loading={commentsLoading}
+      error={commentsError}
+      refresh={commentsRefresh}
+    />
+  </div>
+
+  {showAddToPlaylist && (
+    <AddToPlaylist
+      videoData={videoData}
+      onClose={() => setShowAddToPlaylist(false)}
+    />
+  )}
+</div>
     </>
   );
 }

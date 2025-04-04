@@ -63,7 +63,7 @@ export default function Header() {
                     alt=""
                   />
                   {dropDownOpen && (
-                    <div className="absolute right-4 border-3 border-darktext/40 top-16 mt-2 w-48 bg-lightbg  rounded-md shadow-lg z-50 ">
+                    <div className="absolute right-4 border-3 border-darktext/40 top-16 mt-4 w-48 bg-lightbg  rounded-md shadow-lg z-50 ">
                       <div className="py-1">
                         <NavLink
                           to="/profile"
