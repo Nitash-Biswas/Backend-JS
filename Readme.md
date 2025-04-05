@@ -25,3 +25,4 @@ Watchly is a full-stack MERN (MongoDB, Express, React, Node.js) application desi
   - **Video Hosting**: Cloud storage (Cloudinary) for video and image storage.
 
 ## 2. Folder Structure Overview
+
