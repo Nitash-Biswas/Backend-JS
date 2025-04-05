@@ -17,6 +17,7 @@ function AddToPlaylist({ videoData, onClose }) {
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
 
   // Fetch playlist data
   const {
@@ -36,6 +37,17 @@ function AddToPlaylist({ videoData, onClose }) {
 
   const { createPlaylist, loading: createLoading, error }
   = useManagePlaylist();
+
+  useEffect(() => {
+    if (isEmpty) {
+      const timer = setTimeout(() => {
+        setIsEmpty(false);
+      }
+      , 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isEmpty]);
+
 
   // Handle checkbox toggle
   const handleToggle = async (playlistId, isChecked) => {
@@ -60,6 +72,10 @@ function AddToPlaylist({ videoData, onClose }) {
   };
 
   const handleSave = async () => {
+    if (!newTitle.trim() || !newDescription.trim()) {
+      setIsEmpty(true);
+      return;
+    }
     const response = await createPlaylist({ name: newTitle, description: newDescription });
     // console.log(response?._id);
     await addVideoToPlaylist(response?._id, videoData._id);
@@ -89,7 +105,7 @@ function AddToPlaylist({ videoData, onClose }) {
   }
   return (
     <div className="fixed inset-0 bg-black/70 flex p-6 items-center justify-center z-30">
-      <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg overflow-auto sm:w-1/2 w-6/10 h-full ">
+      <div className="bg-darkbg text-lighttext p-6 rounded-lg shadow-lg overflow-auto sm:w-1/2 w-6/10 h-fit ">
         <div className="flex justify-between mb-4 items-center">
           <h2 className="text-xl font-semibold ">Add to Playlist</h2>
           <button
@@ -131,6 +147,7 @@ function AddToPlaylist({ videoData, onClose }) {
                   type="text"
                   className="w-full p-2 border-2 border-darktext rounded-lg "
                   placeholder="Title"
+                  required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                 />
@@ -138,9 +155,15 @@ function AddToPlaylist({ videoData, onClose }) {
                   type="text"
                   className="w-full p-2 border-2 border-darktext rounded-lg"
                   placeholder="Description"
+                  required
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                 />
+                {isEmpty && (
+                  <p className="text-red-500 text-sm text-left w-full mt-1 ml-2">
+                    Please fill in both the fields
+                  </p>
+                )}
                 <div className="flex w-full justify-end">
                   <button
                     onClick={closeDropDown}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdFileUpload } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useRegisterUser } from "../../hooks/useUserHooks";
@@ -15,6 +15,7 @@ const Register = () => {
   });
   const [errors, setErrors] = useState({});
   const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [showMessage, setShowMessage] = useState(false)
   const navigate = useNavigate();
 
   const { registerUser, loading, error } = useRegisterUser();
@@ -23,6 +24,17 @@ const Register = () => {
     if (!file) return false;
     return ["image/png", "image/jpeg", "image/jpg"].includes(file.type);
   };
+
+   useEffect(() => {
+      if (registerSuccess) {
+        setShowMessage(true);
+        const timer = setTimeout(() => {
+          setShowMessage(false);
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
+    }, [registerSuccess]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -224,13 +236,14 @@ const Register = () => {
           <FileUpload field="avatar" label="Profile Avatar" isAvatar={true} />
           <FileUpload field="coverImage" label="Cover Image" isAvatar={false} />
 
-          <div className="flex gap-4 justify-end">
-            {registerSuccess && !loading && (
-              <p className="text-green-500 text-sm mt-4 mr-8">
+          <div className="flex flex-col gap-4 justify-end">
+            {registerSuccess && !loading && showMessage && (
+              <p className="text-green-500 text-sm ">
                 User registered successfully, you can now log in!
               </p>
             )}
 
+            <div className="flex justify-end gap-4">
             <button
               type="button"
               onClick={() => navigate(-1)}
@@ -245,6 +258,9 @@ const Register = () => {
             >
               {loading ? "Registering..." : "Register"}
             </button>
+            </div>
+
+
           </div>
         </div>
       </form>
