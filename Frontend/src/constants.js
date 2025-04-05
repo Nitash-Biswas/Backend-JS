@@ -3,7 +3,8 @@
 
 // Production server URL
 // AWS EC2 instance URL
-export const BASE_URL = "http://15.206.250.211:8000";
+// export const BASE_URL = "http://15.206.250.211:8000";
+export const BASE_URL = "http://ec2-15-206-250-211.ap-south-1.compute.amazonaws.com:8000";
 // Vercel URL
 // export const BASE_URL = "https://backend-js-nitashs-projects.vercel.app"
 

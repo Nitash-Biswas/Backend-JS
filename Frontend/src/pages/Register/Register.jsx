@@ -54,7 +54,16 @@ const Register = () => {
     if (!validateFile(formData.coverImage))
       newErrors.coverImage = "Valid image required";
 
-    if (Object.keys(newErrors).length > 0) return setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+
+      // Clear errors after 3 seconds
+      setTimeout(() => {
+        setErrors({});
+      }, 3000);
+
+      return;
+    };
 
     // Call the registerUser function
     try {
