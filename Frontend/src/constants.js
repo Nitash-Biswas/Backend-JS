@@ -1,8 +1,12 @@
 // Development serverURL
-export const BASE_URL = "http://localhost:8000";
+// export const BASE_URL = "http://localhost:8000";
 
 // Production server URL
-// export const BASE_URL = "http://3.109.36.151:8000";
+// AWS EC2 instance URL
+export const BASE_URL = "http://15.206.250.211:8000";
+// Vercel URL
+// export const BASE_URL = "https://backend-js-nitashs-projects.vercel.app"
+
 
 export const USERS_URL = `/users`;
 export const VIDEOS_URL = `/videos`;

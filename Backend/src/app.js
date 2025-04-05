@@ -8,7 +8,7 @@ const app = express();
 //  .use() applies middleware to all incoming requests before they reach any route handlers.
 app.use(
   cors({
-    origin: ["http://3.109.36.151:3000", "http://localhost:5173"], // Allow requests from these origins
+    origin: ["http://15.206.250.211:3000", "http://localhost:5173"], // Allow requests from these origins
     credentials: true,  // Allow credentials (cookies, authorization headers, etc.) to be sent
   })
 );

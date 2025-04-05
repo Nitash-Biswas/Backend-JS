@@ -28,6 +28,7 @@ connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
       console.log(`Server is Running at ${process.env.PORT}`);
+      console.log({"cld_name":process.env.CLOUDINARY_CLOUD_NAME,"at_expiry":process.env.ACCESS_JWT_TOKEN_EXPIRY,"rt_expiry":process.env.REFRESH_JWT_TOKEN_EXPIRY});
     });
     app.on("error", (error) => console.log("APP LISTENING ERROR: ", error));
   })
